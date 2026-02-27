@@ -1,0 +1,618 @@
+// src/pages/Mentor/MentorHomeDashboard.jsx
+import { useState } from "react";
+import { useAuth } from "../../../Context/AuthContext";
+import internsData from "../../../Data/Interns.json";
+import {
+  FaUsers,
+  FaTasks,
+  FaCheckCircle,
+  FaClock,
+  FaExclamationTriangle,
+  FaChartLine,
+  FaUserGraduate,
+  FaFileAlt,
+  FaCalendarCheck,
+  FaStar,
+  FaComments,
+  FaRocket,
+  FaAward,
+  FaRegClock,
+  FaArrowUp,
+  FaArrowDown,
+  FaEye,
+  FaDownload,
+  FaFilter,
+  FaSearch,
+  FaEllipsisV,
+  FaUserPlus,
+  FaBell,
+  FaRegCalendarAlt,
+  FaRegCheckCircle,
+  FaRegClock as FaRegClockOutline,
+  FaCode,
+  FaMobile,
+  FaServer,
+  FaPen,
+  FaCamera,
+  FaChartBar,
+  FaThumbsUp,
+  FaExclamationCircle,
+  FaSpinner,
+  FaCheckDouble,
+  FaHourglassHalf,
+  FaCalendarAlt,
+  FaUserCheck,
+  FaUserClock,
+  FaUserTimes,
+  FaEnvelope,
+  FaPhone,
+  FaMapMarkerAlt,
+  FaLinkedin,
+  FaGithub,
+  FaTwitter,
+  FaAngleRight,
+  FaAngleLeft,
+  FaTimes
+} from "react-icons/fa";
+import { MdPendingActions, MdAssignment, MdFeedback, MdOutlineTask } from "react-icons/md";
+
+export default function MentorHomeDashboard() {
+  const { user } = useAuth();
+  const [selectedTimeframe, setSelectedTimeframe] = useState('weekly');
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedIntern, setSelectedIntern] = useState(null);
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  // Calculate statistics from internsData
+  const totalInterns = internsData.length;
+  const pendingInterns = internsData.filter(intern => intern.status === "pending").length;
+  const approvedInterns = internsData.filter(intern => intern.status === "Approve").length;
+  const rejectedInterns = internsData.filter(intern => intern.status === "Rejected").length;
+
+  // Mock data for additional stats
+  const stats = {
+    totalTasks: 45,
+    completedTasks: 32,
+    pendingTasks: 13,
+    averageScore: 78.5,
+    onTimeSubmissions: 85,
+    delayedSubmissions: 15,
+    feedbackGiven: 28,
+    pendingFeedback: 12,
+    activeProjects: 8,
+    completedProjects: 23,
+    hoursLogged: 156,
+    averageAttendance: 94
+  };
+
+  // Department distribution
+  const departmentStats = [
+    { name: 'Frontend', count: 12, color: 'teal', icon: FaCode, progress: 75 },
+    { name: 'Backend', count: 8, color: 'cyan', icon: FaServer, progress: 82 },
+    { name: 'Mobile', count: 6, color: 'emerald', icon: FaMobile, progress: 68 },
+    { name: 'UI/UX', count: 5, color: 'purple', icon: FaPen, progress: 91 },
+    { name: 'QA', count: 4, color: 'amber', icon: FaCamera, progress: 70 },
+  ];
+
+  // Recent interns list with more details
+  const recentInterns = internsData.slice(0, 6).map((intern, index) => ({
+    ...intern,
+    lastActive: ['Just now', '2 hours ago', 'Yesterday', '3 days ago'][index % 4],
+    progress: Math.floor(Math.random() * 30) + 70,
+    tasksCompleted: Math.floor(Math.random() * 15) + 10,
+    totalTasks: 25,
+    avatar: `https://ui-avatars.com/api/?name=${intern.name.replace(' ', '+')}&background=0D9488&color=fff&size=128`,
+    email: `${intern.name.toLowerCase().replace(' ', '.')}@example.com`,
+    project: ['E-commerce App', 'Dashboard UI', 'API Gateway', 'Mobile App'][index % 4],
+    mentor: user?.username || 'John Mentor'
+  }));
+
+  // Upcoming tasks
+  const upcomingTasks = [
+    { id: 1, title: 'Review Frontend Code', intern: 'Alice Johnson', internAvatar: 'https://ui-avatars.com/api/?name=Alice+Johnson&background=0D9488&color=fff', deadline: 'Today, 5:00 PM', priority: 'High', status: 'pending', type: 'code' },
+    { id: 2, title: 'Weekly Progress Meeting', intern: 'All Interns', internAvatar: 'https://ui-avatars.com/api/?name=All+Interns&background=0891B2&color=fff', deadline: 'Tomorrow, 10:00 AM', priority: 'Medium', status: 'scheduled', type: 'meeting' },
+    { id: 3, title: 'Code Review Session', intern: 'Bob Smith', internAvatar: 'https://ui-avatars.com/api/?name=Bob+Smith&background=0D9488&color=fff', deadline: 'Tomorrow, 3:00 PM', priority: 'High', status: 'pending', type: 'code' },
+    { id: 4, title: 'Documentation Review', intern: 'Carol Davis', internAvatar: 'https://ui-avatars.com/api/?name=Carol+Davis&background=0D9488&color=fff', deadline: 'Wed, 11:00 AM', priority: 'Low', status: 'pending', type: 'doc' },
+    { id: 5, title: 'Database Design Review', intern: 'David Wilson', internAvatar: 'https://ui-avatars.com/api/?name=David+Wilson&background=0891B2&color=fff', deadline: 'Wed, 2:00 PM', priority: 'Medium', status: 'pending', type: 'database' },
+  ];
+
+  // Performance alerts
+  const performanceAlerts = [
+    { id: 1, intern: 'Mike Wilson', issue: '3 tasks overdue', severity: 'high', avatar: 'https://ui-avatars.com/api/?name=Mike+Wilson&background=EF4444&color=fff' },
+    { id: 2, intern: 'Emma Brown', issue: 'Low participation', severity: 'medium', avatar: 'https://ui-avatars.com/api/?name=Emma+Brown&background=F59E0B&color=fff' },
+    { id: 3, intern: 'James Lee', issue: 'Excellent progress', severity: 'positive', avatar: 'https://ui-avatars.com/api/?name=James+Lee&background=10B981&color=fff' },
+    { id: 4, intern: 'Sarah Chen', issue: 'Missed deadline', severity: 'high', avatar: 'https://ui-avatars.com/api/?name=Sarah+Chen&background=EF4444&color=fff' },
+  ];
+
+  // Notifications
+  const notifications = [
+    { id: 1, message: 'New LOR request from Sarah', time: '5 min ago', read: false, icon: FaFileAlt },
+    { id: 2, message: 'Task completed by John', time: '1 hour ago', read: false, icon: FaCheckCircle },
+    { id: 3, message: 'Weekly report ready', time: '2 hours ago', read: true, icon: FaChartLine },
+    { id: 4, message: 'New intern added to your team', time: 'Yesterday', read: true, icon: FaUserPlus },
+  ];
+
+  // Achievement badges
+  const achievements = [
+    { id: 1, name: '100% Review Rate', icon: FaStar, color: 'yellow', count: '12/12' },
+    { id: 2, name: 'On-time Feedback', icon: FaClock, color: 'green', count: '85%' },
+    { id: 3, name: 'Mentor Score', icon: FaAward, color: 'purple', count: '4.8/5' },
+  ];
+
+  // Quick stats cards data
+  const quickStats = [
+    { label: 'Total Interns', value: totalInterns, icon: FaUsers, color: 'teal', change: '+12%', changeType: 'increase' },
+    { label: 'Active Tasks', value: stats.pendingTasks, icon: FaTasks, color: 'cyan', change: '+5', changeType: 'increase' },
+    { label: 'Avg. Score', value: stats.averageScore, icon: FaStar, color: 'amber', change: '+2.5%', changeType: 'increase', suffix: '%' },
+    { label: 'Attendance', value: stats.averageAttendance, icon: FaUserCheck, color: 'emerald', change: '-3%', changeType: 'decrease', suffix: '%' },
+  ];
+
+  // Upcoming deadlines
+  const deadlines = [
+    { id: 1, task: 'Project Submission', date: 'Today', count: 3, color: 'red' },
+    { id: 2, task: 'Code Reviews', date: 'Tomorrow', count: 5, color: 'amber' },
+    { id: 3, task: 'Monthly Report', date: 'Dec 25', count: 1, color: 'blue' },
+  ];
+
+  // Top performers
+  const topPerformers = internsData.slice(0, 3).map((intern, index) => ({
+    ...intern,
+    score: [98, 95, 92][index],
+    trend: 'up'
+  }));
+
+  return (
+    <div className="space-y-6">
+      {/* Welcome Section with Quick Actions */}
+      <div className="bg-gradient-to-r from-teal-600 via-teal-500 to-cyan-600 rounded-2xl shadow-xl p-6 text-white">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+          <div>
+            <h1 className="text-3xl font-bold flex items-center gap-3">
+              Welcome back, {user?.username || 'Mentor'}!
+              <span className="text-2xl">👋</span>
+            </h1>
+            <p className="text-teal-100 mt-2 flex items-center gap-2">
+              <FaRocket className="w-4 h-4" />
+              Here's what's happening with your interns today
+            </p>
+          </div>
+          <div className="flex gap-3 mt-4 md:mt-0">
+            <button className="flex items-center gap-2 px-4 py-2 bg-white/20 rounded-xl hover:bg-white/30 transition-colors">
+              <FaDownload className="w-4 h-4" />
+              <span className="text-sm">Export Report</span>
+            </button>
+            <button className="flex items-center gap-2 px-4 py-2 bg-white text-teal-600 rounded-xl hover:bg-teal-50 transition-colors">
+              <FaUserPlus className="w-4 h-4" />
+              <span className="text-sm">Add Intern</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Quick Date Navigation */}
+        <div className="flex gap-2 mt-6">
+          {['Today', 'This Week', 'This Month', 'Custom'].map((item) => (
+            <button
+              key={item}
+              className={`px-4 py-1.5 rounded-lg text-sm transition-colors ${
+                selectedTimeframe === item.toLowerCase()
+                  ? 'bg-white text-teal-600 font-medium'
+                  : 'bg-white/10 hover:bg-white/20'
+              }`}
+              onClick={() => setSelectedTimeframe(item.toLowerCase())}
+            >
+              {item}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Quick Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {quickStats.map((stat, index) => (
+          <div
+            key={index}
+            className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 border-l-4 border-teal-500 group"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-500 text-sm font-medium">{stat.label}</p>
+                <h2 className="text-3xl font-bold mt-2 text-gray-800">
+                  {stat.value}{stat.suffix || ''}
+                </h2>
+              </div>
+              <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                <stat.icon className="w-6 h-6 text-teal-600" />
+              </div>
+            </div>
+            <div className="mt-4 flex items-center gap-2">
+              <span className={`text-xs font-medium flex items-center gap-1 ${
+                stat.changeType === 'increase' ? 'text-green-600' : 'text-red-600'
+              }`}>
+                {stat.changeType === 'increase' ? <FaArrowUp /> : <FaArrowDown />}
+                {stat.change}
+              </span>
+              <span className="text-xs text-gray-400">vs last month</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Main Dashboard Content */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left Column - 2/3 width */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Department Overview */}
+          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <div className="bg-gradient-to-r from-teal-50 to-cyan-50 px-6 py-4 border-b border-teal-100 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                <FaChartBar className="w-5 h-5 text-teal-600" />
+                Department Overview
+              </h2>
+              <button className="text-teal-600 hover:text-teal-700 text-sm font-medium flex items-center gap-1">
+                View All <FaAngleRight />
+              </button>
+            </div>
+            <div className="p-6">
+              <div className="space-y-4">
+                {departmentStats.map((dept, index) => (
+                  <div key={index} className="group">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <dept.icon className={`w-4 h-4 text-${dept.color}-600`} />
+                        <span className="font-medium text-gray-700">{dept.name}</span>
+                        <span className="text-sm text-gray-500">({dept.count} interns)</span>
+                      </div>
+                      <span className="text-sm font-medium text-gray-700">{dept.progress}%</span>
+                    </div>
+                    <div className="w-full bg-gray-100 rounded-full h-2.5">
+                      <div
+                        className={`bg-${dept.color}-600 h-2.5 rounded-full transition-all duration-500 group-hover:bg-${dept.color}-700`}
+                        style={{ width: `${dept.progress}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Recent Interns Table */}
+          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <div className="bg-gradient-to-r from-teal-50 to-cyan-50 px-6 py-4 border-b border-teal-100 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                <FaUsers className="w-5 h-5 text-teal-600" />
+                Recent Interns
+              </h2>
+              <div className="flex items-center gap-3">
+                <div className="relative">
+                  <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <input
+                    type="text"
+                    placeholder="Search interns..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  />
+                </div>
+                <button className="p-2 hover:bg-gray-100 rounded-lg">
+                  <FaFilter className="w-4 h-4 text-gray-500" />
+                </button>
+              </div>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="bg-gray-50 text-gray-600 text-sm">
+                    <th className="py-4 px-6 text-left">Intern</th>
+                    <th className="py-4 px-6 text-left">Department</th>
+                    <th className="py-4 px-6 text-left">Project</th>
+                    <th className="py-4 px-6 text-left">Progress</th>
+                    <th className="py-4 px-6 text-left">Status</th>
+                    <th className="py-4 px-6 text-left">Last Active</th>
+                    <th className="py-4 px-6 text-left">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {recentInterns
+                    .filter(intern =>
+                      intern.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                      intern.department.toLowerCase().includes(searchTerm.toLowerCase())
+                    )
+                    .map((intern) => (
+                      <tr key={intern.id} className="hover:bg-teal-50/30 border-b last:border-b-0">
+                        <td className="py-4 px-6">
+                          <div className="flex items-center gap-3">
+                            <img src={intern.avatar} alt={intern.name} className="w-10 h-10 rounded-full" />
+                            <div>
+                              <p className="font-medium text-gray-800">{intern.name}</p>
+                              <p className="text-xs text-gray-500">{intern.email}</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="py-4 px-6">
+                          <span className="px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-xs">
+                            {intern.department}
+                          </span>
+                        </td>
+                        <td className="py-4 px-6 text-gray-600">{intern.project}</td>
+                        <td className="py-4 px-6">
+                          <div className="flex items-center gap-2">
+                            <div className="w-20 bg-gray-200 rounded-full h-2">
+                              <div
+                                className="bg-teal-600 h-2 rounded-full"
+                                style={{ width: `${intern.progress}%` }}
+                              ></div>
+                            </div>
+                            <span className="text-xs text-gray-600">{intern.progress}%</span>
+                          </div>
+                        </td>
+                        <td className="py-4 px-6">
+                          <span className={`px-3 py-1 rounded-full text-xs font-medium
+                            ${intern.status === 'Approve' ? 'bg-green-100 text-green-700' :
+                              intern.status === 'Rejected' ? 'bg-red-100 text-red-700' :
+                              'bg-yellow-100 text-yellow-700'
+                            }`}>
+                            {intern.status}
+                          </span>
+                        </td>
+                        <td className="py-4 px-6">
+                          <span className="text-sm text-gray-600">{intern.lastActive}</span>
+                        </td>
+                        <td className="py-4 px-6">
+                          <button
+                            onClick={() => setSelectedIntern(intern)}
+                            className="p-2 hover:bg-teal-100 rounded-lg transition-colors"
+                          >
+                            <FaEye className="w-4 h-4 text-teal-600" />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column - 1/3 width */}
+        <div className="space-y-6">
+          {/* Upcoming Tasks */}
+          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <div className="bg-gradient-to-r from-teal-50 to-cyan-50 px-6 py-4 border-b border-teal-100 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                <FaTasks className="w-5 h-5 text-teal-600" />
+                Upcoming Tasks
+              </h2>
+              <span className="bg-teal-600 text-white text-xs px-2 py-1 rounded-full">
+                {upcomingTasks.length} tasks
+              </span>
+            </div>
+            <div className="divide-y">
+              {upcomingTasks.map((task) => (
+                <div key={task.id} className="p-4 hover:bg-teal-50/30 transition-colors">
+                  <div className="flex items-start gap-3">
+                    <img src={task.internAvatar} alt={task.intern} className="w-8 h-8 rounded-full" />
+                    <div className="flex-1">
+                      <h3 className="font-medium text-gray-800 text-sm">{task.title}</h3>
+                      <p className="text-xs text-gray-500 mt-1">{task.intern}</p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <FaRegClock className="w-3 h-3 text-gray-400" />
+                        <span className="text-xs text-gray-500">{task.deadline}</span>
+                        <span className={`text-xs px-2 py-0.5 rounded-full
+                          ${task.priority === 'High' ? 'bg-red-100 text-red-700' :
+                            task.priority === 'Medium' ? 'bg-yellow-100 text-yellow-700' :
+                            'bg-blue-100 text-blue-700'
+                          }`}>
+                          {task.priority}
+                        </span>
+                      </div>
+                    </div>
+                    <button className="p-1 hover:bg-gray-100 rounded">
+                      <FaEllipsisV className="w-3 h-3 text-gray-400" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Performance Alerts */}
+          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <div className="bg-gradient-to-r from-amber-50 to-orange-50 px-6 py-4 border-b border-amber-100 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                <FaExclamationTriangle className="w-5 h-5 text-amber-600" />
+                Alerts & Notifications
+              </h2>
+              <span className="bg-amber-600 text-white text-xs px-2 py-1 rounded-full">
+                {performanceAlerts.length} new
+              </span>
+            </div>
+            <div className="divide-y">
+              {performanceAlerts.map((alert) => (
+                <div key={alert.id} className="p-4 hover:bg-amber-50/30 transition-colors">
+                  <div className="flex items-start gap-3">
+                    <img src={alert.avatar} alt={alert.intern} className="w-8 h-8 rounded-full" />
+                    <div className="flex-1">
+                      <p className="text-sm text-gray-800">{alert.intern}</p>
+                      <p className="text-xs text-gray-600 mt-1">{alert.issue}</p>
+                    </div>
+                    <span className={`text-xs px-2 py-1 rounded-full
+                      ${alert.severity === 'high' ? 'bg-red-100 text-red-700' :
+                        alert.severity === 'medium' ? 'bg-yellow-100 text-yellow-700' :
+                        'bg-green-100 text-green-700'
+                      }`}>
+                      {alert.severity}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Achievements */}
+          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <div className="bg-gradient-to-r from-purple-50 to-pink-50 px-6 py-4 border-b border-purple-100">
+              <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                <FaAward className="w-5 h-5 text-purple-600" />
+                Your Achievements
+              </h2>
+            </div>
+            <div className="p-4">
+              <div className="grid grid-cols-3 gap-3">
+                {achievements.map((achievement) => (
+                  <div key={achievement.id} className="text-center p-3 rounded-xl hover:bg-purple-50 transition-colors">
+                    <div className={`w-10 h-10 bg-${achievement.color}-100 rounded-full flex items-center justify-center mx-auto mb-2`}>
+                      <achievement.icon className={`w-5 h-5 text-${achievement.color}-600`} />
+                    </div>
+                    <p className="text-xs font-medium text-gray-600">{achievement.name}</p>
+                    <p className="text-sm font-bold text-gray-800 mt-1">{achievement.count}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Section - Deadlines & Quick Actions */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Upcoming Deadlines */}
+        <div className="bg-white rounded-2xl shadow-lg p-6">
+          <h3 className="font-semibold text-gray-800 flex items-center gap-2 mb-4">
+            <FaCalendarAlt className="w-4 h-4 text-teal-600" />
+            Upcoming Deadlines
+          </h3>
+          <div className="space-y-3">
+            {deadlines.map((deadline) => (
+              <div key={deadline.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                <div>
+                  <p className="font-medium text-gray-800">{deadline.task}</p>
+                  <p className="text-xs text-gray-500 mt-1">{deadline.date}</p>
+                </div>
+                <span className={`bg-${deadline.color}-100 text-${deadline.color}-700 px-3 py-1 rounded-full text-xs font-medium`}>
+                  {deadline.count} items
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Top Performers */}
+        <div className="bg-white rounded-2xl shadow-lg p-6">
+          <h3 className="font-semibold text-gray-800 flex items-center gap-2 mb-4">
+            <FaStar className="w-4 h-4 text-yellow-500" />
+            Top Performers
+          </h3>
+          <div className="space-y-3">
+            {topPerformers.map((intern, index) => (
+              <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                <div className="w-10 h-10 bg-teal-600 rounded-full flex items-center justify-center text-white font-bold">
+                  {intern.name.charAt(0)}
+                </div>
+                <div className="flex-1">
+                  <p className="font-medium text-gray-800">{intern.name}</p>
+                  <p className="text-xs text-gray-500">{intern.department}</p>
+                </div>
+                <div className="text-right">
+                  <p className="font-bold text-teal-600">{intern.score}</p>
+                  <p className="text-xs text-green-600 flex items-center gap-1">
+                    <FaArrowUp /> 5%
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="bg-white rounded-2xl shadow-lg p-6">
+          <h3 className="font-semibold text-gray-800 flex items-center gap-2 mb-4">
+            <FaRocket className="w-4 h-4 text-teal-600" />
+            Quick Actions
+          </h3>
+          <div className="grid grid-cols-2 gap-3">
+            {[
+              { label: 'Add Task', icon: MdAssignment, color: 'teal' },
+              { label: 'Give Feedback', icon: MdFeedback, color: 'cyan' },
+              { label: 'Schedule Meeting', icon: FaCalendarCheck, color: 'emerald' },
+              { label: 'Generate LOR', icon: FaFileAlt, color: 'purple' },
+            ].map((action, index) => (
+              <button
+                key={index}
+                className={`p-4 bg-${action.color}-50 rounded-xl hover:bg-${action.color}-100 transition-colors text-center group`}
+              >
+                <action.icon className={`w-6 h-6 text-${action.color}-600 mx-auto mb-2 group-hover:scale-110 transition-transform`} />
+                <span className={`text-xs font-medium text-${action.color}-700`}>{action.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Intern Detail Modal */}
+      {selectedIntern && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="bg-gradient-to-r from-teal-600 to-cyan-600 p-6 sticky top-0">
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-4">
+                  <img src={selectedIntern.avatar} alt={selectedIntern.name} className="w-16 h-16 rounded-full border-4 border-white" />
+                  <div className="text-white">
+                    <h2 className="text-2xl font-bold">{selectedIntern.name}</h2>
+                    <p className="text-teal-100">{selectedIntern.department} • {selectedIntern.project}</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setSelectedIntern(null)}
+                  className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+                >
+                  <FaTimes className="w-5 h-5 text-white" />
+                </button>
+              </div>
+            </div>
+            <div className="p-6 space-y-6">
+              {/* Contact Info */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                  <FaEnvelope className="w-4 h-4 text-teal-600" />
+                  <span className="text-sm text-gray-600">{selectedIntern.email}</span>
+                </div>
+                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                  <FaPhone className="w-4 h-4 text-teal-600" />
+                  <span className="text-sm text-gray-600">+1 234 567 890</span>
+                </div>
+              </div>
+
+              {/* Progress Stats */}
+              <div className="grid grid-cols-3 gap-4">
+                <div className="text-center p-3 bg-teal-50 rounded-xl">
+                  <p className="text-2xl font-bold text-teal-600">{selectedIntern.progress}%</p>
+                  <p className="text-xs text-gray-600">Overall Progress</p>
+                </div>
+                <div className="text-center p-3 bg-cyan-50 rounded-xl">
+                  <p className="text-2xl font-bold text-cyan-600">{selectedIntern.tasksCompleted}/{selectedIntern.totalTasks}</p>
+                  <p className="text-xs text-gray-600">Tasks Done</p>
+                </div>
+                <div className="text-center p-3 bg-purple-50 rounded-xl">
+                  <p className="text-2xl font-bold text-purple-600">4.5</p>
+                  <p className="text-xs text-gray-600">Rating</p>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-3">
+                <button className="flex-1 px-4 py-2 bg-teal-600 text-white rounded-xl hover:bg-teal-700 transition-colors">
+                  Give Feedback
+                </button>
+                <button className="flex-1 px-4 py-2 border border-teal-600 text-teal-600 rounded-xl hover:bg-teal-50 transition-colors">
+                  View Details
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

@@ -1,0 +1,43 @@
+[
+  {
+    "id": 1,
+    "name": "Rahul Sharma",
+    "department": "MERN Fullstack",
+    "score": 85,
+    "duration": "3 Months",
+    "email" : "rahul@gmail.com",
+    "batch": "Jan 2026",
+    "status": "Approve"
+  },
+  {
+    "id": 2,
+    "name": "Aman Verma",
+    "department": "Data Analyst",
+    "score": 60,
+    "duration": "2 Months",
+    "email" : "rahul@gmail.com",
+    "batch": "Jan 2026",
+    "status": "Rejected"
+  },
+  {
+    "id": 3,
+    "name": "Priya Singh",
+    "department": "UI/UX",
+    "score": 92,
+    "duration": "6 Months",
+    "email" : "priya@gmail.com",
+    "batch": "Jan 2026",
+    "status": "Approve"
+  },
+
+  {
+    "id": 4,
+    "name": "Nilohit prasad",
+    "department": "Full stack",
+    "score": 90,
+    "duration": "10 Months",
+    "email" : "nilohit@gmail.com",
+    "batch": "Jan 2026",
+    "status": "Approve"
+  }
+]
