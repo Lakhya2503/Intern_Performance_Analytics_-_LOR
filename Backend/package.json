@@ -1,0 +1,30 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon -r dotenv/config src/index.js",
+    "start": "node -r dotenv/config src/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cookie": "^1.1.1",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "csvtojson": "^2.0.14",
+    "dotenv": "^17.2.4",
+    "exceljs": "^4.4.0",
+    "express": "^5.2.1",
+    "express-validator": "^7.3.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.1.6",
+    "multer": "^2.0.2",
+    "nodemon": "^3.1.11"
+  }
+}
