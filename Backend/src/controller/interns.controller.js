@@ -186,6 +186,49 @@ const updateSingleIntern = asyncHandler(async(req,res)=>{
       return res.status(200).json(new ApiResponse(200, "updateIntern", "update Inter successfully"))
 })
 
+const getAllInters = asyncHandler(async(req,res)=>{
+
+  const allInters = await Intern.find().lean()
+
+  return res.status(200).json(new ApiResponse(200, allInters, "All interns fetch Successfully"))
+
+})
+
+const scoringWiseRanking = asyncHandler(async(req,res) => {
+
+    const goldInterns = await Intern.find(
+          { score : {$gte : 85}}
+    )
+
+    const silverInterns = await Intern.find(
+        { score : { $gte : 75, $lt : 85 } }
+    )
+
+    const bronzeInterns = await Intern.find(
+        { score : { $lt : 75 } }
+    )
+      return res.status(200).json(new ApiResponse(200, {
+          gold : goldInterns,
+          silver : silverInterns,
+          bronze : bronzeInterns
+      }, "Ranking fetch"))
+})
+
+const eligibleInternsForLOR = asyncHandler(async(req,res)=>{
+
+    const interns = await Intern.aggregate([
+      {
+            $match : { isCompliantIssue : false ,  isDisciplineIssue : false, score : { $gte : 75, $lt : 85 } }
+      }
+    ])
+
+      if (!interns || interns.length === 0) {
+      throw new ApiError(400, "No interns found for LOR generation");
+      }
+
+    return res.status(200).json(new ApiResponse(200, interns, "Eligible interns for LOR Generation"))
+
+})
 
 
 
@@ -193,5 +236,8 @@ const updateSingleIntern = asyncHandler(async(req,res)=>{
   addBulkInterns,
   addSignleIntern,
   updateBulkInterns,
-  updateSingleIntern
+  updateSingleIntern,
+  getAllInters,
+  eligibleInternsForLOR,
+  scoringWiseRanking,
 }

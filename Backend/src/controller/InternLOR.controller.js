@@ -117,8 +117,8 @@ const updateAndSendLor = asyncHandler(async(req,res)=>{
 
 export {
   generateLOR,
-  lorUpload,
   internsWithLor,
+  lorUpload,
   rejectedInternsForLorGeneration,
   updateAndSendLor
 }

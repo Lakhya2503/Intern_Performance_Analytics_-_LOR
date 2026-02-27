@@ -9,7 +9,6 @@ import {
   internsWithLor,
   rejectedInternForLor,
   updateAndSendLor,
-  scoreRankingInterns
 } from '../../../api/index';
 import {requestHandler} from '../../../utils/index';
 
@@ -277,20 +276,7 @@ const MentorTask = () => {
     );
   };
 
-  const handleViewRankings = () => {
-    requestHandler(
-      async () => await scoreRankingInterns(),
-      setLoading,
-      (response) => {
-        setRankings(response.data || []);
-        setShowRankingsModal(true);
-      },
-      (error) => {
-        setError(error.message || 'Failed to fetch rankings');
-        setTimeout(() => setError(''), 3000);
-      }
-    );
-  };
+
 
   const handleSelectInternForUpdate = (intern) => {
     setSelectedIntern(intern);
@@ -396,13 +382,13 @@ const MentorTask = () => {
               <span className="mr-2">📄</span>
               LOR Generation
             </button>
-            <button
+            {/* <button
               className="flex-1 px-4 py-3 rounded-lg font-medium text-gray-600 hover:bg-gray-100 transition-all duration-200"
               onClick={handleViewRankings}
             >
               <span className="mr-2">🏆</span>
               View Rankings
-            </button>
+            </button> */}
           </div>
         </div>
 

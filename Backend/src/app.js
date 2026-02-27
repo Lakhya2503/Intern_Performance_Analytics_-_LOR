@@ -8,7 +8,7 @@ const fileLimit = "10mb"
 
 app.use(cors({
     origin : process.env.CORS,
-    Credential : true,
+    credentials : true,
     methods : ["GET", "POST", "PUT", "DELETE"]
 }))
 
@@ -30,10 +30,12 @@ app.use(cookieParser())
 //defined router
 import authRouter from './routes/auth.route.js'
 import internRouter from './routes/intern.route.js'
+import lorRouter from './routes/internLOR.route.js'
 
 app.use('/api/lor/v1/user' , authRouter)
 
 app.use('/api/lor/v1/intern' , internRouter)
 
+app.use("/api/lor/v1/lor", lorRouter)
 
 export default app

@@ -26,7 +26,10 @@ import {
   BookOpen,
   UserCheck,
   Star,
-  Clock
+  Clock,
+  Medal,
+  Crown,
+  Trophy
 } from 'lucide-react';
 
 import InternCard from '../../cards/InternCard'
@@ -35,7 +38,11 @@ import { requestHandler } from '../../../utils';
 
 const Analytics = () => {
   const [interns, setInterns] = useState([]);
-  const [rankingData, setRankingData] = useState([]);
+  const [rankingData, setRankingData] = useState({
+    gold: [],
+    silver: [],
+    bronze: []
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedView, setSelectedView] = useState('overview');
@@ -58,7 +65,10 @@ const Analytics = () => {
     danger: '#ef4444',
     info: '#3b82f6',
     purple: '#a855f7',
-    pink: '#ec4899'
+    pink: '#ec4899',
+    gold: '#FBBF24',
+    silver: '#94A3B8',
+    bronze: '#B45309'
   };
 
   const chartColors = [
@@ -83,7 +93,7 @@ const Analytics = () => {
       (response) => {
         const roundedData = response.data.map(intern => ({
           ...intern,
-          score: intern.score ? Math.round(intern.score) : 0
+          score: intern.score ? Math.round(intern.score * 10) / 10 : 0
         }));
         setInterns(roundedData);
         setError(null);
@@ -101,11 +111,22 @@ const Analytics = () => {
       async () => await scoreRankingInterns(),
       setLoading,
       (response) => {
-        const roundedData = response.data.map(intern => ({
-          ...intern,
-          score: intern.score ? Math.round(intern.score) : 0
-        }));
-        setRankingData(roundedData);
+        // Process each category to round scores
+        const processedData = {
+          gold: (response.data.gold || []).map(intern => ({
+            ...intern,
+            score: intern.score ? Math.round(intern.score * 10) / 10 : 0
+          })),
+          silver: (response.data.silver || []).map(intern => ({
+            ...intern,
+            score: intern.score ? Math.round(intern.score * 10) / 10 : 0
+          })),
+          bronze: (response.data.bronze || []).map(intern => ({
+            ...intern,
+            score: intern.score ? Math.round(intern.score * 10) / 10 : 0
+          }))
+        };
+        setRankingData(processedData);
         setError(null);
       },
       (error) => {
@@ -113,6 +134,21 @@ const Analytics = () => {
         console.error('Error fetching ranking:', error);
       }
     );
+  };
+
+  // Get all ranked interns flattened for charts
+  const getAllRankedInterns = () => {
+    return [
+      ...rankingData.gold,
+      ...rankingData.silver,
+      ...rankingData.bronze
+    ];
+  };
+
+  // Get top performers (all gold + top silver if needed)
+  const getTopPerformers = (limit = 5) => {
+    const allRanked = getAllRankedInterns();
+    return allRanked.slice(0, limit);
   };
 
   // Handle intern actions
@@ -144,7 +180,10 @@ const Analytics = () => {
       avgScore: 0,
       complianceIssues: 0,
       disciplineIssues: 0,
-      completionRate: 0
+      completionRate: 0,
+      goldCount: 0,
+      silverCount: 0,
+      bronzeCount: 0
     };
 
     const total = interns.length;
@@ -158,10 +197,13 @@ const Analytics = () => {
     return {
       totalInterns: total,
       activeInterns: active,
-      avgScore: Math.round(avgScore),
+      avgScore: Math.round(avgScore * 10) / 10,
       complianceIssues,
       disciplineIssues,
-      completionRate: Math.round(completionRate)
+      completionRate: Math.round(completionRate),
+      goldCount: rankingData.gold.length,
+      silverCount: rankingData.silver.length,
+      bronzeCount: rankingData.bronze.length
     };
   };
 
@@ -179,11 +221,11 @@ const Analytics = () => {
   // Score distribution
   const getScoreDistribution = () => {
     const ranges = [
-      { range: '90-100', min: 90, max: 100, count: 0, color: colors.primary },
-      { range: '80-89', min: 80, max: 89, count: 0, color: colors.secondary },
-      { range: '70-79', min: 70, max: 79, count: 0, color: colors.purple },
-      { range: '60-69', min: 60, max: 69, count: 0, color: colors.pink },
-      { range: 'Below 60', min: 0, max: 59, count: 0, color: colors.accent2 }
+      { range: '90-100', min: 90, max: 100, count: 0, color: colors.gold },
+      { range: '75-89', min: 75, max: 89, count: 0, color: colors.silver },
+      { range: '60-74', min: 60, max: 74, count: 0, color: colors.bronze },
+      { range: '50-59', min: 50, max: 59, count: 0, color: colors.warning },
+      { range: 'Below 50', min: 0, max: 49, count: 0, color: colors.danger }
     ];
 
     interns.forEach(intern => {
@@ -207,27 +249,56 @@ const Analytics = () => {
             total: 0,
             avgScore: 0,
             scoreSum: 0,
-            active: 0
+            active: 0,
+            goldCount: 0
           });
         }
         const data = mentorMap.get(mentor);
         data.total++;
         data.scoreSum += intern.score || 0;
         if (intern.isActive) data.active++;
+
+        // Count gold performers
+        if (rankingData.gold.some(g => g._id === intern._id)) {
+          data.goldCount++;
+        }
       }
     });
 
     return Array.from(mentorMap.values()).map(m => ({
       ...m,
-      avgScore: Math.round(m.scoreSum / m.total)
-    }));
+      avgScore: Math.round((m.scoreSum / m.total) * 10) / 10
+    })).sort((a, b) => b.avgScore - a.avgScore);
   };
 
   const stats = calculateStats();
   const departmentData = getDepartmentData();
   const scoreDistribution = getScoreDistribution();
   const mentorData = getMentorData();
-  const topPerformers = rankingData.slice(0, 5);
+  const topPerformers = getTopPerformers(5);
+
+  const RankingCategory = ({ title, icon: Icon, color, data }) => (
+    <div className="bg-white rounded-lg shadow p-4">
+      <div className="flex items-center gap-2 mb-3">
+        <Icon size={20} color={color} />
+        <h3 className="font-semibold" style={{ color: colors.darkest }}>{title}</h3>
+        <span className="ml-auto text-sm font-medium" style={{ color }}>
+          {data.length} interns
+        </span>
+      </div>
+      <div className="space-y-2">
+        {data.slice(0, 3).map((intern, index) => (
+          <div key={intern._id} className="flex items-center justify-between text-sm">
+            <span className="text-gray-700">{intern.name}</span>
+            <span className="font-medium" style={{ color }}>{intern.score}%</span>
+          </div>
+        ))}
+        {data.length > 3 && (
+          <p className="text-xs text-gray-500 mt-2">+{data.length - 3} more</p>
+        )}
+      </div>
+    </div>
+  );
 
   const StatCard = ({ title, value, icon: Icon, subtitle, color = colors.primary }) => (
     <div
@@ -370,6 +441,7 @@ const Analytics = () => {
           title="Average Score"
           value={stats.avgScore}
           icon={Award}
+          subtitle={`Gold: ${stats.goldCount} | Silver: ${stats.silverCount} | Bronze: ${stats.bronzeCount}`}
           color={colors.purple}
         />
         <StatCard
@@ -389,6 +461,28 @@ const Analytics = () => {
           value={stats.disciplineIssues}
           icon={AlertTriangle}
           color={colors.accent2}
+        />
+      </div>
+
+      {/* Ranking Categories */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <RankingCategory
+          title="Gold Performers"
+          icon={Crown}
+          color={colors.gold}
+          data={rankingData.gold}
+        />
+        <RankingCategory
+          title="Silver Performers"
+          icon={Medal}
+          color={colors.silver}
+          data={rankingData.silver}
+        />
+        <RankingCategory
+          title="Bronze Performers"
+          icon={Trophy}
+          color={colors.bronze}
+          data={rankingData.bronze}
         />
       </div>
 
@@ -474,39 +568,46 @@ const Analytics = () => {
           </h2>
           <div className="space-y-4">
             {topPerformers.length > 0 ? (
-              topPerformers.map((intern, index) => (
-                <div
-                  key={intern._id}
-                  className="flex items-center justify-between p-3 rounded-lg transition-all duration-300 hover:shadow-md"
-                  style={{
-                    background: index === 0 ? 'linear-gradient(135deg, #e0e7ff 0%, #ede9fe 100%)' : '#f9fafb',
-                    border: index === 0 ? `1px solid ${colors.light}` : 'none'
-                  }}
-                >
-                  <div className="flex items-center gap-3">
-                    <div
-                      className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-white"
-                      style={{
-                        background: index === 0
-                          ? `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})`
-                          : `linear-gradient(135deg, ${colors.light}, ${colors.purple})`,
-                      }}
-                    >
-                      {index + 1}
+              topPerformers.map((intern, index) => {
+                // Determine category color
+                let categoryColor = colors.gold;
+                if (rankingData.silver.includes(intern)) categoryColor = colors.silver;
+                if (rankingData.bronze.includes(intern)) categoryColor = colors.bronze;
+
+                return (
+                  <div
+                    key={intern._id}
+                    className="flex items-center justify-between p-3 rounded-lg transition-all duration-300 hover:shadow-md"
+                    style={{
+                      background: index === 0 ? 'linear-gradient(135deg, #e0e7ff 0%, #ede9fe 100%)' : '#f9fafb',
+                      border: index === 0 ? `1px solid ${colors.light}` : 'none'
+                    }}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div
+                        className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-white"
+                        style={{
+                          background: index === 0
+                            ? `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})`
+                            : `linear-gradient(135deg, ${colors.light}, ${colors.purple})`,
+                        }}
+                      >
+                        {index + 1}
+                      </div>
+                      <div>
+                        <p className="font-medium">{intern.name}</p>
+                        <p className="text-sm text-gray-600">{intern._id}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-medium">{intern.name}</p>
-                      <p className="text-sm text-gray-600">{intern._id?.slice(-6)}</p>
+                    <div className="text-right">
+                      <p className="font-bold" style={{ color: categoryColor }}>
+                        {intern.score}%
+                      </p>
+                      <p className="text-sm text-gray-600">{intern.department}</p>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className="font-bold" style={{ color: colors.darkest }}>
-                      {intern.score}%
-                    </p>
-                    <p className="text-sm text-gray-600">{intern.department}</p>
-                  </div>
-                </div>
-              ))
+                );
+              })
             ) : (
               <p className="text-gray-500 text-center py-4">No ranking data available</p>
             )}

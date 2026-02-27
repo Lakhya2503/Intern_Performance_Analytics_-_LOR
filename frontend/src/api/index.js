@@ -136,7 +136,7 @@
   }
 
   export const internsWithLor = (payload) => {
-      return apiClient.get(`/lor/fetch/inters-with-lor`, payload)
+      return apiClient.get(`/lor/fetch/interns-with-lor`, payload)
   }
 
   export const rejectedInternForLor = () => {

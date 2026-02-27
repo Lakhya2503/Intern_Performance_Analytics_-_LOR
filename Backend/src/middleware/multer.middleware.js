@@ -5,9 +5,10 @@ import ApiError from '../utils/ApiError.js'
 
 const publicDir = path.join(process.cwd(), "public")
 const imageDir = path.join(publicDir, "images")
-const fileDir = path.join(publicDir, "files");
+const fileDir = path.join(publicDir, "files")
+const lorTempDir = path.join(publicDir, "lorTemplate");
 
-    [publicDir, imageDir, fileDir].forEach((dir) => {
+    [publicDir, imageDir, fileDir, lorTempDir].forEach((dir) => {
       if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir, { recursive: true })
       }
@@ -43,6 +44,20 @@ const fileDir = path.join(publicDir, "files");
     }
   })
 
+  const lorTempStorege = multer.diskStorage({
+    destination : function(req,file,cb){
+      cb(null, lorTempDir)
+    },
+
+      filename : function (req,file,cb) {
+
+        const cleanName = file.originalname.replace(/\s+/g, "_");
+
+          cb(null,  cleanName)
+      }
+
+  })
+
 
   const fileFilter = (req,file,cb) =>{
       const allowedType = [
@@ -71,4 +86,11 @@ const fileDir = path.join(publicDir, "files");
       limits : {
         fileSize : 2 * 1024 * 1024
       }
+  })
+
+  export const uploadLorTemp = multer({
+    storage : lorTempStorege,
+    limits : {
+       fileSize : 6 *1024 * 1024
+    }
   })

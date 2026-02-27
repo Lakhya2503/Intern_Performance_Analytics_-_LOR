@@ -17,7 +17,7 @@ export const castValue = (value, type) => {
                 case "string" :
                 return String(value).trim()
           }
-     }
+}
 
 
 export const getChangeFiled = ((oldObj, newObj, internFiledInum) => {
@@ -40,18 +40,41 @@ export const getChangeFiled = ((oldObj, newObj, internFiledInum) => {
           }
 
           return changes;
- })
-
-export const  scoreCalculation = (score) => {
-
-  const rank =  score;
+ }
+)
 
 
-    
+ export const calculateAverageScore = (intern) => {
+    const {
+        taskCompletion = 0,
+        taskQuality = 0,
+        deadlineAdherence = 0,
+        attendance = 0,
+        mentorFeedback = 0,
+        communication = 0,
+    } = intern
 
+    return (
+        Number(taskCompletion) +
+        Number(taskQuality) +
+        Number(deadlineAdherence) +
+        Number(attendance) +
+        Number(mentorFeedback) +
+        Number(communication)
+    ) / 6
+ };
 
+export const approveVerify = () =>{
+          let approvestatus;
+           if( status === "" || status === null || status === undefined ) {
+            approvestatus = true;
+          } else if( status === "true" || status === true || status === 1 || status === "1" ) {
+            approvestatus = true;
+          } else if (status === "false" || status === false || status === 0 || status === 0) {
+            approvestatus = false
+          } else {
+            approvestatus = undefined;
+          }
 
-    return {
-        rank
-    }
+          return approvestatus
 }

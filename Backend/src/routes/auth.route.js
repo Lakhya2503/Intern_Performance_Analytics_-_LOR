@@ -35,7 +35,7 @@ router.route("/auth/update-user-profile-avatar").post(uploadImage.fields(
 
 router.route("/auth/update-authorization/:excustionTeamId").post(verifyJWT, isAuthorizationChanged)
 
-router.route("/auth/fetch-execution-team").post(verifyJWT, fetchAllExcutionTemMembers)
+router.route("/auth/fetch-execution-team").get(verifyJWT, fetchAllExcutionTemMembers)
 
 
 export default router

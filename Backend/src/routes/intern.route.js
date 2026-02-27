@@ -2,6 +2,9 @@ import Router from 'express';
 import {
   addBulkInterns,
   addSignleIntern,
+  eligibleInternsForLOR,
+  getAllInters,
+  scoringWiseRanking,
   updateBulkInterns,
   updateSingleIntern
 } from '../controller/interns.controller.js';
@@ -35,5 +38,11 @@ router.route('/bulk-upload/update').post(
 router.route("/single-intern/add").post( addSignleIntern )
 
 router.route("/single-intern/update/:internId").put( updateSingleIntern )
+
+router.route("/interns-ranking").get( scoringWiseRanking )
+
+router.route("/interns-lor-eligible").get( eligibleInternsForLOR )
+
+router.route("/fetch/all-interns").get(getAllInters)
 
 export default router;

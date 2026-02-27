@@ -1,32 +1,19 @@
-import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import internsData from "../../../Data/Interns.json";
+import { Home, User } from "lucide-react";
 import { useState } from "react";
-import { useAuth } from "../../../Context/AuthContext";
 import {
-  FaTasks,
-  FaUsers,
-  FaCheckCircle,
-  FaClock,
-  FaExclamationTriangle,
-  FaChartLine,
-  FaUserGraduate,
-  FaFileAlt,
-  FaCalendarCheck,
-  FaTachometerAlt,
-  FaCog,
-  FaSignOutAlt,
-  FaBell,
+  FaChartBar,
   FaChevronLeft,
   FaChevronRight,
-  FaChartBar,
-  FaUserCircle,
-  FaCommentDots,
-  FaStar,
-  FaTeamspeak
+  FaCog,
+  FaFileAlt,
+  FaSignOutAlt,
+  FaTachometerAlt,
+  FaTasks,
+  FaUsers
 } from "react-icons/fa";
-import { MdPendingActions, MdAssignment, MdFeedback } from "react-icons/md";
-import { Home, User } from "lucide-react";
 import { FaPeopleGroup } from "react-icons/fa6";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../../../Context/AuthContext";
 
 export default function MentorDashboard() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -43,24 +30,15 @@ export default function MentorDashboard() {
 
   const activeTab = getActiveTabFromPath();
 
-  const totalIntern = internsData.length;
-  const pendingIntern = internsData.filter(
-    (intern) => intern.status === "pending",
-  ).length;
-  const approveIntern = internsData.filter(
-    (intern) => intern.status === "Approve",
-  ).length;
-  const rejectedIntern = internsData.filter(
-    (intern) => intern.status === "Rejected",
-  ).length;
+
 
   // Sidebar menu items with paths
   const menuItems = [
     { id: "dashboard", label: "Dashboard", icon: FaTachometerAlt, color: "teal", path: "/dashboard/Mentor" },
-    { id: "interns", label: "Interns", icon: FaUsers, color: "cyan", badge: pendingIntern, path: "/dashboard/Mentor/interns" },
-    { id: "task", label: "Tasks", icon: FaTasks, color: "emerald", badge: 5, path: "/dashboard/Mentor/task" },
+    { id: "interns", label: "Interns", icon: FaUsers, color: "cyan", path: "/dashboard/Mentor/interns" },
+    { id: "task", label: "Tasks", icon: FaTasks, color: "emerald",path: "/dashboard/Mentor/task" },
     { id: "execution-team", label: "Execution Team", icon: FaPeopleGroup, color: "sky", path: "/dashboard/Mentor/execution-team" },
-    { id: "lor-requests", label: "LOR Requests", icon: FaFileAlt, color: "purple", badge: 2, path: "/dashboard/Mentor/lor-requests" },
+    { id: "lor-requests", label: "LOR Requests", icon: FaFileAlt, color: "purple", path: "/dashboard/Mentor/lor-requests" },
     { id: "analytics", label: "Analytics", icon: FaChartBar, color: "indigo", path: "/dashboard/Mentor/analytics" },
     { id: "setting", label: "Settings", icon: FaCog, color: "cyan", path: "/dashboard/Mentor/setting" },
     { id: "profile", label: "profile", icon: User, color: "green", path: "/dashboard/Mentor/profile" },

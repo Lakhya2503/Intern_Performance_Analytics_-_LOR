@@ -1,3 +1,4 @@
+// src/pages/Mentor/Interns.jsx
 import React, { useState, useEffect } from 'react';
 import {
   FaSearch,
@@ -41,12 +42,12 @@ import {
   scoreRankingInterns
 } from '../../../api';
 import { requestHandler } from '../../../utils';
-import InternCard from '../../cards/InternCard'
+import InternCard from '../../cards/InternCard';
 
 function Interns() {
   // State Management
   const [interns, setInterns] = useState([]);
-  const [rankingData, setRankingData] = useState([]);
+  const [rankingData, setRankingData] = useState({ gold: [], silver: [], bronze: [] });
 
   // UI State
   const [loading, setLoading] = useState(false);
@@ -111,8 +112,9 @@ function Interns() {
       },
       setLoading,
       (res) => {
-        const roundedData = res.data.map(intern => ({
+        const roundedData = (res.data || []).map(intern => ({
           ...intern,
+          id: intern._id || intern.id,
           score: intern.score ? Math.round(intern.score) : 0
         }));
         setInterns(roundedData);
@@ -133,14 +135,26 @@ function Interns() {
       },
       null,
       (res) => {
-        const roundedData = res.data.map(item => ({
-          ...item,
-          score: item.score ? Math.round(item.score) : 0
-        }));
-        setRankingData(roundedData);
+        const rankings = res?.data || { gold: [], silver: [], bronze: [] };
+
+        // Process each tier
+        const processTier = (tier) => {
+          return (tier || []).map(item => ({
+            ...item,
+            id: item._id || item.id,
+            score: item.score ? Math.round(item.score) : 0
+          }));
+        };
+
+        setRankingData({
+          gold: processTier(rankings.gold),
+          silver: processTier(rankings.silver),
+          bronze: processTier(rankings.bronze)
+        });
       },
       (err) => {
         console.error('Error fetching ranking data:', err);
+        setRankingData({ gold: [], silver: [], bronze: [] });
       }
     );
   };
@@ -309,6 +323,13 @@ function Interns() {
       : 0
   };
 
+  const rankingStats = {
+    gold: rankingData.gold.length,
+    silver: rankingData.silver.length,
+    bronze: rankingData.bronze.length,
+    total: rankingData.gold.length + rankingData.silver.length + rankingData.bronze.length
+  };
+
   const handleSort = (key) => {
     setSortConfig({
       key,
@@ -395,7 +416,7 @@ function Interns() {
               className="flex items-center gap-2 px-3 py-2 bg-teal-700 text-white rounded-lg hover:bg-teal-800 text-sm"
             >
               <FaTrophy className="w-4 h-4" />
-              Rankings
+              Rankings ({rankingStats.total})
             </button>
             <button
               onClick={() => {
@@ -500,7 +521,7 @@ function Interns() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {paginatedInterns.map((intern) => (
             <InternCard
-              key={intern._id || intern.id}
+              key={intern.id}
               intern={intern}
               onView={(intern) => setSelectedIntern(intern)}
               onEdit={(intern) => openEditModal(intern)}
@@ -538,7 +559,7 @@ function Interns() {
               </thead>
               <tbody>
                 {paginatedInterns.map((intern) => (
-                  <tr key={intern._id || intern.id} className="border-t hover:bg-gray-50">
+                  <tr key={intern.id} className="border-t hover:bg-gray-50">
                     <td className="py-3 px-4">
                       <div className="flex items-center gap-2">
                         <div className="w-8 h-8 bg-teal-600 rounded-full flex items-center justify-center text-white text-sm font-medium">
@@ -620,7 +641,7 @@ function Interns() {
               </button>
               {[...Array(totalPages)].map((_, i) => (
                 <button
-                  key={i}
+                  key={`page-${i + 1}`}
                   onClick={() => setCurrentPage(i + 1)}
                   className={`w-8 h-8 rounded text-sm ${
                     currentPage === i + 1 ? 'bg-teal-600 text-white' : 'hover:bg-teal-100 text-gray-600'
@@ -969,7 +990,7 @@ function Interns() {
         </div>
       )}
 
-      {/* Rankings Modal */}
+      {/* Rankings Modal - Updated for new structure */}
       {showRankingModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
@@ -989,34 +1010,92 @@ function Interns() {
             </div>
 
             <div className="p-4">
-              {rankingData.length > 0 ? (
-                <div className="space-y-2">
-                  {rankingData.map((intern, index) => (
-                    <div
-                      key={intern.id || intern._id}
-                      className="flex items-center gap-3 p-3 border rounded-lg"
-                    >
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center font-medium text-sm ${
-                        index === 0 ? 'bg-teal-600 text-white' :
-                        index === 1 ? 'bg-teal-500 text-white' :
-                        index === 2 ? 'bg-teal-400 text-white' :
-                        'bg-gray-100 text-gray-600'
-                      }`}>
-                        #{index + 1}
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="font-medium text-gray-900">{intern.name}</h3>
-                        <p className="text-xs text-gray-500">{intern.department}</p>
-                      </div>
-                      <div className="text-right">
-                        <div className={`font-bold ${getScoreColor(intern.score)}`}>
-                          {Math.round(intern.score)}%
+              {/* Gold Tier */}
+              {rankingData.gold.length > 0 && (
+                <div className="mb-4">
+                  <h3 className="text-sm font-medium text-yellow-600 mb-2 flex items-center gap-1">
+                    <FaTrophy className="w-4 h-4" />
+                    Gold Tier
+                  </h3>
+                  <div className="space-y-2">
+                    {rankingData.gold.map((intern, index) => (
+                      <div key={intern.id} className="flex items-center gap-3 p-3 border rounded-lg bg-yellow-50">
+                        <div className="w-8 h-8 bg-yellow-600 rounded-full flex items-center justify-center text-white font-medium text-sm">
+                          #{index + 1}
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="font-medium text-gray-900">{intern.name}</h3>
+                          <p className="text-xs text-gray-500">{intern.department}</p>
+                        </div>
+                        <div className="text-right">
+                          <div className={`font-bold text-yellow-600`}>
+                            {Math.round(intern.score)}%
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              ) : (
+              )}
+
+              {/* Silver Tier */}
+              {rankingData.silver.length > 0 && (
+                <div className="mb-4">
+                  <h3 className="text-sm font-medium text-gray-500 mb-2 flex items-center gap-1">
+                    <FaTrophy className="w-4 h-4" />
+                    Silver Tier
+                  </h3>
+                  <div className="space-y-2">
+                    {rankingData.silver.map((intern, index) => (
+                      <div key={intern.id} className="flex items-center gap-3 p-3 border rounded-lg bg-gray-50">
+                        <div className="w-8 h-8 bg-gray-500 rounded-full flex items-center justify-center text-white font-medium text-sm">
+                          #{index + 1}
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="font-medium text-gray-900">{intern.name}</h3>
+                          <p className="text-xs text-gray-500">{intern.department}</p>
+                        </div>
+                        <div className="text-right">
+                          <div className={`font-bold text-gray-600`}>
+                            {Math.round(intern.score)}%
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Bronze Tier */}
+              {rankingData.bronze.length > 0 && (
+                <div className="mb-4">
+                  <h3 className="text-sm font-medium text-amber-700 mb-2 flex items-center gap-1">
+                    <FaTrophy className="w-4 h-4" />
+                    Bronze Tier
+                  </h3>
+                  <div className="space-y-2">
+                    {rankingData.bronze.map((intern, index) => (
+                      <div key={intern.id} className="flex items-center gap-3 p-3 border rounded-lg bg-amber-50">
+                        <div className="w-8 h-8 bg-amber-700 rounded-full flex items-center justify-center text-white font-medium text-sm">
+                          #{index + 1}
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="font-medium text-gray-900">{intern.name}</h3>
+                          <p className="text-xs text-gray-500">{intern.department}</p>
+                        </div>
+                        <div className="text-right">
+                          <div className={`font-bold text-amber-700`}>
+                            {Math.round(intern.score)}%
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* No Rankings */}
+              {rankingData.gold.length === 0 && rankingData.silver.length === 0 && rankingData.bronze.length === 0 && (
                 <div className="text-center py-8">
                   <FaTrophy className="w-12 h-12 text-gray-300 mx-auto mb-2" />
                   <p className="text-gray-500">No ranking data available</p>

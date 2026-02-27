@@ -19,6 +19,48 @@ const generateAccessRefreshToken = async(userId) => {
     }
 }
 
+const accessRefershToken = asyncHandler(async(req,res)=>{
+    const incomingTokenRefershToken = req.cookies.refreshToken || req.body.refreshToken
+
+    if(!incomingTokenRefershToken) {
+        throw new ApiError(400, "unAutharized request")
+    }
+
+    try {
+      const decodedToken = jwt.sign(incomingTokenRefershToken , process.env.REFRESH_TOKEN_SECRET)
+
+        const user = await User.findById(decodedToken._id)
+
+        if(!user) {
+           throw new ApiError(400, "Invalid refreshToken")
+        }
+
+
+        if(incomingTokenRefershToken !== user.refreshToken) {
+          throw new ApiError(400, "refresh token invalide or used")
+        }
+
+        const { accessToken , refreshToken : newRefreshToken } = generateAccessRefreshToken()
+
+        user.refreshToken = newRefreshToken
+
+        return res.status(200).json(new ApiResponse(200, {
+            accessToken,
+            refreshToken : newRefreshToken
+        } , "Token Refreshed"))
+
+
+    } catch (error) {
+
+
+
+    }
+
+
+
+
+})
+
 const registerUser = asyncHandler(async(req,res)=>{
 
       const  { username, password, email, role } = req.body
@@ -63,9 +105,16 @@ const loggedInUser = asyncHandler(async(req,res)=>{
         throw new ApiError(404, "Email or username are required")
       }
 
+
+
       const user = await User.findOne({
-          $or : [{ email } || { username }]
+          $or : [{ email } , { username }]
       })
+
+      if(!user){
+        throw new ApiError(400, "User not found")
+      }
+
 
       if(!password) {
         throw new ApiError(404, "Password  is required")
@@ -210,7 +259,7 @@ const fetchAllExcutionTemMembers = asyncHandler(async(req,res)=>{
       }
 
       const executionTeamMembers = await User.find(
-          { $match : {role : "ExecutionTeam"}}
+           {role : "ExecutionTeam"}
       ).select("-password -refreshToken")
 
       console.log(executionTeamMembers);
@@ -222,6 +271,7 @@ const fetchAllExcutionTemMembers = asyncHandler(async(req,res)=>{
 
 
 export {
+  fetchAllExcutionTemMembers,
   fetchUser,
   isAuthorizationChanged,
   loggedInUser,
@@ -229,5 +279,5 @@ export {
   registerUser,
   updateAvatar,
   updateProfileFileds,
-  fetchAllExcutionTemMembers
+  accessRefershToken
 }

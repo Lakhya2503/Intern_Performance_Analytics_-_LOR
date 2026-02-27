@@ -32,6 +32,8 @@ import InternsLorRequest from "./Components/Dashboard/mentor_dash/InternsLorRequ
 import Analytics from "./Components/Dashboard/mentor_dash/Analytics";
 import MentorProfile from "./Components/Dashboard/mentor_dash/MentorProfile";
 import MentorSettings from "./Components/Dashboard/mentor_dash/MentorSettings";
+import ExecutionTeam from './Components/Dashboard/mentor_dash/ExecutionTeam'
+
 
 // ========================
 // Execution Team Dashboard Pages
@@ -108,6 +110,7 @@ function AppContent() {
                 <Route path="home" element={<MentorHomeDashboard />} />
                 <Route path="interns" element={<Interns />} />
                 <Route path="analytics" element={<Analytics />} />
+                <Route path="execution-team" element={< ExecutionTeam/>} />
                 <Route path="lor-requests" element={<InternsLorRequest />} />
                 <Route path="task" element={<MentorTask />} />
                 <Route path="profile" element={<MentorProfile />} />
