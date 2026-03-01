@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../Context/AuthContext";
-import { 
-  FiUser, 
-  FiMail, 
-  FiLock, 
-  FiEye, 
-  FiEyeOff, 
+import {
+  FiUser,
+  FiMail,
+  FiLock,
+  FiEye,
+  FiEyeOff,
   FiCheckCircle,
   FiAlertCircle,
   FiArrowRight,
@@ -124,13 +124,13 @@ const Register = () => {
               <div className="relative z-10 text-center w-full">
                 {/* Main Illustration/Image */}
                 <div className="mb-8 transform hover:scale-105 transition-transform duration-500">
-                  <img 
-                    src={Athenura} 
+                  <img
+                    src={Athenura}
                     alt="Team collaboration illustration"
                     className="w-full max-w-md mx-auto drop-shadow-2xl rounded-2xl"
                   />
                 </div>
-                
+
                 {/* Text Content */}
                 <h3 className="text-3xl xl:text-4xl font-bold text-white mb-4">
                   Join Our Community
@@ -138,7 +138,7 @@ const Register = () => {
                 <p className="text-white/90 text-lg xl:text-xl mb-8 max-w-md mx-auto">
                   Connect with mentors and team members to collaborate on amazing projects and grow together.
                 </p>
-                
+
                 {/* Feature List */}
                 <div className="space-y-4 max-w-sm mx-auto">
 

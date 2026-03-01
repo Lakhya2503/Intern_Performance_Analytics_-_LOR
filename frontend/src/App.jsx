@@ -45,6 +45,9 @@ import ExecutionProfile from "./Components/Dashboard/execution_dash/ExecutionPro
 import ExecutionSetting from "./Components/Dashboard/execution_dash/ExecutionSetting";
 import ExecutionTasks from "./Components/Dashboard/execution_dash/ExecutionTasks";
 import InternCard from "./Components/cards/InternCard";
+import  InternExcution from './Components/Dashboard/execution_dash/Interns'
+import Privacy from "./common/Privacy";
+import TermsAndService from "./common/TermsAndService";
 
 
 // =====================================================
@@ -82,14 +85,17 @@ function AppContent() {
   // Check if auth route
   const isAuthRoute =
     location.pathname === "/login" ||
-    location.pathname === "/register";
+    location.pathname === "/register" ||
+    location.pathname === "/privacy" ||
+    location.pathname === "/terms";
+
 
   return (
     <>
 <Toaster
   position="top-right"
   toastOptions={{
-    duration: 500,
+    duration: 5000,
     style: {
       fontSize: "16px",
       background: "#fff",
@@ -746,7 +752,13 @@ function AppContent() {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/login" element={<Login />} />
+
         <Route path="/register" element={<Register />} />
+
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/terms" element={<TermsAndService />} />
+
+
 
 
         {/* ========================
@@ -778,7 +790,7 @@ function AppContent() {
           <Route path="/dashboard/ExecutionTeam" element={<ExecutionDashboard />}>
                 <Route index element={<ExecutionHomeDashboard />} />
                 <Route path="home" element={<ExecutionHomeDashboard />} />
-                <Route path="interns" element={<Interns />} />
+                <Route path="interns" element={<InternExcution />} />
                 <Route path="analytics" element={<Analytics />} />
                 <Route path="tasks" element={<ExecutionTasks />} />
                 <Route path="profile" element={<ExecutionProfile />} />
@@ -813,4 +825,3 @@ function App() {
 }
 
 export default App;
-  

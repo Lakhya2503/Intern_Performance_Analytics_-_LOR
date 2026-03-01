@@ -66,6 +66,17 @@ const registerUser = asyncHandler(async(req,res)=>{
 
       const  { username, password, email, role } = req.body
 
+      const isUserExsist = await User.find(
+        { email  }
+      )
+
+      console.log(isUserExsist);
+
+
+      if(!isUserExsist) {
+        throw new ApiError(400, "user already exist")
+      }
+
 
       const requiredFileds = [email,password,username]
 
@@ -112,7 +123,7 @@ const loggedInUser = asyncHandler(async(req,res)=>{
           $or : [{ email } , { username }]
       })
 
-      if(!user){
+      if(user){
         throw new ApiError(400, "User not found")
       }
 
@@ -121,9 +132,9 @@ const loggedInUser = asyncHandler(async(req,res)=>{
         throw new ApiError(404, "Password  is required")
       }
 
-      const isPasswordCorrect = await user.isPasswordCorrect(password)
+      const isPasswordValid = await user.isPasswordCorrect(password)
 
-      if(!isPasswordCorrect) {
+      if(!isPasswordValid) {
         throw new ApiError(404, "Invalid password please check out the password")
       }
 
@@ -279,6 +290,33 @@ const fetchAllExcutionTemMembers = asyncHandler(async(req,res)=>{
       return res.status(200).json(new ApiResponse(200 , executionTeamMembers, " fetch Successfully Execution Team Members"))
 })
 
+const changeCurrentPassword = asyncHandler(async(req,res)=>{
+      const { newPassword, oldPassword } = req.body
+
+      const user = await User.findById(req.user?._id)
+
+
+      if(!user) {
+            throw new ApiError(404, "user not found")
+      }
+
+      const isPasswordValid = await user.isPasswordCorrect(oldPassword)
+
+      if(!isPasswordValid) {
+        throw new ApiResponse(404, "Invalid credentials")
+      }
+
+      user.password = newPassword
+      await user.save({ validateBeforeSave : false })
+
+      return res.status(200).json(new ApiResponse(200, {}, "current password change successfully"))
+})
+
+const deleteAccount = asyncHandler(async(req,res)=>{
+      await User.findByIdAndDelete(req.user._id)
+
+      return res.status(200).json(new ApiResponse(200,{}, "user account delete successfully"))
+})
 
 
 export {
@@ -290,5 +328,7 @@ export {
   registerUser,
   updateAvatar,
   updateProfileFileds,
-  accessRefershToken
+  accessRefershToken,
+  changeCurrentPassword,
+  deleteAccount
 }

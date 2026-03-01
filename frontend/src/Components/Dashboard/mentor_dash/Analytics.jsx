@@ -29,10 +29,14 @@ import {
   Clock,
   Medal,
   Crown,
-  Trophy
+  Trophy,
+  Edit2,
+  ChevronDown,
+  ChevronUp,
+  Search,
+  Filter
 } from 'lucide-react';
 
-import InternCard from '../../cards/InternCard'
 import { scoreRankingInterns, getAllInterns } from '../../../api/index';
 import { requestHandler } from '../../../utils';
 
@@ -47,6 +51,11 @@ const Analytics = () => {
   const [error, setError] = useState(null);
   const [selectedView, setSelectedView] = useState('overview');
   const [showAllInterns, setShowAllInterns] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortField, setSortField] = useState('name');
+  const [sortDirection, setSortDirection] = useState('asc');
+  const [selectedDepartment, setSelectedDepartment] = useState('all');
+  const [showFilters, setShowFilters] = useState(false);
 
   // Indigo/Purple color palette
   const colors = {
@@ -136,6 +145,13 @@ const Analytics = () => {
     );
   };
 
+  // Handle edit intern
+  const handleEditIntern = (intern) => {
+    console.log('Edit intern:', intern);
+    // Add your edit logic here - this could open a modal or navigate to edit page
+    // For example: navigate(`/interns/edit/${intern._id}`);
+  };
+
   // Get all ranked interns flattened for charts
   const getAllRankedInterns = () => {
     return [
@@ -151,25 +167,67 @@ const Analytics = () => {
     return allRanked.slice(0, limit);
   };
 
-  // Handle intern actions
-  const handleViewIntern = (intern) => {
-    console.log('View intern:', intern);
-    // Add your view logic here
+  // Get unique departments for filter
+  const getUniqueDepartments = () => {
+    const departments = [...new Set(interns.map(i => i.department).filter(Boolean))];
+    return ['all', ...departments];
   };
 
-  const handleEditIntern = (intern) => {
-    console.log('Edit intern:', intern);
-    // Add your edit logic here
+  // Filter and sort interns
+  const getFilteredInterns = () => {
+    let filtered = [...interns];
+
+    // Apply search filter
+    if (searchTerm) {
+      filtered = filtered.filter(intern =>
+        intern.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        intern.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        intern.department?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Apply department filter
+    if (selectedDepartment !== 'all') {
+      filtered = filtered.filter(intern => intern.department === selectedDepartment);
+    }
+
+    // Apply sorting
+    filtered.sort((a, b) => {
+      let aValue = a[sortField];
+      let bValue = b[sortField];
+
+      if (sortField === 'score') {
+        aValue = a.score || 0;
+        bValue = b.score || 0;
+      }
+
+      if (typeof aValue === 'string') {
+        aValue = aValue.toLowerCase();
+        bValue = bValue.toLowerCase();
+      }
+
+      if (aValue < bValue) return sortDirection === 'asc' ? -1 : 1;
+      if (aValue > bValue) return sortDirection === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+    return filtered;
   };
 
-  const handleEmailIntern = (intern) => {
-    console.log('Email intern:', intern);
-    window.location.href = `mailto:${intern.email}`;
+  // Handle sort
+  const handleSort = (field) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
+    }
   };
 
-  const handleShareIntern = (intern) => {
-    console.log('Share intern:', intern);
-    // Add your share logic here
+  // Get sort icon
+  const getSortIcon = (field) => {
+    if (sortField !== field) return null;
+    return sortDirection === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />;
   };
 
   // Calculate statistics
@@ -276,6 +334,16 @@ const Analytics = () => {
   const scoreDistribution = getScoreDistribution();
   const mentorData = getMentorData();
   const topPerformers = getTopPerformers(5);
+  const filteredInterns = getFilteredInterns();
+  const departments = getUniqueDepartments();
+
+  // Helper function to get ranking category color
+  const getInternRankingCategory = (intern) => {
+    if (rankingData.gold.some(g => g._id === intern._id)) return { name: 'Gold', color: colors.gold };
+    if (rankingData.silver.some(s => s._id === intern._id)) return { name: 'Silver', color: colors.silver };
+    if (rankingData.bronze.some(b => b._id === intern._id)) return { name: 'Bronze', color: colors.bronze };
+    return { name: 'Unranked', color: colors.light };
+  };
 
   const RankingCategory = ({ title, icon: Icon, color, data }) => (
     <div className="bg-white rounded-lg shadow p-4">
@@ -369,13 +437,11 @@ const Analytics = () => {
               Comprehensive overview of intern performance and metrics
             </p>
           </div>
-
         </div>
-
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
         <StatCard
           title="Total Interns"
           value={stats.totalInterns}
@@ -401,18 +467,6 @@ const Analytics = () => {
           value={`${stats.completionRate}%`}
           icon={TrendingUp}
           color={colors.pink}
-        />
-        <StatCard
-          title="Compliance Issues"
-          value={stats.complianceIssues}
-          icon={Shield}
-          color={colors.accent1}
-        />
-        <StatCard
-          title="Discipline Issues"
-          value={stats.disciplineIssues}
-          icon={AlertTriangle}
-          color={colors.accent2}
         />
       </div>
 
@@ -548,7 +602,7 @@ const Analytics = () => {
                       </div>
                       <div>
                         <p className="font-medium">{intern.name}</p>
-                        <p className="text-sm text-gray-600">{intern._id}</p>
+                        <p className="text-sm text-gray-600">{intern.email}</p>
                       </div>
                     </div>
                     <div className="text-right">
@@ -567,49 +621,178 @@ const Analytics = () => {
         </div>
       </div>
 
-      {/* Interns Section with InternCard */}
+      {/* Interns List Section */}
       <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-6 border border-purple-100">
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
           <h2 className="text-xl font-semibold" style={{ color: colors.darkest }}>
             {showAllInterns ? 'All Interns' : 'Recent Interns'}
           </h2>
-          <button
-            onClick={() => setShowAllInterns(!showAllInterns)}
-            className="px-3 py-1 text-sm rounded-lg transition-colors"
-            style={{
-              color: colors.primary,
-              border: `1px solid ${colors.light}`
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = colors.lightest;
-              e.currentTarget.style.borderColor = colors.primary;
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'transparent';
-              e.currentTarget.style.borderColor = colors.light;
-            }}
-          >
-            {showAllInterns ? 'Show Less' : 'View All'}
-          </button>
-        </div>
 
-        {/* Intern Cards Grid using InternCard component */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {(showAllInterns ? interns : interns.slice(0, 6)).map((intern) => (
-                <InternCard
-                  key={intern._id}
-                  intern={intern}
-                  onView={handleViewIntern}
-                  onEdit={handleEditIntern}
-                  onEmail={handleEmailIntern}
-                  onShare={handleShareIntern}
-                  hideAllButtons={true}
-                  variant="compact"
-                />
-              ))}
+          <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+            {/* Search */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2" size={18} color={colors.light} />
+              <input
+                type="text"
+                placeholder="Search interns..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-200"
+                style={{ borderColor: colors.light }}
+              />
             </div>
 
-        {!showAllInterns && interns.length > 6 && (
+            {/* Filter toggle */}
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="px-3 py-2 rounded-lg transition-colors flex items-center gap-2"
+              style={{
+                color: colors.primary,
+                border: `1px solid ${colors.light}`,
+                backgroundColor: showFilters ? colors.lightest : 'transparent'
+              }}
+            >
+              <Filter size={18} />
+              Filters
+            </button>
+
+            {/* View toggle */}
+            <button
+              onClick={() => setShowAllInterns(!showAllInterns)}
+              className="px-3 py-2 rounded-lg transition-colors"
+              style={{
+                color: colors.primary,
+                border: `1px solid ${colors.light}`
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = colors.lightest;
+                e.currentTarget.style.borderColor = colors.primary;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+                e.currentTarget.style.borderColor = colors.light;
+              }}
+            >
+              {showAllInterns ? 'Show Less' : 'View All'}
+            </button>
+          </div>
+        </div>
+
+        {/* Filters */}
+        {showFilters && (
+          <div className="mb-6 p-4 bg-purple-50 rounded-lg">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-2" style={{ color: colors.dark }}>
+                  Department
+                </label>
+                <select
+                  value={selectedDepartment}
+                  onChange={(e) => setSelectedDepartment(e.target.value)}
+                  className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-200"
+                  style={{ borderColor: colors.light }}
+                >
+                  {departments.map(dept => (
+                    <option key={dept} value={dept}>
+                      {dept === 'all' ? 'All Departments' : dept}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Interns List Table */}
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b-2" style={{ borderColor: colors.light }}>
+                <th
+                  className="text-left py-3 px-4 cursor-pointer hover:bg-purple-50"
+                  onClick={() => handleSort('name')}
+                >
+                  <div className="flex items-center gap-1">
+                    Name {getSortIcon('name')}
+                  </div>
+                </th>
+                <th className="text-left py-3 px-4">Email</th>
+                <th
+                  className="text-left py-3 px-4 cursor-pointer hover:bg-purple-50"
+                  onClick={() => handleSort('department')}
+                >
+                  <div className="flex items-center gap-1">
+                    Department {getSortIcon('department')}
+                  </div>
+                </th>
+                <th
+                  className="text-left py-3 px-4 cursor-pointer hover:bg-purple-50"
+                  onClick={() => handleSort('score')}
+                >
+                  <div className="flex items-center gap-1">
+                    Score {getSortIcon('score')}
+                  </div>
+                </th>
+                <th className="text-left py-3 px-4">Ranking</th>
+                <th className="text-left py-3 px-4">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {(showAllInterns ? filteredInterns : filteredInterns.slice(0, 10)).map((intern) => {
+                const ranking = getInternRankingCategory(intern);
+                return (
+                  <tr
+                    key={intern._id}
+                    className="border-b hover:bg-purple-50/50 transition-colors"
+                    style={{ borderColor: colors.lightest }}
+                  >
+                    <td className="py-3 px-4 font-medium">{intern.name}</td>
+                    <td className="py-3 px-4 text-gray-600">{intern.email}</td>
+                    <td className="py-3 px-4">{intern.department || 'Unassigned'}</td>
+                    <td className="py-3 px-4">
+                      <span className="font-semibold" style={{ color: ranking.color }}>
+                        {intern.score}%
+                      </span>
+                    </td>
+                    <td className="py-3 px-4">
+                      <span
+                        className="px-2 py-1 rounded-full text-xs font-medium"
+                        style={{
+                          backgroundColor: `${ranking.color}20`,
+                          color: ranking.color
+                        }}
+                      >
+                        {ranking.name}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4">
+                      <span
+                        className="px-2 py-1 rounded-full text-xs font-medium"
+                        style={{
+                          backgroundColor: intern.isActive ? '#10b98120' : '#94a3b820',
+                          color: intern.isActive ? '#10b981' : '#64748b'
+                        }}
+                      >
+                        {intern.isActive ? 'Active' : 'Completed'}
+                      </span>
+                    </td>
+
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+
+        {/* No results message */}
+        {filteredInterns.length === 0 && (
+          <div className="text-center py-8">
+            <p className="text-gray-500">No interns found matching your criteria</p>
+          </div>
+        )}
+
+        {/* Load more button */}
+        {!showAllInterns && filteredInterns.length > 10 && (
           <div className="mt-6 text-center">
             <button
               onClick={() => setShowAllInterns(true)}
@@ -625,7 +808,7 @@ const Analytics = () => {
                 e.currentTarget.style.backgroundColor = 'transparent';
               }}
             >
-              Load More Interns ({interns.length - 6} remaining)
+              Load More Interns ({filteredInterns.length - 10} remaining)
             </button>
           </div>
         )}

@@ -181,10 +181,12 @@ export const AuthProvider = ({ children }) => {
     try {
 
       const res = await registerUser(payload);
-        toast.success("login successfully")
-      return { success: true, data: res.data };
-
-    } finally {
+        toast.success(res.data.message || "login successfully")
+         return { success: true, data: res.data };
+  }
+    catch(error) {
+          toast.error(error?.response?.data.message)
+    }finally {
 
       setLoading(false);
 

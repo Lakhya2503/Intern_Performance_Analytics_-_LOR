@@ -1,5 +1,7 @@
 import Router from 'express'
 import {
+  changeCurrentPassword,
+  deleteAccount,
   fetchAllExcutionTemMembers,
   fetchUser,
   isAuthorizationChanged,
@@ -21,7 +23,11 @@ router.route("/auth/logged-in").post(userLoginValidator(), loggedInUser)
 
 router.route("/auth/logged-out").post(verifyJWT, loggedOutUser)
 
+router.route("/auth/change/current-password").put(verifyJWT, changeCurrentPassword)
+
 router.route("/auth/fetch-user").get(verifyJWT, fetchUser)
+
+router.route("/auth/delete-account").delete(verifyJWT, deleteAccount)
 
 router.route("/auth/update-user-profile").post(verifyJWT, updateProfileFileds)
 

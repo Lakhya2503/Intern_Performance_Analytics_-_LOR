@@ -259,7 +259,6 @@ function MentorTask() {
 
   // ============= FILTERING AND SORTING =============
   const departments = ['All', ...new Set(interns.map(intern => intern.department).filter(Boolean))];
-  const statuses = ['All', 'Approve', 'Rejected', 'Pending'];
 
   const filteredInterns = interns
     .filter(intern => {
@@ -498,18 +497,6 @@ function MentorTask() {
             >
               {departments.map(dept => (
                 <option key={dept} value={dept}>{dept}</option>
-              ))}
-            </select>
-            <select
-              value={selectedStatus}
-              onChange={(e) => {
-                setSelectedStatus(e.target.value);
-                setCurrentPage(1);
-              }}
-              className="px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-gray-50 hover:bg-white transition-all duration-200 min-w-[120px]"
-            >
-              {statuses.map(status => (
-                <option key={status} value={status}>{status}</option>
               ))}
             </select>
           </div>

@@ -26,7 +26,8 @@ import {
   currentUser,
   deleteAccount,
   updateAvatar,
-  updateProfile
+  updateProfile,
+  changeCurrentPassword  // Import the password change API
 } from '../../../api/index';
 
 import { useAuth } from "../../../Context/AuthContext";
@@ -36,6 +37,7 @@ const MentorSettings = () => {
   const [loading, setLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState(''); // Add success message state
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [modalAction, setModalAction] = useState(null);
   const [expandedSections, setExpandedSections] = useState({
@@ -72,6 +74,9 @@ const MentorSettings = () => {
     showConfirm: false
   });
 
+  // Password change loading state
+  const [passwordLoading, setPasswordLoading] = useState(false);
+
   // Notification settings (local only)
   const [notifications, setNotifications] = useState({
     emailNotifications: true,
@@ -82,6 +87,17 @@ const MentorSettings = () => {
   useEffect(() => {
     fetchUserData();
   }, []);
+
+  // Auto clear messages
+  useEffect(() => {
+    if (errorMessage || successMessage) {
+      const timer = setTimeout(() => {
+        setErrorMessage('');
+        setSuccessMessage('');
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [errorMessage, successMessage]);
 
   // Fetch user data using currentUser API
   const fetchUserData = () => {
@@ -108,8 +124,6 @@ const MentorSettings = () => {
       },
       (error) => {
         setErrorMessage(error.message || 'Failed to fetch user data');
-        // Auto clear error after 3 seconds
-        setTimeout(() => setErrorMessage(''), 3000);
       }
     );
   };
@@ -139,12 +153,11 @@ const MentorSettings = () => {
       setLoading,
       (response) => {
         setAvatarFile(null);
-        // Refresh user data to get updated avatar
+        setSuccessMessage('Avatar updated successfully');
         fetchUserData();
       },
       (error) => {
         setErrorMessage(error.message || 'Failed to update avatar');
-        setTimeout(() => setErrorMessage(''), 3000);
       }
     );
   };
@@ -160,12 +173,76 @@ const MentorSettings = () => {
       async () => await updateProfile(profileData),
       setLoading,
       (response) => {
-        // Refresh user data
+        setSuccessMessage('Profile updated successfully');
         fetchUserData();
       },
       (error) => {
         setErrorMessage(error.message || 'Failed to update profile');
-        setTimeout(() => setErrorMessage(''), 3000);
+      }
+    );
+  };
+
+  // Handle password change
+  const handlePasswordChange = (e) => {
+    e.preventDefault();
+
+    // Validate passwords
+    if (!passwordForm.currentPassword) {
+      setErrorMessage('Please enter your current password');
+      return;
+    }
+
+    if (!passwordForm.newPassword) {
+      setErrorMessage('Please enter a new password');
+      return;
+    }
+
+    if (passwordForm.newPassword.length < 8) {
+      setErrorMessage('New password must be at least 8 characters long');
+      return;
+    }
+
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      setErrorMessage('New passwords do not match');
+      return;
+    }
+
+    // Check password strength (optional - you can adjust requirements)
+    const hasLowerCase = /[a-z]/.test(passwordForm.newPassword);
+    const hasUpperCase = /[A-Z]/.test(passwordForm.newPassword);
+    const hasNumber = /[0-9]/.test(passwordForm.newPassword);
+
+    if (!hasLowerCase || !hasUpperCase || !hasNumber) {
+      setErrorMessage('Password must contain at least one lowercase letter, one uppercase letter, and one number');
+      return;
+    }
+
+    const passwordData = {
+      oldPassword: passwordForm.currentPassword,
+      newPassword: passwordForm.newPassword
+    };
+
+    setPasswordLoading(true);
+    requestHandler(
+      async () => await changeCurrentPassword(passwordData),
+      setPasswordLoading,
+      (response) => {
+        // Clear password form
+        setPasswordForm({
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: '',
+          showCurrent: false,
+          showNew: false,
+          showConfirm: false
+        });
+        setSuccessMessage('Password changed successfully');
+      },
+      (error) => {
+        setErrorMessage(error.message || 'Failed to change password');
+      },
+      () => {
+        setPasswordLoading(false);
       }
     );
   };
@@ -195,7 +272,6 @@ const MentorSettings = () => {
       },
       (error) => {
         setErrorMessage(error.message || 'Failed to delete account');
-        setTimeout(() => setErrorMessage(''), 3000);
         setShowConfirmModal(false);
       }
     );
@@ -212,7 +288,6 @@ const MentorSettings = () => {
       },
       (error) => {
         setErrorMessage(error.message || 'Failed to logout');
-        setTimeout(() => setErrorMessage(''), 3000);
       }
     );
   };
@@ -298,7 +373,19 @@ const MentorSettings = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-teal-50 via-white to-emerald-50 p-4 md:p-8">
-      {/* Error Message - Only shown when there's an error */}
+      {/* Success Message */}
+      {successMessage && (
+        <div className="fixed top-4 right-4 z-50 animate-slideIn">
+          <div className="bg-white border-l-4 border-green-500 text-green-700 p-4 rounded-xl shadow-2xl flex items-center gap-3">
+            <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+              <FaCheckCircle className="text-green-600" />
+            </div>
+            <span className="font-medium">{successMessage}</span>
+          </div>
+        </div>
+      )}
+
+      {/* Error Message */}
       {errorMessage && (
         <div className="fixed top-4 right-4 z-50 animate-slideIn">
           <div className="bg-white border-l-4 border-red-500 text-red-700 p-4 rounded-xl shadow-2xl flex items-center gap-3">
@@ -572,14 +659,14 @@ const MentorSettings = () => {
 
                   {expandedSections.security && (
                     <div className="space-y-8">
-                      {/* Change Password Form - UI only */}
+                      {/* Change Password Form */}
                       <div className="bg-gradient-to-br from-teal-50 to-emerald-50 p-6 rounded-2xl border border-teal-100">
                         <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
                           <FaKey className="text-teal-600" />
                           Change Password
                         </h3>
 
-                        <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
+                        <form onSubmit={handlePasswordChange} className="space-y-4">
                           <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                               Current Password
@@ -591,6 +678,7 @@ const MentorSettings = () => {
                                 onChange={(e) => setPasswordForm({...passwordForm, currentPassword: e.target.value})}
                                 className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all pr-12"
                                 placeholder="Enter current password"
+                                required
                               />
                               <button
                                 type="button"
@@ -613,6 +701,7 @@ const MentorSettings = () => {
                                 onChange={(e) => setPasswordForm({...passwordForm, newPassword: e.target.value})}
                                 className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all pr-12"
                                 placeholder="Enter new password"
+                                required
                               />
                               <button
                                 type="button"
@@ -686,6 +775,7 @@ const MentorSettings = () => {
                                 onChange={(e) => setPasswordForm({...passwordForm, confirmPassword: e.target.value})}
                                 className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all pr-12"
                                 placeholder="Confirm new password"
+                                required
                               />
                               <button
                                 type="button"
@@ -700,9 +790,28 @@ const MentorSettings = () => {
                             )}
                           </div>
 
-                          <div className="text-sm text-gray-500 italic">
-                            Password change feature coming soon
-                          </div>
+                          <button
+                            type="submit"
+                            disabled={passwordLoading ||
+                              !passwordForm.currentPassword ||
+                              !passwordForm.newPassword ||
+                              !passwordForm.confirmPassword ||
+                              passwordForm.newPassword !== passwordForm.confirmPassword ||
+                              passwordForm.newPassword.length < 8}
+                            className="w-full px-4 py-3 bg-gradient-to-r from-teal-600 to-emerald-600 text-white rounded-xl hover:from-teal-700 hover:to-emerald-700 transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            {passwordLoading ? (
+                              <>
+                                <FaSpinner className="animate-spin" />
+                                Changing Password...
+                              </>
+                            ) : (
+                              <>
+                                <FaKey />
+                                Change Password
+                              </>
+                            )}
+                          </button>
                         </form>
                       </div>
 

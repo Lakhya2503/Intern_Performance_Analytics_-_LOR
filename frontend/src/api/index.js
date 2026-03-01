@@ -65,8 +65,12 @@
     return apiClient.get("/user/auth/fetch-user")
   }
 
+  export const changeCurrentPassword = (payload) => {
+    return apiClient.put("/user/auth/change/current-password",payload)
+  }
+
   export const deleteAccount = () => {
-    return apiClient.delete("/user/auth/delete-user")
+    return apiClient.delete("/user/auth/delete-account")
   }
 
   //  ============================================================
