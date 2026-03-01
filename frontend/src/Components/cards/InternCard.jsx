@@ -16,14 +16,26 @@ import {
   FaChartLine,
   FaPhone,
   FaMapMarkerAlt,
-  FaBirthdayCake,
   FaUsers,
-  FaFileAlt,
   FaShare
 } from 'react-icons/fa';
 import { MdOutlineEmail } from 'react-icons/md';
 
-const InternCard = ({ intern, onView, onEdit, onEmail, onShare, variant = 'default' }) => {
+const InternCard = ({ 
+  intern, 
+  onView, 
+  onEdit, 
+  onEmail, 
+  onShare, 
+  variant = 'default',
+  // Button visibility props - default to true for backward compatibility
+  showViewButton = true,
+  showEditButton = true,
+  showEmailButton = true,
+  showShareButton = true,
+  // Optional: hide all buttons at once (overrides individual props)
+  hideAllButtons = false
+}) => {
   // Helper function to get score color based on percentage
   const getScoreColor = (score) => {
     if (!score && score !== 0) return 'text-gray-400';
@@ -362,37 +374,37 @@ const InternCard = ({ intern, onView, onEdit, onEmail, onShare, variant = 'defau
             {statusBadge}
           </div>
           <div className="flex items-center gap-1">
-            <button
-              onClick={() => onEmail && onEmail(intern)}
-              className="p-2 hover:bg-emerald-50 rounded-lg transition-colors group relative"
-              title={`Email ${intern.name}`}
-            >
-              <MdOutlineEmail className="w-5 h-5 text-emerald-600 group-hover:scale-110 transition-transform" />
-              <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                Send Email
-              </span>
-            </button>
-            <button
-              onClick={() => onView(intern)}
-              className="p-2 hover:bg-blue-50 rounded-lg transition-colors group relative"
-              title="View Details"
-            >
-              <FaEye className="w-5 h-5 text-blue-600 group-hover:scale-110 transition-transform" />
-              <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                View Details
-              </span>
-            </button>
-            <button
-              onClick={() => onEdit(intern)}
-              className="p-2 hover:bg-amber-50 rounded-lg transition-colors group relative"
-              title="Edit Intern"
-            >
-              <FaEdit className="w-5 h-5 text-amber-600 group-hover:scale-110 transition-transform" />
-              <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                Edit
-              </span>
-            </button>
-            {onShare && (
+            
+            {/* View Button - Conditionally rendered */}
+            {!hideAllButtons && showViewButton && onView && (
+              <button
+                onClick={() => onView(intern)}
+                className="p-2 hover:bg-blue-50 rounded-lg transition-colors group relative"
+                title="View Details"
+              >
+                <FaEye className="w-5 h-5 text-blue-600 group-hover:scale-110 transition-transform" />
+                {/* <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                  View Details
+                </span> */}
+              </button>
+            )}
+            
+            {/* Edit Button - Conditionally rendered */}
+            {!hideAllButtons && showEditButton && onEdit && (
+              <button
+                onClick={() => onEdit(intern)}
+                className="p-2 hover:bg-amber-50 rounded-lg transition-colors group relative"
+                title="Edit Intern"
+              >
+                <FaEdit className="w-5 h-5 text-amber-600 group-hover:scale-110 transition-transform" />
+                {/* <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                  Edit
+                </span> */}
+              </button>
+            )}
+            
+            {/* Share Button - Conditionally rendered */}
+            {!hideAllButtons && showShareButton && onShare && (
               <button
                 onClick={() => onShare(intern)}
                 className="p-2 hover:bg-purple-50 rounded-lg transition-colors group relative"
@@ -411,7 +423,7 @@ const InternCard = ({ intern, onView, onEdit, onEmail, onShare, variant = 'defau
   );
 };
 
-// PropTypes for better type checking
+// Default props
 InternCard.defaultProps = {
   intern: {
     name: 'Unknown Intern',
@@ -437,7 +449,13 @@ InternCard.defaultProps = {
   onEdit: () => {},
   onEmail: () => {},
   onShare: null,
-  variant: 'default'
+  variant: 'default',
+  // Button visibility defaults
+  showViewButton: true,
+  showEditButton: true,
+  showEmailButton: true,
+  showShareButton: true,
+  hideAllButtons: false
 };
 
 export default InternCard;

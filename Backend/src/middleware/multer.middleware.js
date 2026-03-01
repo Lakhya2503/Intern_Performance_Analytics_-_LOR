@@ -91,6 +91,6 @@ const lorTempDir = path.join(publicDir, "lorTemplate");
   export const uploadLorTemp = multer({
     storage : lorTempStorege,
     limits : {
-       fileSize : 6 *1024 * 1024
+       fileSize : 6 * 1024 * 1024
     }
   })

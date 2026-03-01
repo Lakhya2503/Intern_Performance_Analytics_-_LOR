@@ -27,6 +27,8 @@ app.use(
 app.use(cookieParser())
 
 
+
+
 //defined router
 import authRouter from './routes/auth.route.js'
 import internRouter from './routes/intern.route.js'
@@ -37,5 +39,17 @@ app.use('/api/lor/v1/user' , authRouter)
 app.use('/api/lor/v1/intern' , internRouter)
 
 app.use("/api/lor/v1/lor", lorRouter)
+
+
+
+app.use((err, req, res, next) => {
+  console.error(err);
+
+  res.status(err.statusCode || 500).json({
+    success: false,
+    message: err.message || "Internal Server Error"
+  });
+});
+
 
 export default app

@@ -18,6 +18,7 @@ import {
 } from "../api";
 
 import { LocalStorage } from "../utils";
+import toast from "react-hot-toast";
 
 const AuthContext = createContext(null);
 
@@ -32,7 +33,7 @@ export const AuthProvider = ({ children }) => {
   // =========================
 
   const [user, setUser] = useState(() => LocalStorage.get("user") || null);
-  const [role, setRole] = useState(() => LocalStorage.get("user")?.role || null);
+  const [role, setRole] = useState(() => LocalStorage.get("user")?.role || "Mentor");
   const [loading, setLoading] = useState(false);
   const [isInitializing, setIsInitializing] = useState(true);
 
@@ -155,6 +156,8 @@ export const AuthProvider = ({ children }) => {
 
       if (!userData) throw new Error("User fetch failed");
 
+      toast.success("login successfully")
+
       navigate(`/dashboard/${userData.role}`, { replace: true });
 
       return { success: true };
@@ -178,7 +181,7 @@ export const AuthProvider = ({ children }) => {
     try {
 
       const res = await registerUser(payload);
-
+        toast.success("login successfully")
       return { success: true, data: res.data };
 
     } finally {
@@ -199,6 +202,7 @@ export const AuthProvider = ({ children }) => {
 
     try {
       await loggedOutUser();
+        toast.success("log out successfully")
     } finally {
 
       clearAuth();

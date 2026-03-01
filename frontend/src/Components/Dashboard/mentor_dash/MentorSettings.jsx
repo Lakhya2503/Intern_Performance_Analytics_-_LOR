@@ -70,6 +70,8 @@ import {
   updateProfile
 } from '../../../api/index';
 
+import {useAuth} from "../../../Context/AuthContext"
+
 // Note: The following functions are NOT available in your imports:
 // - updatePassword
 // - updateSettings
@@ -96,13 +98,16 @@ const MentorSettings = () => {
     integrations: false
   });
 
+  const { user } = useAuth()
   // Data states
   const [activeSessions, setActiveSessions] = useState([]);
   const [loginHistory, setLoginHistory] = useState([]);
   const [integrations, setIntegrations] = useState([]);
   const [avatarFile, setAvatarFile] = useState(null);
   const [avatarPreview, setAvatarPreview] = useState(null);
-
+  const [userDeta, setUserDeta] = useState({})
+  
+  console.log(userDeta)
   // Password form state
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: '',
@@ -193,7 +198,7 @@ const MentorSettings = () => {
       (response) => {
         // Update settings with user data from API
         const userData = response.data;
-        setUserData(userData);
+        setUserDeta(userData);
 
         setSettings(prevSettings => ({
           ...prevSettings,
@@ -666,6 +671,10 @@ const MentorSettings = () => {
                     </button>
                   </div>
 
+                  {
+                    console.log(userDeta.avatar)
+                  }
+
                   {/* Avatar Upload */}
                   <div className="mb-8 flex items-center gap-6">
                     <div className="relative">
@@ -673,7 +682,7 @@ const MentorSettings = () => {
                         {avatarPreview ? (
                           <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover" />
                         ) : (
-                          settings.profile.displayName?.charAt(0) || <FaUser />
+                         <img src={`${userDeta.avatar}`} alt="Avatar" className="w-full h-full object-cover" /> || <FaUser />
                         )}
                       </div>
                       <label htmlFor="avatar-upload" className="absolute bottom-0 right-0 w-8 h-8 bg-white rounded-full shadow-lg flex items-center justify-center cursor-pointer hover:bg-teal-50 transition-colors">

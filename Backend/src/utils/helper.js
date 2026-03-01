@@ -64,7 +64,7 @@ export const getChangeFiled = ((oldObj, newObj, internFiledInum) => {
     ) / 6
  };
 
-export const approveVerify = () =>{
+export const approveVerify = (status) =>{
           let approvestatus;
            if( status === "" || status === null || status === undefined ) {
             approvestatus = true;

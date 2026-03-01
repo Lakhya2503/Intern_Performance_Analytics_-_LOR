@@ -4,6 +4,7 @@ import {
   addSignleIntern,
   eligibleInternsForLOR,
   getAllInters,
+  internWIthNoLor,
   scoringWiseRanking,
   updateBulkInterns,
   updateSingleIntern
@@ -42,6 +43,8 @@ router.route("/single-intern/update/:internId").put( updateSingleIntern )
 router.route("/interns-ranking").get( scoringWiseRanking )
 
 router.route("/interns-lor-eligible").get( eligibleInternsForLOR )
+
+router.route("/interns-with-no-lor").get( internWIthNoLor )
 
 router.route("/fetch/all-interns").get(getAllInters)
 

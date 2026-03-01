@@ -10,7 +10,7 @@ const internSchema = new Schema(
           type : String,
           required : true
         },
-          email: {
+    email: {
         type: String,
         required: true,
         unique: true,
@@ -24,6 +24,10 @@ const internSchema = new Schema(
         course : {
           type : String,
           required : true
+        },
+        startDate : {
+            type : Date,
+            default : Date.now()
         },
         endDate : {
           type  : Date,
@@ -39,6 +43,14 @@ const internSchema = new Schema(
         isActive:{
           type: Boolean,
           default : false
+        },
+        isCompliantIssue : {
+          type : Boolean,
+          default : false
+        },
+        isDisciplineIssue : {
+           type : Boolean,
+           default : false
         },
         score : {
           type : Number

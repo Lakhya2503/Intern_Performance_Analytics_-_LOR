@@ -54,7 +54,6 @@
   }
 
   export const loggedOutUser = () => {
-
     return apiClient.post("/user/auth/logged-out")
   }
 
@@ -98,12 +97,12 @@
   //  ============================================================
   //  ----------------------------   INTERN -------------------------------
 
-  export const addBulkUploadIntern = (file) => {
-      return apiClient.post(`/intern/bulk-upload/add`, file)
+  export const addBulkUploadIntern = (bulkAddInterns) => {
+      return apiClient.post(`/intern/bulk-upload/add`, bulkAddInterns)
   }
 
-  export const updateBulkUploadIntern = (file) => {
-      return apiClient.post(`/intern/bulk-upload/update`, file)
+  export const updateBulkUploadIntern = (bulkUpdateInterns) => {
+      return apiClient.post(`/intern/bulk-upload/update`, bulkUpdateInterns)
   }
 
   export const addSingleIntern = (payload) => {
@@ -122,6 +121,14 @@
      return apiClient.get("/intern/fetch/all-interns")
   }
 
+    export const eligibleInternsForLOR = () => {
+         return apiClient.get("/intern/interns-with-no-lor")
+    }
+
+  export const internsWithNoLor = () => {
+    return apiClient.get("/intern/interns-with-no-lor")
+  }
+
   //  ============================================================
   //  ----------------------------   LOR -------------------------------
   //  -----------------------   ONLY MENTORS CAN ACCESS  ---------------------
@@ -135,17 +142,28 @@
     return apiClient.post(`/lor/lor-generate/${internId}`,payload)
   }
 
-  export const internsWithLor = (payload) => {
-      return apiClient.get(`/lor/fetch/interns-with-lor`, payload)
+  export const internsWithLor = () => {
+      return apiClient.get(`/lor/fetch/interns-with-lor`)
   }
 
   export const rejectedInternForLor = () => {
-      return apiClient.get(`/lor/fetch/rejected-intern-lor/generation`)
+      return apiClient.get(`/lor/fetch/rejected-intern-lor`)
+  }
+
+  export const rejectToGenLor = (internId,payload) => {
+      return apiClient.post(`/lor/reject/intern/lor-gen/${internId}`,payload)
   }
 
   export const updateAndSendLor = (internLorId) => {
-      return apiClient.get(`/lor/update/send-lor/${internLorId}`)
+      return apiClient.put(`/lor/update/send-lor/${internLorId}`)
   }
 
+  export const resendSendEmailLor = (internId) => {
+      return apiClient.post(`/lor/resend/lor-email/${internId}`)
+  }
+
+  export const bulkUploadInternForGenLor = (bulkInternOfLorGen) => {
+    return apiClient.post(`/lor/bulk-upload/interns/lor-gen`, bulkInternOfLorGen)
+  }
 
   //  ============================================================

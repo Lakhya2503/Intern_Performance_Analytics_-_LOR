@@ -643,18 +643,19 @@ const Analytics = () => {
 
         {/* Intern Cards Grid using InternCard component */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {(showAllInterns ? interns : interns.slice(0, 6)).map((intern) => (
-            <InternCard
-              key={intern._id}
-              intern={intern}
-              onView={handleViewIntern}
-              onEdit={handleEditIntern}
-              onEmail={handleEmailIntern}
-              onShare={handleShareIntern}
-              variant="default"
-            />
-          ))}
-        </div>
+              {(showAllInterns ? interns : interns.slice(0, 6)).map((intern) => (
+                <InternCard
+                  key={intern._id}
+                  intern={intern}
+                  onView={handleViewIntern}
+                  onEdit={handleEditIntern}
+                  onEmail={handleEmailIntern}
+                  onShare={handleShareIntern}
+                  hideAllButtons={true}
+                  variant="compact"
+                />
+              ))}
+            </div>
 
         {!showAllInterns && interns.length > 6 && (
           <div className="mt-6 text-center">

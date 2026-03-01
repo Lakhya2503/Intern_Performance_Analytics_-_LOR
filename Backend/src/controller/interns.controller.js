@@ -1,4 +1,5 @@
 import fs from 'fs'
+import mongoose from 'mongoose'
 import path from 'path'
 import Intern from '../model/interns.model.js'
 import parseFileToJson from '../parser/parseInternsData.js'
@@ -6,43 +7,93 @@ import ApiError from '../utils/ApiError.js'
 import ApiResponse from '../utils/ApiResponse.js'
 import asyncHandler from '../utils/asyncHandler.js'
 import { internsFieldsEnum } from '../utils/constant.js'
-import { castValue, getChangeFiled } from '../utils/helper.js'
+import { calculateAverageScore, castValue, getChangeFiled } from '../utils/helper.js'
 
-const addBulkInterns = asyncHandler(async(req,res)=>{
-    const file = req.files?.bulkAddInterns[0]
+const addBulkInterns = asyncHandler(async (req, res) => {
+    const file = req.files?.bulkAddInterns[0];
+    const user = req.user;
 
-    if(!file) {
-      throw new ApiError(404, "Inters file doesn't exists")
+    if (!user.isAuthorized) {
+        throw new ApiError(404, "Unauthorized request");
     }
 
-    const extension = path.extname(file.originalname)
-
-    const data = await parseFileToJson(extension, file.path)
-
-    if(!data) {
-      throw new ApiError(500, "something wen't wrong when parsing interns data")
+    if (!file) {
+        throw new ApiError(404, "Interns file doesn't exist");
     }
 
+    const extension = path.extname(file.originalname);
+    const data = await parseFileToJson(extension, file.path);
 
+    if (!data) {
+        throw new ApiError(500, "Something went wrong when parsing interns data");
+    }
 
-    const formattedInternsData = data.map(intern => ({
-        _id : intern.intern_id,
-        name : intern.name,
-        gender : intern.gender,
-        course : intern.course ,
-        email : intern.email.text,
-        endDate :  Date(intern.endDate) || NaN,
-        department : intern.department ,
-        mentor : intern.mentor,
-        score : Number(intern.score) || 0,
-        isActive : Boolean(intern.active)
-    }))
+    const newInternFromClient = [];
+    const alreadyExistInternsOnServer = [];
+    const notValidData = [];
 
+    const allInternsId = data.map(i => i.intern_id);
+    const existingInterns = await Intern.find({ _id: { $in: allInternsId } }).select('_id');
+    const existingInternIdSet = new Set(existingInterns.map(i => i._id.toString()));
 
-    const bulkInterns = await Intern.insertMany(formattedInternsData)
+    for (const newIntern of data) {
+        const finalScore = calculateAverageScore(newIntern);
 
-    return res.status(200).json(new ApiResponse(200, bulkInterns, "Add Bulk interns Successfully"))
-})
+        const {
+            intern_id = "",
+            name = "",
+            gender = "",
+            course = "",
+            email = "",
+            endDate = "",
+            department = "",
+            mentor = "",
+            active = ""
+        } = newIntern;
+
+        const emptyFields = [intern_id, name, gender, course, email, endDate, department, mentor, active]
+            .filter(field => field === null || field === undefined || String(field).trim() === "");
+
+        if (emptyFields.length > 0) {
+            notValidData.push({ intern: newIntern, missingFields: emptyFields });
+            continue;
+        }
+
+        if (existingInternIdSet.has(intern_id)) {
+            alreadyExistInternsOnServer.push(newIntern);
+            continue;
+        }
+
+        let endDateObj = new Date(endDate);
+        if (isNaN(endDateObj)) endDateObj = null;
+
+        newInternFromClient.push({
+            _id: intern_id,
+            name,
+            gender,
+            course,
+            email,
+            endDate: endDateObj,
+            department,
+            mentor,
+            score: Number(finalScore),
+            isActive: Boolean(active)
+        });
+    }
+
+    let insertedInterns = [];
+    if (newInternFromClient.length > 0) {
+        insertedInterns = await Intern.insertMany(newInternFromClient, { ordered: false });
+    }
+
+    newInternFromClient.forEach(item => console.log(item));
+
+    return res.status(200).json(new ApiResponse(200, {
+        newInternFromClient,
+        alreadyExistInternsOnServer,
+        notValidData
+    }, "Added Bulk interns successfully"));
+});
 
 const updateBulkInterns = asyncHandler(async(req,res)=>{
 
@@ -120,9 +171,12 @@ const updateBulkInterns = asyncHandler(async(req,res)=>{
 })
 
 const addSignleIntern = asyncHandler(async(req,res)=>{
-    const {_id,  name, gender, course , email, endDate, department, mentor, score, isActive} = req.body
+    const { name, gender, course , email, endDate, department, mentor, score, isActive} = req.body
 
-      const allFields =  [_id,  name, gender, course , email, department, mentor]
+      const allFields =  [name, gender, course , email, department, mentor]
+
+      // console.log( name, gender, course , email, endDate, department, mentor, score, isActive);
+
 
 
       if(allFields.some(item => item.trim() === "")){
@@ -130,7 +184,7 @@ const addSignleIntern = asyncHandler(async(req,res)=>{
       }
 
       const intern = await Intern.create({
-          _id,
+          _id :  req.body._id ? req.body._id : new mongoose.Types.ObjectId(),
           name,
           gender,
           course ,
@@ -216,28 +270,74 @@ const scoringWiseRanking = asyncHandler(async(req,res) => {
 
 const eligibleInternsForLOR = asyncHandler(async(req,res)=>{
 
-    const interns = await Intern.aggregate([
-      {
-            $match : { isCompliantIssue : false ,  isDisciplineIssue : false, score : { $gte : 75, $lt : 85 } }
-      }
-    ])
+        const filteredInterns = await Intern.aggregate([
+              {
+                $match: {
+                  isCompliantIssue: false,
+                  isDisciplineIssue: false,
+                  score: { $gte: 75, $lt: 85 }
+                }
+              },
+              {
+                $lookup: {
+                  from: "internlors",
+                  localField: "email",
+                  foreignField: "email",
+                  as: "lor"
+                }
+              },
+              {
+                $match: {
+                  lor: { $size: 0 }
+                }
+              }
+            ]);
 
-      if (!interns || interns.length === 0) {
-      throw new ApiError(400, "No interns found for LOR generation");
-      }
 
-    return res.status(200).json(new ApiResponse(200, interns, "Eligible interns for LOR Generation"))
+
+        // console.log(filteredInterns);
+
+    return res.status(200).json(new ApiResponse(200, filteredInterns, "Eligible interns for LOR Generation"))
 
 })
+
+const internWIthNoLor = asyncHandler(async(req,res)=>{
+
+          const filteredInterns = await Intern.aggregate([
+                        {
+                          $match: {
+                            isCompliantIssue: false,
+                            isDisciplineIssue: false,
+                          }
+                        },
+                        {
+                          $lookup: {
+                            from: "internlors",
+                            localField: "email",
+                            foreignField: "email",
+                            as: "lor"
+                          }
+                        },
+                        {
+                          $match: {
+                            lor: { $size: 0 }
+                          }
+                        }
+                      ]);
+
+          // console.log(filteredInterns);
+
+            return res.status(200).json(new ApiResponse(200, filteredInterns, "interns with no lor"))
+})
+
 
 
 
   export {
   addBulkInterns,
   addSignleIntern,
-  updateBulkInterns,
-  updateSingleIntern,
-  getAllInters,
   eligibleInternsForLOR,
-  scoringWiseRanking,
+  getAllInters, internWIthNoLor, scoringWiseRanking,
+  updateBulkInterns,
+  updateSingleIntern
 }

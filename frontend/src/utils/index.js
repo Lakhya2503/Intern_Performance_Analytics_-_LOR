@@ -1,3 +1,5 @@
+import toast from "react-hot-toast";
+
 export const requestHandler = async(
   api,
   setLoading,
@@ -19,7 +21,30 @@ export const requestHandler = async(
 
     onSuccess(data)
 
+    console.log(data.message)
+
+    let successMessage = data.message || ""
+
+    toast.success(successMessage)
+
+    console.log(successMessage);
+
+
+
+
   } catch (error) {
+
+
+    const errorMessage = error?.response?.data.message || error?.message
+    onError(error?.response?.data)
+
+    //  const { statusCode, message } = onError?.(error?.message || "Something went wrong", error);
+    console.log("error.response : ",errorMessage);
+
+
+
+     toast.error(errorMessage)
+
 
       if (error?.response?.status === 401 || error?.response?.status === 403) {
             LocalStorage.clear();

@@ -7,6 +7,10 @@ export const generateLORService = async (data) => {
   const { name, department, endDate } = data;
 
   if (!name || !department || !endDate) {
+    console.log(name);
+    console.log(department);
+    console.log(endDate);
+
     throw new Error("Missing required fields");
   }
 

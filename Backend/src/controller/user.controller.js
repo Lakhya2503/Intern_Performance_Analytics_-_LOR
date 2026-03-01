@@ -3,6 +3,7 @@ import User from '../model/user.model.js'
 import ApiError from '../utils/ApiError.js'
 import ApiResponse from '../utils/ApiResponse.js'
 import asyncHandler from '../utils/asyncHandler.js'
+import uploadFiles from '../utils/cloudinary.js'
 
 const generateAccessRefreshToken = async(userId) => {
     const user = await User.findById(userId)
@@ -69,7 +70,7 @@ const registerUser = asyncHandler(async(req,res)=>{
       const requiredFileds = [email,password,username]
 
 
-      if(requiredFileds.some(field  => field.trim() === "")){
+      if(requiredFileds.some(field  => String(field).trim() === "")){
         throw new ApiError(404, "All fields are required")
       }
 
@@ -200,10 +201,16 @@ const updateAvatar = asyncHandler(async(req,res)=>{
 
       console.log(file.path);
 
+        const avatarFile = await uploadFiles(file);
+
+        if (!avatarFile || !avatarFile.url) {
+          throw new ApiError(500, "Failed to upload avatar file");
+        }
+
 
       const update = await Profile.findByIdAndUpdate(
         userWithProfile._id,
-          {avatar : file.path},
+          {avatar : avatarFile.url},
         {
           new : true,
           runValidators : true
