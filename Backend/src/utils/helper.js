@@ -19,29 +19,32 @@ export const castValue = (value, type) => {
           }
 }
 
+export const getChangeField = (oldObj, newObj, internFieldType) => {
+    const changes = {};
 
-export const getChangeFiled = ((oldObj, newObj, internFiledInum) => {
-        const changes = {};
+    for(const key in internFieldType) {
+        if(key === "_id") continue;
+        if(!(key in newObj)) continue;
 
-        for(const key in internFiledInum) {
-            if(key === "_id") continue;
-            if(!(key in newObj)) continue
+        const type = internFieldType[key];
+        const newValue = castValue(newObj[key], type);
+        const oldValue = castValue(oldObj[key], type);
 
-            const type = internFiledInum[key]
-
-            const newValue = castValue(newObj[key], type)
-            const oldValue = castValue(oldObj[key], type)
+        console.log("newValue", newValue);
+        console.log("oldValue", oldValue);
 
 
-            if(newValue !== oldValue) {
-                changes[key] = newValue
+        if(type === "date") {
+            if((newValue?.getTime() || null) !== (oldValue?.getTime() || null)) {
+                changes[key] = newValue;
             }
+        } else if(newValue !== oldValue) {
+            changes[key] = newValue;
+        }
+    }
 
-          }
-
-          return changes;
- }
-)
+    return changes;
+}
 
 
  export const calculateAverageScore = (intern) => {
@@ -70,7 +73,7 @@ export const approveVerify = (status) =>{
             approvestatus = true;
           } else if( status === "true" || status === true || status === 1 || status === "1" ) {
             approvestatus = true;
-          } else if (status === "false" || status === false || status === 0 || status === 0) {
+          } else if (status === "false" || status === false || status === 0 || status === "0") {
             approvestatus = false
           } else {
             approvestatus = undefined;

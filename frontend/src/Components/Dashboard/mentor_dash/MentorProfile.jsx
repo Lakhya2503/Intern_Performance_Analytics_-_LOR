@@ -1,13 +1,10 @@
 import { useEffect, useState } from 'react';
 import {
-  FaBell,
   FaBriefcase,
   FaBuilding,
   FaCamera,
-  FaChartLine,
   FaCheckCircle,
   FaClock,
-  FaDownload,
   FaEdit,
   FaEnvelope,
   FaExclamationCircle,
@@ -15,16 +12,10 @@ import {
   FaGraduationCap,
   FaIdCard,
   FaLink,
-  FaLock,
   FaSave,
-  FaShare,
-  FaShieldAlt,
   FaSpinner,
-  FaStar,
   FaTimes,
-  FaTrash,
-  FaUser,
-  FaUsers
+  FaUser
 } from 'react-icons/fa';
 import { requestHandler } from '../../../utils';
 
@@ -38,23 +29,13 @@ const MentorProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({
     fullName: '',
-    bio: '',
-    expertise: '',
-    company: '',
-    position: '',
-    yearsOfExperience: '',
-    education: '',
-    linkedin: '',
-    website: ''
+    bio: ''
   });
   const [avatarFile, setAvatarFile] = useState(null);
   const [avatarPreview, setAvatarPreview] = useState(null);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [updatingProfile, setUpdatingProfile] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
-  const [activeTab, setActiveTab] = useState('profile');
-  const [showSettingsModal, setShowSettingsModal] = useState(false);
-  const [settingsType, setSettingsType] = useState(null);
 
   // Fetch current user data
   const fetchCurrentUser = () => {
@@ -65,14 +46,7 @@ const MentorProfile = () => {
         setProfile(response.data);
         setEditForm({
           fullName: response.data.fullName || '',
-          bio: response.data.bio || '',
-          expertise: response.data.expertise || '',
-          company: response.data.company || '',
-          position: response.data.position || '',
-          yearsOfExperience: response.data.yearsOfExperience || '',
-          education: response.data.education || '',
-          linkedin: response.data.linkedin || '',
-          website: response.data.website || ''
+          bio: response.data.bio || ''
         });
         if (response.data.avatar) {
           // Convert file path to URL if needed
@@ -133,10 +107,16 @@ const MentorProfile = () => {
     );
   };
 
-  // Handle profile update
+  // Handle profile update - only sends fullName and bio
   const handleProfileUpdate = async () => {
+    // Only send the fields that are editable
+    const updateData = {
+      fullName: editForm.fullName,
+      bio: editForm.bio
+    };
+
     requestHandler(
-      async () => await updateProfile(editForm),
+      async () => await updateProfile(updateData),
       setUpdatingProfile,
       (response) => {
         setProfile(prev => ({
@@ -168,14 +148,7 @@ const MentorProfile = () => {
     setIsEditing(false);
     setEditForm({
       fullName: profile?.fullName || '',
-      bio: profile?.bio || '',
-      expertise: profile?.expertise || '',
-      company: profile?.company || '',
-      position: profile?.position || '',
-      yearsOfExperience: profile?.yearsOfExperience || '',
-      education: profile?.education || '',
-      linkedin: profile?.linkedin || '',
-      website: profile?.website || ''
+      bio: profile?.bio || ''
     });
   };
 
@@ -198,18 +171,6 @@ const MentorProfile = () => {
         : profile.avatar;
     }
     return null;
-  };
-
-  // Handle settings action
-  const handleSettingsAction = (type) => {
-    setSettingsType(type);
-    setShowSettingsModal(true);
-  };
-
-  // Close modal
-  const closeModal = () => {
-    setShowSettingsModal(false);
-    setSettingsType(null);
   };
 
   if (loading) {
@@ -261,71 +222,14 @@ const MentorProfile = () => {
         </div>
       )}
 
-      {/* Settings Modal */}
-      {showSettingsModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 animate-fadeIn">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 transform animate-slideUp">
-            <div className="p-6">
-              <div className="flex items-center gap-4 mb-6">
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                  settingsType === 'delete' ? 'bg-red-100' : 'bg-indigo-100'
-                }`}>
-                  {settingsType === 'delete' ? (
-                    <FaTrash className="text-red-600 text-xl" />
-                  ) : (
-                    <FaLock className="text-indigo-600 text-xl" />
-                  )}
-                </div>
-                <h3 className="text-xl font-bold text-gray-800">
-                  {settingsType === 'delete' ? 'Delete Account' : 'Reset Password'}
-                </h3>
-              </div>
-
-              <p className="text-gray-600 mb-6">
-                {settingsType === 'delete'
-                  ? 'Are you absolutely sure you want to delete your account? This action cannot be undone.'
-                  : 'A password reset link will be sent to your email address.'}
-              </p>
-
-              <div className="flex gap-3">
-                <button
-                  onClick={closeModal}
-                  className="flex-1 px-4 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors font-medium"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={() => {
-                    // Handle the action here
-                    closeModal();
-                    setSuccessMessage(settingsType === 'delete'
-                      ? 'Account deletion request sent'
-                      : 'Password reset email sent');
-                    setTimeout(() => setSuccessMessage(''), 3000);
-                  }}
-                  className={`flex-1 px-4 py-3 rounded-xl text-white font-medium transition-colors ${
-                    settingsType === 'delete'
-                      ? 'bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700'
-                      : 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700'
-                  }`}
-                >
-                  Confirm
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto ">
+      <div className="max-w-7xl mx-auto">
         {/* Profile Header Card */}
-
         <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden mb-8 border border-indigo-100">
           {/* Cover Photo with Gradient */}
-          <div className="h-56 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 relative ">
+          <div className="h-56 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 relative">
             {/* Pattern Overlay */}
-            <div className="absolute inset-0 opacity-10 ">
+            <div className="absolute inset-0 opacity-10">
               <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
                 <defs>
                   <pattern id="pattern" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
@@ -337,7 +241,7 @@ const MentorProfile = () => {
             </div>
 
             {/* Profile Info Overlay */}
-            <div className="absolute -bottom-16 left-8 md:left-12 flex items-end gap-6 ">
+            <div className="absolute -bottom-16 left-8 md:left-12 flex items-end gap-6">
               {/* Avatar with Rings */}
               <div className="relative group">
                 <div className="absolute inset-0 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 rounded-2xl blur-lg opacity-50 group-hover:opacity-75 transition-opacity"></div>
@@ -361,7 +265,7 @@ const MentorProfile = () => {
                   )}
 
                   {/* Avatar Upload Overlay */}
-                  <label className="absolute inset-0 bg-zinc-600 bg-gradient-to-t from-black/80 via-black/50 to-transparent flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 cursor-pointer">
+                  <label className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 cursor-pointer">
                     <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform">
                       <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white">
                         <FaCamera className="text-white text-xl" />
@@ -381,16 +285,13 @@ const MentorProfile = () => {
               </div>
 
               {/* Name and Role */}
-              <div className="mb-6  ">
-                <h1 className="text-3xl md:text-4xl font-bold  mb-4 text-cyan-400">
-                  {profile?.fullName || profile.username || "Mentor"}
+              <div className="mb-10">
+                <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
+                  {profile?.fullName.toUpperCase() || profile?.user?.username  || "Mentor"}
                 </h1>
-                <div className="flex items-center gap-3 text-zinc-600">
+                <div className="flex items-center gap-3 font-bold text-zinc-700">
                   <FaBriefcase className="text-sm" />
-                  <span className="font-medium ">{profile?.position || 'Mentor'}</span>
-                  <span className="w-1 h-1 bg-indigo-300 rounded-full"></span>
-                  <FaBuilding className="text-sm " />
-                  <span>{profile?.company || 'Not specified'}</span>
+                  <span className="font-medium">Mentor</span>
                 </div>
               </div>
             </div>
@@ -420,551 +321,237 @@ const MentorProfile = () => {
           </div>
 
           {/* Stats Bar */}
-       <div className="pt-20 md:pt-24 px-6 md:px-12 pb-6">
-  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
-    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-xl shadow-sm border border-blue-100 hover:shadow-md transition-shadow">
-      <p className="text-sm text-blue-600 mb-1">Member Since</p>
-      <p className="font-semibold text-gray-800 flex items-center gap-2">
-        <FaClock className="text-blue-500" />
-        {formatDate(profile?.user?.createdAt)}
-      </p>
-    </div>
-
-    <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-4 rounded-xl shadow-sm border border-purple-100 hover:shadow-md transition-shadow">
-      <p className="text-sm text-purple-600 mb-1">Email</p>
-      <p className="font-semibold text-gray-800 flex items-center gap-2 truncate">
-        <FaEnvelope className="text-purple-500" />
-        {profile?.user?.email.slice(0,20)}....
-      </p>
-    </div>
-
-    <div className="bg-gradient-to-br from-emerald-50 to-teal-50 p-4 rounded-xl shadow-sm border border-emerald-100 hover:shadow-md transition-shadow">
-      <p className="text-sm text-emerald-600 mb-1">Status</p>
-      <div className="flex items-center gap-2">
-        <span className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium ${
-          profile?.user?.isAuthorized
-            ? 'bg-emerald-500 text-white shadow-sm'
-            : 'bg-amber-500 text-white shadow-sm'
-        }`}>
-          <FaCheckCircle className="text-xs" />
-          {profile?.user?.isAuthorized ? 'Active' : 'Pending'}
-        </span>
-      </div>
-    </div>
-
-    <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-4 rounded-xl shadow-sm border border-amber-100 hover:shadow-md transition-shadow">
-      <p className="text-sm text-amber-600 mb-1">Experience</p>
-      <p className="font-semibold text-gray-800 flex items-center gap-2">
-        <FaChartLine className="text-amber-500" />
-        {profile?.yearsOfExperience || '0'} years
-      </p>
-    </div>
-  </div>
-</div>
-        </div>
-
-        {/* Navigation Tabs */}
-        <div className="flex flex-wrap gap-2 mb-8">
-          {[
-            { id: 'profile', label: 'Profile', icon: FaUser, color: 'indigo' },
-            { id: 'mentees', label: 'Mentees', icon: FaUsers, color: 'purple' },
-            { id: 'achievements', label: 'Achievements', icon: FaStar, color: 'pink' },
-            { id: 'settings', label: 'Settings', icon: FaShieldAlt, color: 'indigo' }
-          ].map(tab => {
-            const Icon = tab.icon;
-            const colors = {
-              indigo: 'from-indigo-600 to-purple-600',
-              purple: 'from-purple-600 to-pink-600',
-              pink: 'from-pink-600 to-rose-600'
-            };
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`px-6 py-3 rounded-xl font-medium transition-all duration-300 flex items-center gap-2 ${
-                  activeTab === tab.id
-                    ? `bg-gradient-to-r ${colors[tab.color]} text-white shadow-lg shadow-${tab.color}-200 transform -translate-y-0.5`
-                    : 'bg-white/80 backdrop-blur-sm text-gray-600 hover:bg-white hover:shadow-md'
-                }`}
-              >
-                <Icon className={activeTab === tab.id ? 'animate-pulse' : ''} />
-                {tab.label}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Tab Content */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-6 md:p-8 border border-indigo-100">
-          {activeTab === 'profile' && (
-            <div className="animate-fadeIn">
-              <div className="flex items-center justify-between mb-8">
-                <h2 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-                  Profile Information
-                </h2>
-                {!isEditing && (
-                  <button
-                    onClick={() => setIsEditing(true)}
-                    className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-                  >
-                    <FaEdit />
-                    Edit Profile
-                  </button>
-                )}
+          <div className="pt-20 md:pt-24 px-6 md:px-12 pb-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
+              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-xl shadow-sm border border-blue-100 hover:shadow-md transition-shadow">
+                <p className="text-sm text-blue-600 mb-1">Member Since</p>
+                <p className="font-semibold text-gray-800 flex items-center gap-2">
+                  <FaClock className="text-blue-500" />
+                  {formatDate(profile?.user?.createdAt)}
+                </p>
               </div>
 
-              {isEditing ? (
-                // Edit Mode
-                <div className="space-y-6 max-w-3xl">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Full Name
-                      </label>
-                      <input
-                        type="text"
-                        name="fullName"
-                        value={editForm.fullName}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
-                        placeholder="Enter your full name"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Position
-                      </label>
-                      <input
-                        type="text"
-                        name="position"
-                        value={editForm.position}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
-                        placeholder="e.g., Senior Software Engineer"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Company
-                      </label>
-                      <input
-                        type="text"
-                        name="company"
-                        value={editForm.company}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
-                        placeholder="e.g., Google, Microsoft"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Years of Experience
-                      </label>
-                      <input
-                        type="number"
-                        name="yearsOfExperience"
-                        value={editForm.yearsOfExperience}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
-                        placeholder="5"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Expertise
-                      </label>
-                      <input
-                        type="text"
-                        name="expertise"
-                        value={editForm.expertise}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
-                        placeholder="e.g., React, Node.js, Python"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Education
-                      </label>
-                      <input
-                        type="text"
-                        name="education"
-                        value={editForm.education}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
-                        placeholder="e.g., B.Sc. Computer Science"
-                      />
-                    </div>
-                  </div>
+              <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-4 rounded-xl shadow-sm border border-purple-100 hover:shadow-md transition-shadow">
+                <p className="text-sm text-purple-600 mb-1">Email</p>
+                <p className="font-semibold text-gray-800 flex items-center gap-2 truncate">
+                  <FaEnvelope className="text-purple-500" />
+                  {profile?.user?.email}
+                </p>
+              </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Bio
-                    </label>
-                    <textarea
-                      name="bio"
-                      value={editForm.bio}
-                      onChange={handleInputChange}
-                      rows="4"
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
-                      placeholder="Tell us about yourself, your experience, and your mentoring philosophy..."
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        LinkedIn Profile
-                      </label>
-                      <input
-                        type="url"
-                        name="linkedin"
-                        value={editForm.linkedin}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
-                        placeholder="https://linkedin.com/in/..."
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Personal Website
-                      </label>
-                      <input
-                        type="url"
-                        name="website"
-                        value={editForm.website}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
-                        placeholder="https://..."
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex gap-3 pt-4">
-                    <button
-                      onClick={handleProfileUpdate}
-                      disabled={updatingProfile}
-                      className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {updatingProfile ? (
-                        <>
-                          <FaSpinner className="animate-spin" />
-                          Saving Changes...
-                        </>
-                      ) : (
-                        <>
-                          <FaSave />
-                          Save Changes
-                        </>
-                      )}
-                    </button>
-                    <button
-                      onClick={handleCancelEdit}
-                      className="px-6 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-all duration-300 flex items-center gap-2"
-                    >
-                      <FaTimes />
-                      Cancel
-                    </button>
-                  </div>
+              <div className="bg-gradient-to-br from-emerald-50 to-teal-50 p-4 rounded-xl shadow-sm border border-emerald-100 hover:shadow-md transition-shadow">
+                <p className="text-sm text-emerald-600 mb-1">Status</p>
+                <div className="flex items-center gap-2">
+                  <span className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium ${
+                    profile?.user?.isAuthorized
+                      ? 'bg-emerald-500 text-white shadow-sm'
+                      : 'bg-amber-500 text-white shadow-sm'
+                  }`}>
+                    <FaCheckCircle className="text-xs" />
+                    {profile?.user?.isAuthorized ? 'Active' : 'Pending'}
+                  </span>
                 </div>
-              ) : (
-                // View Mode
-                <div className="space-y-8">
-                  {/* Basic Info */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-6 rounded-2xl border border-indigo-100">
-                      <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center mb-3">
-                        <FaUser className="text-indigo-600" />
-                      </div>
-                      <p className="text-sm text-indigo-600 mb-1">Full Name</p>
-                      <p className="text-lg font-semibold text-gray-800">
-                        {profile?.fullName || 'Not provided'}
-                      </p>
-                    </div>
-                    <div className="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-6 rounded-2xl border border-indigo-100">
-                      <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center mb-3">
-                        <FaBriefcase className="text-indigo-600" />
-                      </div>
-                      <p className="text-sm text-indigo-600 mb-1">Position</p>
-                      <p className="text-lg font-semibold text-gray-800">
-                        {profile?.position || 'Not provided'}
-                      </p>
-                    </div>
-                    <div className="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-6 rounded-2xl border border-indigo-100">
-                      <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center mb-3">
-                        <FaBuilding className="text-indigo-600" />
-                      </div>
-                      <p className="text-sm text-indigo-600 mb-1">Company</p>
-                      <p className="text-lg font-semibold text-gray-800">
-                        {profile?.company || 'Not provided'}
-                      </p>
-                    </div>
-                  </div>
+              </div>
 
-                  {/* Bio */}
-                  <div className="bg-gradient-to-br from-gray-50 to-indigo-50 p-6 rounded-2xl border border-indigo-100">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-3">About Me</h3>
-                    <p className="text-gray-700 leading-relaxed">
-                      {profile?.bio || 'No bio provided yet.'}
+              <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-4 rounded-xl shadow-sm border border-amber-100 hover:shadow-md transition-shadow">
+                <p className="text-sm text-amber-600 mb-1">User ID</p>
+                <p className="font-semibold text-gray-800 flex items-center gap-2 truncate">
+                  <FaIdCard className="text-amber-500" />
+                  {profile?._id?.slice(-6) || 'N/A'}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Profile Content */}
+        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-6 md:p-8 border border-indigo-100">
+          <div className="animate-fadeIn">
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                Profile Information
+              </h2>
+              {!isEditing && (
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                >
+                  <FaEdit />
+                  Edit Profile
+                </button>
+              )}
+            </div>
+
+            {isEditing ? (
+              // Edit Mode - Only fullName and bio are editable
+              <div className="space-y-6 max-w-3xl">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Full Name
+                  </label>
+                  <input
+                    type="text"
+                    name="fullName"
+                    value={editForm.fullName}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+                    placeholder="Enter your full name"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Bio
+                  </label>
+                  <textarea
+                    name="bio"
+                    value={editForm.bio}
+                    onChange={handleInputChange}
+                    rows="4"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+                    placeholder="Tell us about yourself, your experience, and your mentoring philosophy..."
+                  />
+                </div>
+
+                <div className="flex gap-3 pt-4">
+                  <button
+                    onClick={handleProfileUpdate}
+                    disabled={updatingProfile}
+                    className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {updatingProfile ? (
+                      <>
+                        <FaSpinner className="animate-spin" />
+                        Saving Changes...
+                      </>
+                    ) : (
+                      <>
+                        <FaSave />
+                        Save Changes
+                      </>
+                    )}
+                  </button>
+                  <button
+                    onClick={handleCancelEdit}
+                    className="px-6 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-all duration-300 flex items-center gap-2"
+                  >
+                    <FaTimes />
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            ) : (
+              // View Mode
+              <div className="space-y-8">
+                {/* Basic Info */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-6 rounded-2xl border border-indigo-100">
+                    <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center mb-3">
+                      <FaUser className="text-indigo-600" />
+                    </div>
+                    <p className="text-sm text-indigo-600 mb-1">Full Name</p>
+                    <p className="text-lg font-semibold text-gray-800">
+                      {profile?.fullName || 'Not provided'}
                     </p>
                   </div>
 
-                  {/* Additional Info */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="bg-white p-6 rounded-2xl border border-indigo-100 shadow-sm">
-                      <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                        <FaGraduationCap className="text-indigo-600" />
-                        Education & Experience
-                      </h3>
-                      <div className="space-y-4">
-                        <div>
-                          <p className="text-sm text-indigo-600">Education</p>
-                          <p className="font-medium text-gray-800">
-                            {profile?.education || 'Not specified'}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-indigo-600">Years of Experience</p>
-                          <p className="font-medium text-gray-800">
-                            {profile?.yearsOfExperience || '0'} years
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-indigo-600">Expertise</p>
-                          <div className="flex flex-wrap gap-2 mt-2">
-                            {(profile?.expertise?.split(',').map(item => item.trim()) || []).map((skill, index) => (
-                              <span
-                                key={index}
-                                className="px-3 py-1 bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-700 rounded-lg text-sm font-medium border border-indigo-100"
-                              >
-                                {skill}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
+                  <div className="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-6 rounded-2xl border border-indigo-100">
+                    <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center mb-3">
+                      <FaEnvelope className="text-indigo-600" />
                     </div>
-
-                    <div className="bg-white p-6 rounded-2xl border border-indigo-100 shadow-sm">
-                      <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                        <FaLink className="text-indigo-600" />
-                        Links & Social
-                      </h3>
-                      <div className="space-y-4">
-                        {profile?.linkedin && (
-                          <a
-                            href={profile.linkedin}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-3 text-gray-700 hover:text-indigo-600 transition-colors p-3 bg-gradient-to-r from-gray-50 to-indigo-50 rounded-xl border border-indigo-100"
-                          >
-                            <FaLink className="text-indigo-500" />
-                            <span className="truncate">LinkedIn Profile</span>
-                          </a>
-                        )}
-                        {profile?.website && (
-                          <a
-                            href={profile.website}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-3 text-gray-700 hover:text-indigo-600 transition-colors p-3 bg-gradient-to-r from-gray-50 to-indigo-50 rounded-xl border border-indigo-100"
-                          >
-                            <FaGlobe className="text-indigo-500" />
-                            <span className="truncate">Personal Website</span>
-                          </a>
-                        )}
-                        {!profile?.linkedin && !profile?.website && (
-                          <p className="text-gray-500 text-center py-4">No links provided</p>
-                        )}
-                      </div>
-                    </div>
+                    <p className="text-sm text-indigo-600 mb-1">Email</p>
+                    <p className="text-lg font-semibold text-gray-800">
+                      {profile?.user?.email || 'Not provided'}
+                    </p>
                   </div>
+                </div>
 
-                  {/* Account Details */}
-                  <div className="border-t border-indigo-100 pt-6">
+                {/* Bio */}
+                <div className="bg-gradient-to-br from-gray-50 to-indigo-50 p-6 rounded-2xl border border-indigo-100">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-3">About Me</h3>
+                  <p className="text-gray-700 leading-relaxed">
+                    {profile?.bio || 'No bio provided yet.'}
+                  </p>
+                </div>
+
+                {/* Additional Info - Read Only */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="bg-white p-6 rounded-2xl border border-indigo-100 shadow-sm">
                     <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                      <FaIdCard className="text-indigo-600" />
-                      Account Details
+                      <FaGraduationCap className="text-indigo-600" />
+                      Account Information
                     </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="bg-gradient-to-br from-gray-50 to-indigo-50 p-4 rounded-xl border border-indigo-100">
-                        <p className="text-sm text-indigo-600 mb-1">Account Created</p>
+                    <div className="space-y-4">
+                      <div>
+                        <p className="text-sm text-indigo-600">Username</p>
                         <p className="font-medium text-gray-800">
-                          {formatDate(profile?.user?.createdAt)}
+                          {profile?.user?.username || 'Not specified'}
                         </p>
                       </div>
-                      <div className="bg-gradient-to-br from-gray-50 to-indigo-50 p-4 rounded-xl border border-indigo-100">
-                        <p className="text-sm text-indigo-600 mb-1">Last Updated</p>
+                      <div>
+                        <p className="text-sm text-indigo-600">User ID</p>
                         <p className="font-medium text-gray-800">
-                          {formatDate(profile?.updatedAt)}
+                          {profile?._id || 'Not specified'}
                         </p>
                       </div>
-                      <div className="bg-gradient-to-br from-gray-50 to-indigo-50 p-4 rounded-xl border border-indigo-100">
-                        <p className="text-sm text-indigo-600 mb-1">Username</p>
+                      <div>
+                        <p className="text-sm text-indigo-600">Role</p>
                         <p className="font-medium text-gray-800">
-                          {profile?.user?.username || 'Not provided'}
+                          {profile?.user?.role || 'Mentor'}
                         </p>
                       </div>
                     </div>
                   </div>
-                </div>
-              )}
-            </div>
-          )}
 
-          {activeTab === 'mentees' && (
-            <div className="text-center py-16 animate-fadeIn">
-              <div className="w-24 h-24 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-3xl flex items-center justify-center mx-auto mb-6 transform rotate-12">
-                <FaUsers className="text-5xl text-indigo-600" />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-800 mb-3">No Mentees Yet</h3>
-              <p className="text-gray-500 max-w-md mx-auto">
-                You haven't been assigned any mentees yet. Once you have mentees, they'll appear here.
-              </p>
-              <button className="mt-6 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl">
-                Find Mentees
-              </button>
-            </div>
-          )}
-
-          {activeTab === 'achievements' && (
-            <div className="text-center py-16 animate-fadeIn">
-              <div className="w-24 h-24 bg-gradient-to-br from-pink-100 to-rose-100 rounded-3xl flex items-center justify-center mx-auto mb-6 transform -rotate-12">
-                <FaStar className="text-5xl text-pink-600" />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-800 mb-3">No Achievements Yet</h3>
-              <p className="text-gray-500 max-w-md mx-auto">
-                Your achievements and milestones will be displayed here as you progress.
-              </p>
-              <button className="mt-6 px-6 py-3 bg-gradient-to-r from-pink-600 to-rose-600 text-white rounded-xl hover:from-pink-700 hover:to-rose-700 transition-all duration-300 shadow-lg hover:shadow-xl">
-                View All Achievements
-              </button>
-            </div>
-          )}
-
-          {activeTab === 'settings' && (
-            <div className="animate-fadeIn">
-              <h2 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-8">
-                Account Settings
-              </h2>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Password Settings */}
-                <div className="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-6 rounded-2xl border border-indigo-100 hover:shadow-lg transition-all">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
-                      <FaLock className="text-indigo-600 text-xl" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-gray-800 mb-2">Password</h3>
-                      <p className="text-gray-600 text-sm mb-4">
-                        Change your password to keep your account secure
-                      </p>
-                      <button
-                        onClick={() => handleSettingsAction('password')}
-                        className="px-4 py-2 bg-white text-indigo-600 rounded-lg hover:bg-indigo-50 transition-colors border border-indigo-200"
-                      >
-                        Change Password
-                      </button>
+                  <div className="bg-white p-6 rounded-2xl border border-indigo-100 shadow-sm">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                      <FaLink className="text-indigo-600" />
+                      Contact Information
+                    </h3>
+                    <div className="space-y-4">
+                      {profile?.user?.email && (
+                        <div className="flex items-center gap-3 text-gray-700 p-3 bg-gradient-to-r from-gray-50 to-indigo-50 rounded-xl border border-indigo-100">
+                          <FaEnvelope className="text-indigo-500" />
+                          <span className="truncate">{profile.user.email}</span>
+                        </div>
+                      )}
+                      {!profile?.user?.email && (
+                        <p className="text-gray-500 text-center py-4">No contact information</p>
+                      )}
                     </div>
                   </div>
                 </div>
 
-                {/* Notifications Settings */}
-                <div className="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-6 rounded-2xl border border-indigo-100 hover:shadow-lg transition-all">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
-                      <FaBell className="text-indigo-600 text-xl" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-gray-800 mb-2">Notifications</h3>
-                      <p className="text-gray-600 text-sm mb-4">
-                        Manage your notification preferences
+                {/* Account Details */}
+                <div className="border-t border-indigo-100 pt-6">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                    <FaIdCard className="text-indigo-600" />
+                    Account Details
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="bg-gradient-to-br from-gray-50 to-indigo-50 p-4 rounded-xl border border-indigo-100">
+                      <p className="text-sm text-indigo-600 mb-1">Account Created</p>
+                      <p className="font-medium text-gray-800">
+                        {formatDate(profile?.user?.createdAt)}
                       </p>
-                      <button className="px-4 py-2 bg-white text-indigo-600 rounded-lg hover:bg-indigo-50 transition-colors border border-indigo-200">
-                        Configure
-                      </button>
                     </div>
-                  </div>
-                </div>
-
-                {/* Privacy Settings */}
-                <div className="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-6 rounded-2xl border border-indigo-100 hover:shadow-lg transition-all">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
-                      <FaShieldAlt className="text-indigo-600 text-xl" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-gray-800 mb-2">Privacy</h3>
-                      <p className="text-gray-600 text-sm mb-4">
-                        Control your privacy settings and data
+                    <div className="bg-gradient-to-br from-gray-50 to-indigo-50 p-4 rounded-xl border border-indigo-100">
+                      <p className="text-sm text-indigo-600 mb-1">Last Updated</p>
+                      <p className="font-medium text-gray-800">
+                        {formatDate(profile?.updatedAt)}
                       </p>
-                      <button className="px-4 py-2 bg-white text-indigo-600 rounded-lg hover:bg-indigo-50 transition-colors border border-indigo-200">
-                        Manage Privacy
-                      </button>
                     </div>
-                  </div>
-                </div>
-
-                {/* Export Data */}
-                <div className="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-6 rounded-2xl border border-indigo-100 hover:shadow-lg transition-all">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
-                      <FaDownload className="text-indigo-600 text-xl" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-gray-800 mb-2">Export Data</h3>
-                      <p className="text-gray-600 text-sm mb-4">
-                        Download your profile data and mentee information
+                    <div className="bg-gradient-to-br from-gray-50 to-indigo-50 p-4 rounded-xl border border-indigo-100">
+                      <p className="text-sm text-indigo-600 mb-1">Account Status</p>
+                      <p className="font-medium text-gray-800">
+                        {profile?.user?.isAuthorized ? 'Active' : 'Pending'}
                       </p>
-                      <button className="px-4 py-2 bg-white text-indigo-600 rounded-lg hover:bg-indigo-50 transition-colors border border-indigo-200">
-                        Export
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Share Profile */}
-                <div className="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-6 rounded-2xl border border-indigo-100 hover:shadow-lg transition-all">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
-                      <FaShare className="text-indigo-600 text-xl" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-gray-800 mb-2">Share Profile</h3>
-                      <p className="text-gray-600 text-sm mb-4">
-                        Get a shareable link to your mentor profile
-                      </p>
-                      <button className="px-4 py-2 bg-white text-indigo-600 rounded-lg hover:bg-indigo-50 transition-colors border border-indigo-200">
-                        Generate Link
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Danger Zone */}
-                <div className="bg-gradient-to-br from-red-50 to-pink-50 p-6 rounded-2xl border border-red-200 hover:shadow-lg transition-all">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
-                      <FaTrash className="text-red-600 text-xl" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-gray-800 mb-2">Delete Account</h3>
-                      <p className="text-gray-600 text-sm mb-4">
-                        Permanently delete your account and all associated data
-                      </p>
-                      <button
-                        onClick={() => handleSettingsAction('delete')}
-                        className="px-4 py-2 bg-gradient-to-r from-red-600 to-pink-600 text-white rounded-lg hover:from-red-700 hover:to-pink-700 transition-colors"
-                      >
-                        Delete Account
-                      </button>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
 
@@ -990,27 +577,12 @@ const MentorProfile = () => {
           }
         }
 
-        @keyframes slideUp {
-          from {
-            transform: translateY(20px);
-            opacity: 0;
-          }
-          to {
-            transform: translateY(0);
-            opacity: 1;
-          }
-        }
-
         .animate-slideIn {
           animation: slideIn 0.3s ease-out;
         }
 
         .animate-fadeIn {
           animation: fadeIn 0.3s ease-out;
-        }
-
-        .animate-slideUp {
-          animation: slideUp 0.3s ease-out;
         }
       `}</style>
     </div>

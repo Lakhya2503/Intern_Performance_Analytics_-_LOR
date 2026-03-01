@@ -1,45 +1,74 @@
-import React, { useState, useEffect } from 'react';
-import { updateAvatar, updateProfile } from '../../../api/index';
-import { requestHandler } from '../../../utils/index';
+import { useEffect, useState } from 'react';
+import {
+  FaBriefcase,
+  FaBuilding,
+  FaCamera,
+  FaCheckCircle,
+  FaClock,
+  FaEdit,
+  FaEnvelope,
+  FaExclamationCircle,
+  FaGlobe,
+  FaGraduationCap,
+  FaIdCard,
+  FaLink,
+  FaSave,
+  FaSpinner,
+  FaTimes,
+  FaUser
+} from 'react-icons/fa';
+import { requestHandler } from '../../../utils';
+
+// Import the API functions
+import { currentUser, updateAvatar, updateProfile } from '../../../api/index';
 
 const ExecutionProfile = () => {
-  // State Management
-  const [userData, setUserData] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [successMessage, setSuccessMessage] = useState('');
-  const [error, setError] = useState('');
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [avatarFile, setAvatarFile] = useState(null);
-  const [avatarPreview, setAvatarPreview] = useState('');
-
-  // Form State
-  const [profileForm, setProfileForm] = useState({
+  const [editForm, setEditForm] = useState({
     fullName: '',
-    bio: '',
-    username: '',
-    email: ''
+    bio: ''
   });
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState(null);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [updatingProfile, setUpdatingProfile] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+
+  // Fetch current user data
+  const fetchCurrentUser = () => {
+    requestHandler(
+      async () => await currentUser(),
+      setLoading,
+      (response) => {
+        setProfile(response.data);
+        setEditForm({
+          fullName: response.data.fullName || '',
+          bio: response.data.bio || ''
+        });
+        if (response.data.avatar) {
+          // Convert file path to URL if needed
+          const avatarUrl = response.data.avatar.startsWith('C:')
+            ? `http://localhost:5000/${response.data.avatar.split('public\\')[1]?.replace(/\\/g, '/')}`
+            : response.data.avatar;
+          setAvatarPreview(avatarUrl);
+        }
+        setError(null);
+      },
+      (error) => {
+        setError(error.message || 'Failed to fetch profile');
+        console.error('Error fetching profile:', error);
+      }
+    );
+  };
 
   useEffect(() => {
-    // Get user data from localStorage or context
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      try {
-        const parsedUser = JSON.parse(storedUser);
-        setUserData(parsedUser);
-        setProfileForm({
-          fullName: parsedUser.fullName || '',
-          bio: parsedUser.bio || '',
-          username: parsedUser.user?.username || '',
-          email: parsedUser.user?.email || ''
-        });
-        setAvatarPreview(parsedUser.avatar || '');
-      } catch (error) {
-        console.error('Error parsing user data:', error);
-      }
-    }
+    fetchCurrentUser();
   }, []);
 
+  // Handle avatar change
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -52,387 +81,481 @@ const ExecutionProfile = () => {
     }
   };
 
+  // Handle avatar upload
   const handleAvatarUpload = async () => {
-    if (!avatarFile) {
-      setError('Please select an image first');
-      return;
-    }
+    if (!avatarFile) return;
 
     const formData = new FormData();
     formData.append('avatar', avatarFile);
 
     requestHandler(
       async () => await updateAvatar(formData),
-      setLoading,
+      setUploadingAvatar,
       (response) => {
-        setSuccessMessage('✨ Avatar updated successfully!');
-        // Update user data in localStorage
-        if (userData) {
-          const updatedUser = {
-            ...userData,
-            avatar: response.data?.avatar || avatarPreview
-          };
-          localStorage.setItem('user', JSON.stringify(updatedUser));
-          setUserData(updatedUser);
-        }
+        setProfile(prev => ({
+          ...prev,
+          avatar: response.data.avatar
+        }));
         setAvatarFile(null);
-        setTimeout(() => setSuccessMessage(''), 3000);
       },
       (error) => {
         setError(error.message || 'Failed to update avatar');
-        setTimeout(() => setError(''), 3000);
+        console.error('Error updating avatar:', error);
       }
     );
   };
 
-  const handleProfileUpdate = async (e) => {
-    e.preventDefault();
-
-    const payload = {
-      fullName: profileForm.fullName,
-      bio: profileForm.bio,
-      username: profileForm.username
+  // Handle profile update - only sends fullName and bio
+  const handleProfileUpdate = async () => {
+    // Only send the fields that are editable
+    const updateData = {
+      fullName: editForm.fullName,
+      bio: editForm.bio
     };
 
     requestHandler(
-      async () => await updateProfile(payload),
-      setLoading,
+      async () => await updateProfile(updateData),
+      setUpdatingProfile,
       (response) => {
-        setSuccessMessage('✅ Profile updated successfully!');
-        // Update user data in localStorage
-        if (userData) {
-          const updatedUser = {
-            ...userData,
-            fullName: profileForm.fullName,
-            bio: profileForm.bio,
-            user: {
-              ...userData.user,
-              username: profileForm.username,
-              email: userData.user?.email // email remains unchanged
-            }
-          };
-          localStorage.setItem('user', JSON.stringify(updatedUser));
-          setUserData(updatedUser);
-        }
+        setProfile(prev => ({
+          ...prev,
+          ...response.data
+        }));
         setIsEditing(false);
-        setTimeout(() => setSuccessMessage(''), 3000);
       },
       (error) => {
         setError(error.message || 'Failed to update profile');
-        setTimeout(() => setError(''), 3000);
+        console.error('Error updating profile:', error);
       }
     );
   };
 
+  // Handle input change
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setProfileForm(prev => ({
+    setEditForm(prev => ({
       ...prev,
       [name]: value
     }));
   };
 
-  const getInitials = () => {
-    if (profileForm.fullName) {
-      return profileForm.fullName
-        .split(' ')
-        .map(word => word[0])
-        .join('')
-        .toUpperCase()
-        .slice(0, 2);
-    }
-    return profileForm.username?.slice(0, 2).toUpperCase() || 'EP';
+  // Cancel editing
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setEditForm({
+      fullName: profile?.fullName || '',
+      bio: profile?.bio || ''
+    });
   };
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 mb-6 border border-gray-200">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Execution Team Profile
-          </h1>
-          <p className="text-gray-600 mt-2">Manage your profile information and settings</p>
+  // Format date
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
+  // Get avatar URL
+  const getAvatarUrl = () => {
+    if (avatarPreview) return avatarPreview;
+    if (profile?.avatar) {
+      return profile.avatar.startsWith('C:')
+        ? `http://localhost:5000/${profile.avatar.split('public\\')[1]?.replace(/\\/g, '/')}`
+        : profile.avatar;
+    }
+    return null;
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
+        <div className="text-center">
+          <div className="relative">
+            <div className="w-20 h-20 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-4"></div>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full animate-pulse"></div>
+            </div>
+          </div>
+          <p className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent font-medium mt-4">Loading your profile...</p>
         </div>
+      </div>
+    );
+  }
 
-        {/* Success/Error Messages */}
-        {successMessage && (
-          <div className="mb-4 p-4 bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-500 text-green-700 rounded-lg shadow-md animate-slideIn">
-            <div className="flex items-center">
-              <span className="text-2xl mr-3">✅</span>
-              <span className="font-medium">{successMessage}</span>
-            </div>
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
+        <div className="text-center bg-white/80 backdrop-blur-sm p-10 rounded-2xl shadow-xl border border-indigo-100">
+          <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <FaExclamationCircle className="text-4xl text-red-600" />
           </div>
-        )}
-        {error && (
-          <div className="mb-4 p-4 bg-gradient-to-r from-red-50 to-rose-50 border-l-4 border-red-500 text-red-700 rounded-lg shadow-md animate-slideIn">
-            <div className="flex items-center">
-              <span className="text-2xl mr-3">❌</span>
-              <span className="font-medium">{error}</span>
+          <p className="text-red-600 font-medium text-lg mb-4">{error}</p>
+          <button
+            onClick={fetchCurrentUser}
+            className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-4 md:p-8">
+      {/* Success Message */}
+      {successMessage && (
+        <div className="fixed top-4 right-4 z-50 animate-slideIn">
+          <div className="bg-white border-l-4 border-indigo-500 text-indigo-700 p-4 rounded-xl shadow-2xl flex items-center gap-3">
+            <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
+              <FaCheckCircle className="text-indigo-600" />
             </div>
+            <span className="font-medium">{successMessage}</span>
           </div>
-        )}
+        </div>
+      )}
 
-        {/* Loading Indicator */}
-        {loading && (
-          <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50">
-            <div className="bg-white rounded-2xl p-8 shadow-2xl">
-              <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent mx-auto"></div>
-              <p className="text-gray-600 mt-4 font-medium">Updating profile...</p>
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto">
+        {/* Profile Header Card */}
+        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden mb-8 border border-indigo-100">
+          {/* Cover Photo with Gradient */}
+          <div className="h-56 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 relative">
+            {/* Pattern Overlay */}
+            <div className="absolute inset-0 opacity-10">
+              <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <pattern id="pattern" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+                    <circle cx="20" cy="20" r="2" fill="white" />
+                  </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#pattern)" />
+              </svg>
             </div>
-          </div>
-        )}
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Avatar Section */}
-          <div className="md:col-span-1">
-            <div className="bg-white rounded-2xl shadow-xl overflow-hidden sticky top-6">
-              <div className="bg-gradient-to-r from-purple-500 to-purple-600 px-6 py-4">
-                <h2 className="text-xl font-semibold text-white flex items-center">
-                  <span className="text-2xl mr-2">🖼️</span>
-                  Profile Picture
-                </h2>
-              </div>
-              <div className="p-6">
-                <div className="flex flex-col items-center">
-                  {/* Avatar Display */}
-                  <div className="relative group mb-4">
-                    {avatarPreview ? (
-                      <img
-                        src={avatarPreview}
-                        alt="Profile"
-                        className="w-32 h-32 rounded-full object-cover border-4 border-purple-200 shadow-lg"
-                      />
-                    ) : (
-                      <div className="w-32 h-32 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-white text-4xl font-bold shadow-lg">
-                        {getInitials()}
-                      </div>
-                    )}
-                    <label
-                      htmlFor="avatar-upload"
-                      className="absolute bottom-0 right-0 bg-blue-500 text-white p-2 rounded-full cursor-pointer hover:bg-blue-600 transition-colors shadow-lg opacity-0 group-hover:opacity-100"
-                    >
-                      <span className="text-sm">✏️</span>
-                    </label>
-                  </div>
-
-                  {/* Avatar Upload */}
-                  <input
-                    type="file"
-                    id="avatar-upload"
-                    className="hidden"
-                    accept="image/*"
-                    onChange={handleAvatarChange}
-                  />
-
-                  {avatarFile && (
-                    <div className="w-full space-y-3">
-                      <p className="text-sm text-gray-600 text-center">
-                        Selected: {avatarFile.name}
-                      </p>
-                      <button
-                        onClick={handleAvatarUpload}
-                        disabled={loading}
-                        className="w-full px-4 py-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg hover:from-purple-600 hover:to-purple-700 disabled:opacity-50 transition-all transform hover:scale-105 font-medium shadow-lg"
-                      >
-                        <span className="mr-2">📤</span>
-                        Upload Avatar
-                      </button>
+            {/* Profile Info Overlay */}
+            <div className="absolute -bottom-16 left-8 md:left-12 flex items-end gap-6">
+              {/* Avatar with Rings */}
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 rounded-2xl blur-lg opacity-50 group-hover:opacity-75 transition-opacity"></div>
+                <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-2xl border-4 border-white shadow-2xl overflow-hidden bg-white transform transition-transform group-hover:scale-105">
+                  {getAvatarUrl() ? (
+                    <img
+                      src={getAvatarUrl()}
+                      alt={profile?.fullName}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = `https://ui-avatars.com/api/?name=${profile?.fullName}&background=6366f1&color=fff&size=160&bold=true`;
+                      }}
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center">
+                      <span className="text-5xl font-bold text-white">
+                        {profile?.fullName?.charAt(0) || 'M'}
+                      </span>
                     </div>
                   )}
 
-                  {/* User Role Badge */}
-                  <div className="mt-4 text-center">
-                    <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-medium">
-                      {userData?.user?.role || 'Execution Team'}
-                    </span>
-                  </div>
+                  {/* Avatar Upload Overlay */}
+                  <label className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 cursor-pointer">
+                    <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform">
+                      <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white">
+                        <FaCamera className="text-white text-xl" />
+                      </div>
+                    </div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleAvatarChange}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+
+                {/* Status Indicator */}
+                <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 border-4 border-white rounded-full"></div>
+              </div>
+
+              {/* Name and Role */}
+              <div className="mb-10">
+                <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
+                  {profile?.fullName.toUpperCase() || profile?.user?.username || "ExecutionTeam"}
+                </h1>
+                <div className="flex items-center gap-3 font-bold text-zinc-700">
+                  <FaBriefcase className="text-sm" />
+                  <span className="font-medium">ExecutionTeam</span>
                 </div>
               </div>
             </div>
+
+            {/* Upload Avatar Button */}
+            {avatarFile && (
+              <div className="absolute bottom-4 right-8 animate-fadeIn">
+                <button
+                  onClick={handleAvatarUpload}
+                  disabled={uploadingAvatar}
+                  className="px-6 py-3 bg-white/90 backdrop-blur-sm text-indigo-700 rounded-xl font-medium hover:bg-white transition-all duration-300 flex items-center gap-2 shadow-xl hover:shadow-2xl transform hover:-translate-y-0.5"
+                >
+                  {uploadingAvatar ? (
+                    <>
+                      <FaSpinner className="animate-spin" />
+                      Uploading...
+                    </>
+                  ) : (
+                    <>
+                      <FaCamera />
+                      Save New Avatar
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
           </div>
 
-          {/* Profile Information Section */}
-          <div className="md:col-span-2">
-            <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-              <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-4 flex justify-between items-center">
-                <h2 className="text-xl font-semibold text-white flex items-center">
-                  <span className="text-2xl mr-2">👤</span>
-                  Profile Information
-                </h2>
-                {!isEditing && (
-                  <button
-                    onClick={() => setIsEditing(true)}
-                    className="px-4 py-2 bg-white text-blue-600 rounded-lg hover:bg-gray-100 transition-all transform hover:scale-105 font-medium shadow-lg"
-                  >
-                    <span className="mr-2">✏️</span>
-                    Edit Profile
-                  </button>
-                )}
+          {/* Stats Bar */}
+          <div className="pt-20 md:pt-24 px-6 md:px-12 pb-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
+              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-xl shadow-sm border border-blue-100 hover:shadow-md transition-shadow">
+                <p className="text-sm text-blue-600 mb-1">Member Since</p>
+                <p className="font-semibold text-gray-800 flex items-center gap-2">
+                  <FaClock className="text-blue-500" />
+                  {formatDate(profile?.user?.createdAt)}
+                </p>
               </div>
 
-              <div className="p-6">
-                {isEditing ? (
-                  // Edit Mode Form
-                  <form onSubmit={handleProfileUpdate} className="space-y-4">
-                    <div className="space-y-1">
-                      <label className="text-sm font-medium text-gray-700">Full Name</label>
-                      <input
-                        type="text"
-                        name="fullName"
-                        value={profileForm.fullName}
-                        onChange={handleInputChange}
-                        placeholder="Enter your full name"
-                        className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                      />
-                    </div>
+              <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-4 rounded-xl shadow-sm border border-purple-100 hover:shadow-md transition-shadow">
+                <p className="text-sm text-purple-600 mb-1">Email</p>
+                <p className="font-semibold text-gray-800 flex items-center gap-2 truncate">
+                  <FaEnvelope className="text-purple-500" />
+                  {profile?.user?.email}
+                </p>
+              </div>
 
-                    <div className="space-y-1">
-                      <label className="text-sm font-medium text-gray-700">Username</label>
-                      <input
-                        type="text"
-                        name="username"
-                        value={profileForm.username}
-                        onChange={handleInputChange}
-                        placeholder="Enter username"
-                        className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                        required
-                      />
-                    </div>
+              <div className="bg-gradient-to-br from-emerald-50 to-teal-50 p-4 rounded-xl shadow-sm border border-emerald-100 hover:shadow-md transition-shadow">
+                <p className="text-sm text-emerald-600 mb-1">Status</p>
+                <div className="flex items-center gap-2">
+                  <span className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium ${
+                    profile?.user?.isAuthorized
+                      ? 'bg-emerald-500 text-white shadow-sm'
+                      : 'bg-amber-500 text-white shadow-sm'
+                  }`}>
+                    <FaCheckCircle className="text-xs" />
+                    {profile?.user?.isAuthorized ? 'Active' : 'Pending'}
+                  </span>
+                </div>
+              </div>
 
-                    <div className="space-y-1">
-                      <label className="text-sm font-medium text-gray-700">Email</label>
-                      <input
-                        type="email"
-                        value={profileForm.email}
-                        className="w-full px-4 py-2 border border-gray-200 rounded-lg bg-gray-50 cursor-not-allowed"
-                        disabled
-                      />
-                      <p className="text-xs text-gray-500 mt-1">Email cannot be changed</p>
-                    </div>
+              <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-4 rounded-xl shadow-sm border border-amber-100 hover:shadow-md transition-shadow">
+                <p className="text-sm text-amber-600 mb-1">User ID</p>
+                <p className="font-semibold text-gray-800 flex items-center gap-2 truncate">
+                  <FaIdCard className="text-amber-500" />
+                  {profile?._id?.slice(-6) || 'N/A'}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
 
-                    <div className="space-y-1">
-                      <label className="text-sm font-medium text-gray-700">Bio</label>
-                      <textarea
-                        name="bio"
-                        value={profileForm.bio}
-                        onChange={handleInputChange}
-                        placeholder="Tell us about yourself..."
-                        rows="4"
-                        className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
-                      />
-                    </div>
+        {/* Profile Content */}
+        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-6 md:p-8 border border-indigo-100">
+          <div className="animate-fadeIn">
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                Profile Information
+              </h2>
+              {!isEditing && (
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                >
+                  <FaEdit />
+                  Edit Profile
+                </button>
+              )}
+            </div>
 
-                    <div className="flex space-x-3 pt-4">
-                      <button
-                        type="submit"
-                        disabled={loading}
-                        className="px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 disabled:opacity-50 transition-all transform hover:scale-105 font-medium shadow-lg"
-                      >
-                        <span className="mr-2">💾</span>
+            {isEditing ? (
+              // Edit Mode - Only fullName and bio are editable
+              <div className="space-y-6 max-w-3xl">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Full Name
+                  </label>
+                  <input
+                    type="text"
+                    name="fullName"
+                    value={editForm.fullName}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+                    placeholder="Enter your full name"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Bio
+                  </label>
+                  <textarea
+                    name="bio"
+                    value={editForm.bio}
+                    onChange={handleInputChange}
+                    rows="4"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+                    placeholder="Tell us about yourself, your experience, and your mentoring philosophy..."
+                  />
+                </div>
+
+                <div className="flex gap-3 pt-4">
+                  <button
+                    onClick={handleProfileUpdate}
+                    disabled={updatingProfile}
+                    className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {updatingProfile ? (
+                      <>
+                        <FaSpinner className="animate-spin" />
+                        Saving Changes...
+                      </>
+                    ) : (
+                      <>
+                        <FaSave />
                         Save Changes
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setIsEditing(false);
-                          // Reset form to original values
-                          if (userData) {
-                            setProfileForm({
-                              fullName: userData.fullName || '',
-                              bio: userData.bio || '',
-                              username: userData.user?.username || '',
-                              email: userData.user?.email || ''
-                            });
-                          }
-                        }}
-                        className="px-6 py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-all"
-                      >
-                        Cancel
-                      </button>
+                      </>
+                    )}
+                  </button>
+                  <button
+                    onClick={handleCancelEdit}
+                    className="px-6 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-all duration-300 flex items-center gap-2"
+                  >
+                    <FaTimes />
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            ) : (
+              // View Mode
+              <div className="space-y-8">
+                {/* Basic Info */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-6 rounded-2xl border border-indigo-100">
+                    <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center mb-3">
+                      <FaUser className="text-indigo-600" />
                     </div>
-                  </form>
-                ) : (
-                  // View Mode
-                  <div className="space-y-4">
-                    {/* Profile Details */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="bg-gray-50 p-4 rounded-lg">
-                        <p className="text-sm text-gray-500 mb-1">Full Name</p>
-                        <p className="text-lg font-semibold text-gray-800">
-                          {profileForm.fullName || 'Not provided'}
-                        </p>
-                      </div>
+                    <p className="text-sm text-indigo-600 mb-1">Full Name</p>
+                    <p className="text-lg font-semibold text-gray-800">
+                      {profile?.fullName || 'Not provided'}
+                    </p>
+                  </div>
 
-                      <div className="bg-gray-50 p-4 rounded-lg">
-                        <p className="text-sm text-gray-500 mb-1">Username</p>
-                        <p className="text-lg font-semibold text-gray-800">
-                          {profileForm.username}
-                        </p>
-                      </div>
-
-                      <div className="bg-gray-50 p-4 rounded-lg">
-                        <p className="text-sm text-gray-500 mb-1">Email</p>
-                        <p className="text-lg font-semibold text-gray-800">
-                          {profileForm.email}
-                        </p>
-                      </div>
-
-                      <div className="bg-gray-50 p-4 rounded-lg">
-                        <p className="text-sm text-gray-500 mb-1">Member Since</p>
-                        <p className="text-lg font-semibold text-gray-800">
-                          {userData?.createdAt ? new Date(userData.createdAt).toLocaleDateString() : 'N/A'}
-                        </p>
-                      </div>
+                  <div className="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-6 rounded-2xl border border-indigo-100">
+                    <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center mb-3">
+                      <FaEnvelope className="text-indigo-600" />
                     </div>
+                    <p className="text-sm text-indigo-600 mb-1">Email</p>
+                    <p className="text-lg font-semibold text-gray-800">
+                      {profile?.user?.email || 'Not provided'}
+                    </p>
+                  </div>
+                </div>
 
-                    {/* Bio Section */}
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      <p className="text-sm text-gray-500 mb-2">Bio</p>
-                      <p className="text-gray-800">
-                        {profileForm.bio || 'No bio provided yet.'}
-                      </p>
-                    </div>
+                {/* Bio */}
+                <div className="bg-gradient-to-br from-gray-50 to-indigo-50 p-6 rounded-2xl border border-indigo-100">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-3">About Me</h3>
+                  <p className="text-gray-700 leading-relaxed">
+                    {profile?.bio || 'No bio provided yet.'}
+                  </p>
+                </div>
 
-                    {/* Account Details */}
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      <h3 className="font-semibold text-gray-700 mb-3">Account Details</h3>
-                      <div className="space-y-2">
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-600">User ID</span>
-                          <span className="text-sm font-mono text-gray-800">{userData?.user?._id}</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-600">Profile ID</span>
-                          <span className="text-sm font-mono text-gray-800">{userData?._id}</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-600">Account Status</span>
-                          <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
-                            {userData?.user?.isAuthorized ? 'Authorized' : 'Pending'}
-                          </span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-600">Last Updated</span>
-                          <span className="text-sm text-gray-800">
-                            {userData?.updatedAt ? new Date(userData.updatedAt).toLocaleString() : 'N/A'}
-                          </span>
-                        </div>
+                {/* Additional Info - Read Only */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="bg-white p-6 rounded-2xl border border-indigo-100 shadow-sm">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                      <FaGraduationCap className="text-indigo-600" />
+                      Account Information
+                    </h3>
+                    <div className="space-y-4">
+                      <div>
+                        <p className="text-sm text-indigo-600">Username</p>
+                        <p className="font-medium text-gray-800">
+                          {profile?.user?.username || 'Not specified'}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-indigo-600">User ID</p>
+                        <p className="font-medium text-gray-800">
+                          {profile?._id || 'Not specified'}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-indigo-600">Role</p>
+                        <p className="font-medium text-gray-800">
+                          {profile?.user?.role || 'Mentor'}
+                        </p>
                       </div>
                     </div>
                   </div>
-                )}
+
+                  <div className="bg-white p-6 rounded-2xl border border-indigo-100 shadow-sm">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                      <FaLink className="text-indigo-600" />
+                      Contact Information
+                    </h3>
+                    <div className="space-y-4">
+                      {profile?.user?.email && (
+                        <div className="flex items-center gap-3 text-gray-700 p-3 bg-gradient-to-r from-gray-50 to-indigo-50 rounded-xl border border-indigo-100">
+                          <FaEnvelope className="text-indigo-500" />
+                          <span className="truncate">{profile.user.email}</span>
+                        </div>
+                      )}
+                      {!profile?.user?.email && (
+                        <p className="text-gray-500 text-center py-4">No contact information</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Account Details */}
+                <div className="border-t border-indigo-100 pt-6">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                    <FaIdCard className="text-indigo-600" />
+                    Account Details
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="bg-gradient-to-br from-gray-50 to-indigo-50 p-4 rounded-xl border border-indigo-100">
+                      <p className="text-sm text-indigo-600 mb-1">Account Created</p>
+                      <p className="font-medium text-gray-800">
+                        {formatDate(profile?.user?.createdAt)}
+                      </p>
+                    </div>
+                    <div className="bg-gradient-to-br from-gray-50 to-indigo-50 p-4 rounded-xl border border-indigo-100">
+                      <p className="text-sm text-indigo-600 mb-1">Last Updated</p>
+                      <p className="font-medium text-gray-800">
+                        {formatDate(profile?.updatedAt)}
+                      </p>
+                    </div>
+                    <div className="bg-gradient-to-br from-gray-50 to-indigo-50 p-4 rounded-xl border border-indigo-100">
+                      <p className="text-sm text-indigo-600 mb-1">Account Status</p>
+                      <p className="font-medium text-gray-800">
+                        {profile?.user?.isAuthorized ? 'Active' : 'Pending'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
 
-      {/* Custom CSS Animations */}
+      {/* Custom CSS for animations */}
       <style jsx>{`
         @keyframes slideIn {
           from {
-            transform: translateX(-100%);
+            transform: translateX(100%);
             opacity: 0;
           }
           to {
@@ -441,8 +564,21 @@ const ExecutionProfile = () => {
           }
         }
 
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+
         .animate-slideIn {
           animation: slideIn 0.3s ease-out;
+        }
+
+        .animate-fadeIn {
+          animation: fadeIn 0.3s ease-out;
         }
       `}</style>
     </div>

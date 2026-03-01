@@ -7,7 +7,7 @@ import ApiError from '../utils/ApiError.js'
 import ApiResponse from '../utils/ApiResponse.js'
 import asyncHandler from '../utils/asyncHandler.js'
 import { internsFieldsEnum } from '../utils/constant.js'
-import { calculateAverageScore, castValue, getChangeFiled } from '../utils/helper.js'
+import { calculateAverageScore, castValue, getChangeField } from '../utils/helper.js'
 
 const addBulkInterns = asyncHandler(async (req, res) => {
     const file = req.files?.bulkAddInterns[0];
@@ -95,80 +95,104 @@ const addBulkInterns = asyncHandler(async (req, res) => {
     }, "Added Bulk interns successfully"));
 });
 
-const updateBulkInterns = asyncHandler(async(req,res)=>{
+const updateBulkInterns = asyncHandler(async (req, res) => {
+    const file = req.files?.bulkUpdateInterns?.[0];
+    if (!file) throw new ApiError(404, "Interns file doesn't exist");
 
+    const extension = path.extname(file.originalname);
+    const oldInterns = await Intern.find().lean();
+    const newInterns = await parseFileToJson(extension, file.path);
 
-      const file = req.files?.bulkUpdateInterns[0]
+    const dbMap = new Map(oldInterns.map(i => [i.email.trim().toLowerCase(), i]));
 
-       if(!file) {
-         throw new ApiError(404, "Inters file doesn't exists")
-       }
+    const bulkUpdates = [];
+    const updateLogs = [];
+    const skippedRows = [];
 
-    const extension = path.extname(file.originalname)
+    const scoreFields = [
+        "taskCompletion",
+        "taskQuality",
+        "deadlineAdherence",
+        "attendance",
+        "mentorFeedback",
+        "communication"
+    ];
 
-    const oldInters = await Intern.find().lean()
-    const newInters = await parseFileToJson(extension, file.path)
+    const mainFields = [
+        "_id", "name", "email", "gender", "course", "startDate", "endDate",
+        "department", "mentor", "isActive", "isCompliantIssue", "isDisciplineIssue", "score"
+    ];
 
+    for (const uploadIntern of newInterns) {
+        const email = (uploadIntern.email?.text || uploadIntern.email || "").trim().toLowerCase();
+        const dbIntern = dbMap.get(email);
 
-    const dbMap = new Map(
-        oldInters.map(intern => [intern.email, intern])
-     )
-
-
-
-     const bulkUpdates = [];
-     const updateInternsLog = [];
-
-     for(const uploadIntern of newInters) {
-       const dbInterns = dbMap.get(uploadIntern.email.text);
-
-
-
-       if(!dbInterns) continue;
-
-
-
-        const changes = getChangeFiled(dbInterns,uploadIntern, internsFieldsEnum)
-
-       console.log(changes);
-
-        if(Object.keys(changes).length > 0) {
-            bulkUpdates.push({
-                updateOne: {
-                    filter : { email : uploadIntern.email.text},
-                    update : { $set : changes }
-                }
-            })
-
-            updateInternsLog.push({
-              email : uploadIntern.email.text,
-              name : dbInterns.name,
-              oldValue : Object.fromEntries(
-                  Object.keys(changes).map(k => [k, dbInterns[k]])
-              ),
-              newValue : changes
-            })
-
+        if (!dbIntern) {
+            skippedRows.push({ email, reason: "Not found in DB" });
+            continue;
         }
-     }
 
-     if(bulkUpdates.length > 0) {
-          await Intern.bulkWrite(bulkUpdates)
+        const changes = {};
+        const otherData = {};
+
+        Object.keys(uploadIntern).forEach(key => {
+            const value = uploadIntern[key];
+
+            if (scoreFields.includes(key)) {
+                // Cast score-related fields to number
+                const castedValue = Number(value);
+                if (!isNaN(castedValue)) changes[key] = castedValue;
+                else skippedRows.push({ email, field: key, reason: "Invalid value" });
+            } else if (mainFields.includes(key)) {
+                changes[key] = value; // main fields go directly
+            } else {
+                // Only truly "other" fields go into otherData
+                otherData[key] = value;
+            }
+        });
+
+        // Calculate score if any of the 6 fields exist
+        const hasScoreFields = scoreFields.some(f => f in uploadIntern);
+        if (hasScoreFields) {
+            const internForScore = { ...dbIntern, ...changes };
+            changes.score = calculateAverageScore(internForScore);
+        }
+
+        // Merge new otherData with existing one, preserving main and score fields
+        if (Object.keys(otherData).length > 0) {
+            changes.otherData = { ...(dbIntern.otherData || {}), ...otherData };
+        }
+
+        if (Object.keys(changes).length === 0) continue;
+
+        bulkUpdates.push({
+            updateOne: {
+                filter: { email },
+                update: { $set: changes },
+            },
+        });
+
+        updateLogs.push({
+            email,
+            name: dbIntern.name,
+            oldValue: Object.fromEntries(Object.keys(changes).map(k => [k, dbIntern[k]])),
+            newValue: changes,
+        });
+    }
+
+    if (bulkUpdates.length > 0) {
+        await Intern.bulkWrite(bulkUpdates);
     }
 
     await fs.promises.unlink(file.path).catch(() => {});
 
-    // console.log(bulkUpdates);
+    return res.status(200).json(new ApiResponse(200, {
+        updateCount: updateLogs.length,
+        updatedInterns: updateLogs,
+        skippedRows
+    }, "Interns updated successfully"));
+});
 
-
-    return res
-    .status(200)
-    .json(new ApiResponse(200, {
-        updateCount : updateInternsLog.length,
-        updateInterns : updateInternsLog
-    }, "interns update successfully"))
-
-})
 
 const addSignleIntern = asyncHandler(async(req,res)=>{
     const { name, gender, course , email, endDate, department, mentor, score, isActive} = req.body

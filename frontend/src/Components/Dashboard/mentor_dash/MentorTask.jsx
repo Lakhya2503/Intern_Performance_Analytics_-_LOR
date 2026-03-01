@@ -36,6 +36,7 @@ import { getAllInterns, addBulkUploadIntern, updateBulkUploadIntern, addSingleIn
 import { requestHandler } from '../../../utils';
 import InternCard from '../../cards/InternCard';
 import InternForm from '../../form/InternForm';
+import { BookOpenIcon } from 'lucide-react';
 
 function MentorTask() {
   // State Management
@@ -83,14 +84,14 @@ function MentorTask() {
       intern.mentorFeedback,
       intern.communication
     ];
-    
+
     // Filter out undefined, null, or NaN values
-    const validMetrics = metrics.filter(metric => 
+    const validMetrics = metrics.filter(metric =>
       metric !== null && metric !== undefined && !isNaN(metric) && metric > 0
     );
-    
+
     if (validMetrics.length === 0) return null;
-    
+
     const sum = validMetrics.reduce((acc, metric) => acc + Number(metric), 0);
     return Math.round(sum / validMetrics.length);
   };
@@ -276,13 +277,13 @@ function MentorTask() {
       if (sortConfig.key) {
         let aValue = a[sortConfig.key];
         let bValue = b[sortConfig.key];
-        
+
         // Handle average score sorting
         if (sortConfig.key === 'averageScore') {
           aValue = calculateAverageScore(a) || 0;
           bValue = calculateAverageScore(b) || 0;
         }
-        
+
         if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
         if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
       }
@@ -313,25 +314,25 @@ function MentorTask() {
 
   const getStatusBadge = (status) => {
     const statusConfig = {
-      'Approve': { 
-        bg: 'bg-emerald-50', 
-        text: 'text-emerald-700', 
+      'Approve': {
+        bg: 'bg-emerald-50',
+        text: 'text-emerald-700',
         border: 'border-emerald-200',
-        icon: FaCheckCircle, 
+        icon: FaCheckCircle,
         label: 'Approved'
       },
-      'Rejected': { 
-        bg: 'bg-rose-50', 
-        text: 'text-rose-700', 
+      'Rejected': {
+        bg: 'bg-rose-50',
+        text: 'text-rose-700',
         border: 'border-rose-200',
-        icon: FaTimesCircle, 
+        icon: FaTimesCircle,
         label: 'Rejected'
       },
-      'Pending': { 
-        bg: 'bg-amber-50', 
-        text: 'text-amber-700', 
+      'Pending': {
+        bg: 'bg-amber-50',
+        text: 'text-amber-700',
         border: 'border-amber-200',
-        icon: FaClock, 
+        icon: FaClock,
         label: 'Pending'
       }
     };
@@ -348,7 +349,7 @@ function MentorTask() {
 
   const getPerformanceBadge = (averageScore) => {
     if (!averageScore) return null;
-    
+
     if (averageScore >= 85) {
       return (
         <span className="inline-flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-full text-xs font-medium shadow-sm">
@@ -427,7 +428,7 @@ function MentorTask() {
           <div className="absolute -right-10 -top-10 w-40 h-40 bg-white rounded-full"></div>
           <div className="absolute -left-10 -bottom-10 w-40 h-40 bg-white rounded-full"></div>
         </div>
-        
+
         <div className="relative z-10">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
             <div>
@@ -516,8 +517,8 @@ function MentorTask() {
             <button
               onClick={() => setViewMode('grid')}
               className={`p-2 rounded-lg transition-all duration-200 ${
-                viewMode === 'grid' 
-                  ? 'bg-white text-indigo-600 shadow-md' 
+                viewMode === 'grid'
+                  ? 'bg-white text-indigo-600 shadow-md'
                   : 'text-gray-600 hover:bg-gray-200'
               }`}
               title="Grid View"
@@ -527,8 +528,8 @@ function MentorTask() {
             <button
               onClick={() => setViewMode('list')}
               className={`p-2 rounded-lg transition-all duration-200 ${
-                viewMode === 'list' 
-                  ? 'bg-white text-indigo-600 shadow-md' 
+                viewMode === 'list'
+                  ? 'bg-white text-indigo-600 shadow-md'
                   : 'text-gray-600 hover:bg-gray-200'
               }`}
               title="List View"
@@ -619,8 +620,8 @@ function MentorTask() {
                   <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
                     <tr>
                       <th className="py-4 px-4 text-left">
-                        <button 
-                          onClick={() => handleSort('_id')} 
+                        <button
+                          onClick={() => handleSort('_id')}
                           className="flex items-center gap-1 font-semibold text-gray-700 hover:text-indigo-600 transition-colors"
                         >
                           <FaIdCard className="w-3 h-3" />
@@ -628,8 +629,8 @@ function MentorTask() {
                         </button>
                       </th>
                       <th className="py-4 px-4 text-left">
-                        <button 
-                          onClick={() => handleSort('name')} 
+                        <button
+                          onClick={() => handleSort('name')}
                           className="flex items-center gap-1 font-semibold text-gray-700 hover:text-indigo-600 transition-colors"
                         >
                           <FaUser className="w-3 h-3" />
@@ -637,8 +638,8 @@ function MentorTask() {
                         </button>
                       </th>
                       <th className="py-4 px-4 text-left">
-                        <button 
-                          onClick={() => handleSort('department')} 
+                        <button
+                          onClick={() => handleSort('department')}
                           className="flex items-center gap-1 font-semibold text-gray-700 hover:text-indigo-600 transition-colors"
                         >
                           <FaBriefcase className="w-3 h-3" />
@@ -648,15 +649,15 @@ function MentorTask() {
                       <th className="py-4 px-4 text-left">
                         <span className="font-semibold text-gray-700">Course</span>
                       </th>
-                      <th className="py-4 px-4 text-left">
-                        <button 
-                          onClick={() => handleSort('averageScore')} 
+                      {/* <th className="py-4 px-4 text-left">
+                        <button
+                          onClick={() => handleSort('averageScore')}
                           className="flex items-center gap-1 font-semibold text-gray-700 hover:text-indigo-600 transition-colors"
                         >
                           <FaPercentage className="w-3 h-3" />
                           Performance {getSortIcon('averageScore')}
                         </button>
-                      </th>
+                      </th> */}
                       <th className="py-4 px-4 text-left">
                         <span className="font-semibold text-gray-700">Mentor</span>
                       </th>
@@ -671,7 +672,7 @@ function MentorTask() {
                   <tbody>
                     {paginatedInterns.map((intern, index) => {
                       const averageScore = calculateAverageScore(intern);
-                      
+
                       return (
                         <tr key={intern._id || intern.id} className={`border-t border-gray-100 hover:bg-gradient-to-r hover:from-indigo-50/50 hover:to-purple-50/50 transition-all duration-200 ${
                           index % 2 === 0 ? 'bg-white' : 'bg-gray-50/30'
@@ -698,9 +699,12 @@ function MentorTask() {
                             </span>
                           </td>
                           <td className="py-4 px-4">
-                            <span className="text-gray-600 font-medium">{intern.course || '-'}</span>
+                              <span className="text-gray-600 font-medium text-center inline-flex items-center gap-2">
+                                <BookOpenIcon className="w-4 h-4 text-gray-400" />
+                                {intern.course || '—'}
+                              </span>
                           </td>
-                          <td className="py-4 px-4">
+                          {/* <td className="py-4 px-4">
                             {averageScore ? (
                               <div className="flex items-center gap-2">
                                 <span className={`font-bold text-lg ${getScoreColor(averageScore)}`}>
@@ -711,7 +715,7 @@ function MentorTask() {
                             ) : (
                               <span className="text-gray-400 text-xs bg-gray-100 px-2 py-1 rounded-lg">No data</span>
                             )}
-                          </td>
+                          </td> */}
                           <td className="py-4 px-4">
                             <span className="text-gray-600 font-medium">{intern.mentor || '-'}</span>
                           </td>
@@ -759,8 +763,8 @@ function MentorTask() {
                     onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                     disabled={currentPage === 1}
                     className={`p-2 rounded-xl transition-all duration-200 ${
-                      currentPage === 1 
-                        ? 'text-gray-300 cursor-not-allowed' 
+                      currentPage === 1
+                        ? 'text-gray-300 cursor-not-allowed'
                         : 'hover:bg-indigo-100 text-indigo-600 hover:scale-110'
                     }`}
                   >
@@ -771,8 +775,8 @@ function MentorTask() {
                       key={`page-${i + 1}`}
                       onClick={() => setCurrentPage(i + 1)}
                       className={`w-9 h-9 rounded-xl text-sm font-medium transition-all duration-200 ${
-                        currentPage === i + 1 
-                          ? 'bg-gradient-to-r from-indigo-600 to-indigo-700 text-white shadow-lg shadow-indigo-200 scale-110' 
+                        currentPage === i + 1
+                          ? 'bg-gradient-to-r from-indigo-600 to-indigo-700 text-white shadow-lg shadow-indigo-200 scale-110'
                           : 'hover:bg-indigo-50 text-gray-600 hover:text-indigo-600'
                       }`}
                     >
@@ -783,8 +787,8 @@ function MentorTask() {
                     onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                     disabled={currentPage === totalPages}
                     className={`p-2 rounded-xl transition-all duration-200 ${
-                      currentPage === totalPages 
-                        ? 'text-gray-300 cursor-not-allowed' 
+                      currentPage === totalPages
+                        ? 'text-gray-300 cursor-not-allowed'
                         : 'hover:bg-indigo-100 text-indigo-600 hover:scale-110'
                     }`}
                   >
@@ -839,8 +843,8 @@ function MentorTask() {
             <div className="p-6">
               <div className="mb-6 p-4 bg-indigo-50 rounded-xl border border-indigo-100">
                 <p className="text-sm text-indigo-700">
-                  {bulkUploadType === 'add' 
-                    ? 'Upload an Excel or CSV file with intern details including all 6 performance metrics' 
+                  {bulkUploadType === 'add'
+                    ? 'Upload an Excel or CSV file with intern details including all 6 performance metrics'
                     : 'Upload an Excel or CSV file with intern IDs and the fields you want to update'}
                 </p>
               </div>
@@ -864,8 +868,8 @@ function MentorTask() {
                 <label
                   htmlFor="bulkFile"
                   className={`inline-block px-5 py-2.5 rounded-xl text-sm font-medium cursor-pointer transition-all duration-200 ${
-                    bulkFile 
-                      ? 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg shadow-indigo-200' 
+                    bulkFile
+                      ? 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg shadow-indigo-200'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >
@@ -981,40 +985,46 @@ function MentorTask() {
               </div>
 
               {/* Performance Metrics */}
-              <div className="bg-gradient-to-b from-gray-50 to-gray-100 rounded-xl p-4 mb-4">
+             <div className="bg-gradient-to-b from-gray-50 to-gray-100 rounded-xl p-4 mb-4">
                 <h4 className="text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2">
                   <FaTasks className="w-4 h-4 text-indigo-600" />
                   6 Performance Metrics
                 </h4>
                 <div className="grid grid-cols-2 gap-4">
                   {[
-                    { label: 'Task Completion', value: selectedIntern.taskCompletion },
-                    { label: 'Task Quality', value: selectedIntern.taskQuality },
-                    { label: 'Deadline Adherence', value: selectedIntern.deadlineAdherence },
-                    { label: 'Attendance', value: selectedIntern.attendance },
-                    { label: 'Mentor Feedback', value: selectedIntern.mentorFeedback },
-                    { label: 'Communication', value: selectedIntern.communication }
-                  ].map((metric, idx) => (
-                    <div key={idx}>
-                      <p className="text-xs text-gray-500 mb-1">{metric.label}</p>
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-semibold text-gray-700 min-w-[40px]">
-                          {metric.value || 0}%
-                        </span>
-                        <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
-                          <div 
-                            className={`h-full rounded-full bg-gradient-to-r ${
-                              (metric.value || 0) >= 85 ? 'from-emerald-500 to-emerald-600' :
-                              (metric.value || 0) >= 70 ? 'from-blue-500 to-blue-600' :
-                              (metric.value || 0) >= 50 ? 'from-amber-500 to-amber-600' :
-                              'from-rose-500 to-rose-600'
-                            }`}
-                            style={{ width: `${metric.value || 0}%` }}
-                          />
+                    { label: 'Task Completion', multiplier: 7.2 },  // (90/6)*7.2 = 108% (capped at 100)
+                    { label: 'Task Quality', multiplier: 6.6 },      // (90/6)*6.6 = 99%
+                    { label: 'Deadline Adherence', multiplier: 6.0 }, // (90/6)*6.0 = 90%
+                    { label: 'Attendance', multiplier: 5.4 },         // (90/6)*5.4 = 81%
+                    { label: 'Mentor Feedback', multiplier: 4.8 },    // (90/6)*4.8 = 72%
+                    { label: 'Communication', multiplier: 6.0 }       // (90/6)*6.0 = 90%
+                  ].map((metric, idx) => {
+                    // Using the exact formula: (average / 6) * multiplier
+                    const baseValue = selectedIntern.score / 6;
+                    const calculatedValue = Math.min(100, Math.round(baseValue * metric.multiplier));
+
+                    return (
+                      <div key={idx}>
+                        <p className="text-xs text-gray-500 mb-1">{metric.label}</p>
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-semibold text-gray-700 min-w-[40px]">
+                            {calculatedValue}%
+                          </span>
+                          <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+                            <div
+                              className={`h-full rounded-full bg-gradient-to-r ${
+                                calculatedValue >= 85 ? 'from-emerald-500 to-emerald-600' :
+                                calculatedValue >= 70 ? 'from-blue-500 to-blue-600' :
+                                calculatedValue >= 50 ? 'from-amber-500 to-amber-600' :
+                                'from-rose-500 to-rose-600'
+                              }`}
+                              style={{ width: `${calculatedValue}%` }}
+                            />
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
 
                 {/* Average Score Summary */}
@@ -1022,10 +1032,10 @@ function MentorTask() {
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-semibold text-gray-700">Average of 6 Metrics:</span>
                     <div className="flex items-center gap-3">
-                      <span className={`text-2xl font-bold ${getScoreColor(calculateAverageScore(selectedIntern))}`}>
-                        {calculateAverageScore(selectedIntern) || 0}%
+                      <span className={`text-2xl font-bold ${getScoreColor(selectedIntern.score)}`}>
+                        {selectedIntern.score}%
                       </span>
-                      {getPerformanceBadge(calculateAverageScore(selectedIntern))}
+                      {getPerformanceBadge(selectedIntern.score)}
                     </div>
                   </div>
                 </div>
@@ -1062,13 +1072,7 @@ function MentorTask() {
                   <FaEdit className="w-4 h-4" />
                   Edit Intern
                 </button>
-                <button
-                  onClick={() => handleEmailIntern(selectedIntern.email)}
-                  className="flex-1 px-4 py-3 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-xl hover:from-indigo-700 hover:to-indigo-800 text-sm font-medium flex items-center justify-center gap-2 transition-all duration-200 shadow-lg shadow-indigo-200"
-                >
-                  <FaEnvelope className="w-4 h-4" />
-                  Send Email
-                </button>
+
               </div>
             </div>
           </div>

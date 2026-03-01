@@ -101,14 +101,14 @@ function Interns() {
       intern.mentorFeedback,
       intern.communication
     ];
-    
+
     // Filter out undefined, null, or NaN values
-    const validMetrics = metrics.filter(metric => 
+    const validMetrics = metrics.filter(metric =>
       metric !== null && metric !== undefined && !isNaN(metric) && metric > 0
     );
-    
+
     if (validMetrics.length === 0) return null;
-    
+
     const sum = validMetrics.reduce((acc, metric) => acc + Number(metric), 0);
     return Math.round(sum / validMetrics.length);
   };
@@ -368,13 +368,13 @@ function Interns() {
       if (sortConfig.key) {
         let aValue = a[sortConfig.key];
         let bValue = b[sortConfig.key];
-        
+
         // Handle average score sorting
         if (sortConfig.key === 'averageScore') {
           aValue = calculateAverageScore(a) || 0;
           bValue = calculateAverageScore(b) || 0;
         }
-        
+
         if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
         if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
       }
@@ -402,7 +402,7 @@ function Interns() {
     lorEligible: lorEligibleInterns.length,
     withIssues: interns.filter(i => i.isCompliantIssue || i.isDisciplineIssue).length,
     withCompleteMetrics: interns.filter(i => {
-      return i.taskCompletion && i.taskQuality && i.deadlineAdherence && 
+      return i.taskCompletion && i.taskQuality && i.deadlineAdherence &&
              i.attendance && i.mentorFeedback && i.communication;
     }).length
   };
@@ -449,7 +449,7 @@ function Interns() {
 
   const getPerformanceBadge = (averageScore) => {
     if (!averageScore) return null;
-    
+
     if (averageScore >= 85) {
       return (
         <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">
@@ -585,10 +585,7 @@ function Interns() {
             <p className="text-teal-200 text-xs">LOR Eligible</p>
             <p className="text-xl font-bold text-white">{stats.lorEligible}</p>
           </div>
-          <div className="bg-teal-700/50 backdrop-blur-sm rounded-lg p-3">
-            <p className="text-teal-200 text-xs">With Issues</p>
-            <p className="text-xl font-bold text-white">{stats.withIssues}</p>
-          </div>
+          
         </div>
       </div>
 
@@ -638,8 +635,8 @@ function Interns() {
             <button
               onClick={() => setViewMode('grid')}
               className={`p-2 rounded-lg transition-colors ${
-                viewMode === 'grid' 
-                  ? 'bg-teal-100 text-teal-600' 
+                viewMode === 'grid'
+                  ? 'bg-teal-100 text-teal-600'
                   : 'hover:bg-gray-100 text-gray-600'
               }`}
               title="Grid View"
@@ -649,8 +646,8 @@ function Interns() {
             <button
               onClick={() => setViewMode('list')}
               className={`p-2 rounded-lg transition-colors ${
-                viewMode === 'list' 
-                  ? 'bg-teal-100 text-teal-600' 
+                viewMode === 'list'
+                  ? 'bg-teal-100 text-teal-600'
                   : 'hover:bg-gray-100 text-gray-600'
               }`}
               title="List View"
@@ -736,8 +733,8 @@ function Interns() {
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="py-3 px-4 text-left">
-                        <button 
-                          onClick={() => handleSort('_id')} 
+                        <button
+                          onClick={() => handleSort('_id')}
                           className="flex items-center gap-1 font-medium text-gray-700 hover:text-teal-600"
                         >
                           <FaIdCard className="w-3 h-3" />
@@ -745,8 +742,8 @@ function Interns() {
                         </button>
                       </th>
                       <th className="py-3 px-4 text-left">
-                        <button 
-                          onClick={() => handleSort('name')} 
+                        <button
+                          onClick={() => handleSort('name')}
                           className="flex items-center gap-1 font-medium text-gray-700 hover:text-teal-600"
                         >
                           <FaUser className="w-3 h-3" />
@@ -754,8 +751,8 @@ function Interns() {
                         </button>
                       </th>
                       <th className="py-3 px-4 text-left">
-                        <button 
-                          onClick={() => handleSort('department')} 
+                        <button
+                          onClick={() => handleSort('department')}
                           className="flex items-center gap-1 font-medium text-gray-700 hover:text-teal-600"
                         >
                           <FaBriefcase className="w-3 h-3" />
@@ -764,8 +761,8 @@ function Interns() {
                       </th>
                       <th className="py-3 px-4 text-left">Course</th>
                       <th className="py-3 px-4 text-left">
-                        <button 
-                          onClick={() => handleSort('averageScore')} 
+                        <button
+                          onClick={() => handleSort('averageScore')}
                           className="flex items-center gap-1 font-medium text-gray-700 hover:text-teal-600"
                         >
                           <FaPercentage className="w-3 h-3" />
@@ -780,7 +777,7 @@ function Interns() {
                   <tbody>
                     {paginatedInterns.map((intern) => {
                       const averageScore = calculateAverageScore(intern);
-                      
+
                       return (
                         <tr key={intern._id || intern.id} className="border-t hover:bg-gray-50 transition-colors">
                           <td className="py-3 px-4">
@@ -862,8 +859,8 @@ function Interns() {
                     onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                     disabled={currentPage === 1}
                     className={`p-2 rounded transition-colors ${
-                      currentPage === 1 
-                        ? 'text-gray-300 cursor-not-allowed' 
+                      currentPage === 1
+                        ? 'text-gray-300 cursor-not-allowed'
                         : 'hover:bg-teal-100 text-teal-600'
                     }`}
                   >
@@ -874,8 +871,8 @@ function Interns() {
                       key={`page-${i + 1}`}
                       onClick={() => setCurrentPage(i + 1)}
                       className={`w-8 h-8 rounded text-sm transition-colors ${
-                        currentPage === i + 1 
-                          ? 'bg-teal-600 text-white' 
+                        currentPage === i + 1
+                          ? 'bg-teal-600 text-white'
                           : 'hover:bg-teal-100 text-gray-600'
                       }`}
                     >
@@ -886,8 +883,8 @@ function Interns() {
                     onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                     disabled={currentPage === totalPages}
                     className={`p-2 rounded transition-colors ${
-                      currentPage === totalPages 
-                        ? 'text-gray-300 cursor-not-allowed' 
+                      currentPage === totalPages
+                        ? 'text-gray-300 cursor-not-allowed'
                         : 'hover:bg-teal-100 text-teal-600'
                     }`}
                   >
@@ -964,8 +961,8 @@ function Interns() {
                   Upload Excel or CSV file
                 </p>
                 <p className="text-xs text-gray-500 mb-4">
-                  {bulkUploadType === 'add' 
-                    ? 'File should contain intern details with 6 performance metrics' 
+                  {bulkUploadType === 'add'
+                    ? 'File should contain intern details with 6 performance metrics'
                     : 'File should contain intern IDs and fields to update'}
                 </p>
                 <input
@@ -1195,7 +1192,7 @@ function Interns() {
                 <div className="space-y-4">
                   {lorEligibleInterns.map((intern) => {
                     const averageScore = calculateAverageScore(intern);
-                    
+
                     return (
                       <div key={intern._id || intern.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
                         <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
@@ -1271,7 +1268,7 @@ function Interns() {
                               <div className="flex items-center gap-2">
                                 <p className="text-sm font-medium">{intern.taskCompletion || 0}%</p>
                                 <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                                  <div 
+                                  <div
                                     className="h-full bg-teal-500"
                                     style={{ width: `${intern.taskCompletion || 0}%` }}
                                   />
@@ -1283,7 +1280,7 @@ function Interns() {
                               <div className="flex items-center gap-2">
                                 <p className="text-sm font-medium">{intern.taskQuality || 0}%</p>
                                 <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                                  <div 
+                                  <div
                                     className="h-full bg-teal-500"
                                     style={{ width: `${intern.taskQuality || 0}%` }}
                                   />
@@ -1295,7 +1292,7 @@ function Interns() {
                               <div className="flex items-center gap-2">
                                 <p className="text-sm font-medium">{intern.deadlineAdherence || 0}%</p>
                                 <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                                  <div 
+                                  <div
                                     className="h-full bg-teal-500"
                                     style={{ width: `${intern.deadlineAdherence || 0}%` }}
                                   />
@@ -1307,7 +1304,7 @@ function Interns() {
                               <div className="flex items-center gap-2">
                                 <p className="text-sm font-medium">{intern.attendance || 0}%</p>
                                 <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                                  <div 
+                                  <div
                                     className="h-full bg-teal-500"
                                     style={{ width: `${intern.attendance || 0}%` }}
                                   />
@@ -1319,7 +1316,7 @@ function Interns() {
                               <div className="flex items-center gap-2">
                                 <p className="text-sm font-medium">{intern.mentorFeedback || 0}%</p>
                                 <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                                  <div 
+                                  <div
                                     className="h-full bg-teal-500"
                                     style={{ width: `${intern.mentorFeedback || 0}%` }}
                                   />
@@ -1331,7 +1328,7 @@ function Interns() {
                               <div className="flex items-center gap-2">
                                 <p className="text-sm font-medium">{intern.communication || 0}%</p>
                                 <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                                  <div 
+                                  <div
                                     className="h-full bg-teal-500"
                                     style={{ width: `${intern.communication || 0}%` }}
                                   />
@@ -1466,7 +1463,7 @@ function Interns() {
                     <div className="flex items-center gap-2">
                       <p className="text-sm font-medium">{selectedIntern.taskCompletion || 0}%</p>
                       <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                        <div 
+                        <div
                           className="h-full bg-teal-500"
                           style={{ width: `${selectedIntern.taskCompletion || 0}%` }}
                         />
@@ -1478,7 +1475,7 @@ function Interns() {
                     <div className="flex items-center gap-2">
                       <p className="text-sm font-medium">{selectedIntern.taskQuality || 0}%</p>
                       <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                        <div 
+                        <div
                           className="h-full bg-teal-500"
                           style={{ width: `${selectedIntern.taskQuality || 0}%` }}
                         />
@@ -1490,7 +1487,7 @@ function Interns() {
                     <div className="flex items-center gap-2">
                       <p className="text-sm font-medium">{selectedIntern.deadlineAdherence || 0}%</p>
                       <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                        <div 
+                        <div
                           className="h-full bg-teal-500"
                           style={{ width: `${selectedIntern.deadlineAdherence || 0}%` }}
                         />
@@ -1502,7 +1499,7 @@ function Interns() {
                     <div className="flex items-center gap-2">
                       <p className="text-sm font-medium">{selectedIntern.attendance || 0}%</p>
                       <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                        <div 
+                        <div
                           className="h-full bg-teal-500"
                           style={{ width: `${selectedIntern.attendance || 0}%` }}
                         />
@@ -1514,7 +1511,7 @@ function Interns() {
                     <div className="flex items-center gap-2">
                       <p className="text-sm font-medium">{selectedIntern.mentorFeedback || 0}%</p>
                       <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                        <div 
+                        <div
                           className="h-full bg-teal-500"
                           style={{ width: `${selectedIntern.mentorFeedback || 0}%` }}
                         />
@@ -1526,7 +1523,7 @@ function Interns() {
                     <div className="flex items-center gap-2">
                       <p className="text-sm font-medium">{selectedIntern.communication || 0}%</p>
                       <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                        <div 
+                        <div
                           className="h-full bg-teal-500"
                           style={{ width: `${selectedIntern.communication || 0}%` }}
                         />

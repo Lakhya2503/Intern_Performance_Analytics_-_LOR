@@ -1,63 +1,38 @@
-// src/pages/Mentor/MentorHomeDashboard.jsx
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { BsGraphUpArrow } from "react-icons/bs";
+import {
+  FaAngleRight,
+  FaArrowDown,
+  FaArrowUp,
+  FaDatabase,
+  FaEdit,
+  FaEnvelope,
+  FaFileAlt,
+  FaGithub,
+  FaLinkedin,
+  FaPhone,
+  FaRocket,
+  FaSearch,
+  FaSpinner,
+  FaStar,
+  FaTasks,
+  FaTimes,
+  FaTrophy,
+  FaUpload,
+  FaUserEdit,
+  FaUserGraduate,
+  FaUserPlus,
+  FaUsers
+} from "react-icons/fa";
+import { MdOutlineRateReview } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../Context/AuthContext";
 import {
   getAllInterns,
-  scoreRankingInterns,
-  internsWithLor
+  internsWithLor,
+  scoreRankingInterns
 } from "../../../api/index";
 import { requestHandler } from "../../../utils/index";
-import {
-  FaUsers,
-  FaTasks,
-  FaCheckCircle,
-  FaClock,
-  FaChartLine,
-  FaFileAlt,
-  FaCalendarCheck,
-  FaStar,
-  FaRocket,
-  FaAward,
-  FaRegClock,
-  FaArrowUp,
-  FaArrowDown,
-  FaEye,
-  FaFilter,
-  FaSearch,
-  FaUserPlus,
-  FaBell,
-  FaCode,
-  FaMobile,
-  FaServer,
-  FaPen,
-  FaCamera,
-  FaChartBar,
-  FaSpinner,
-  FaCalendarAlt,
-  FaEnvelope,
-  FaPhone,
-  FaAngleRight,
-  FaTimes,
-  FaTrophy,
-  FaUser,
-  FaEdit,
-  FaPlusCircle,
-  FaGithub,
-  FaLinkedin,
-  FaTwitter,
-  FaGlobe,
-  FaPaperPlane,
-  FaChartPie,
-  FaUserGraduate,
-  FaUserTie,
-  FaBriefcase,
-  FaClock as FaClockRegular
-} from "react-icons/fa";
-import { MdAssignment, MdFeedback, MdOutlineRateReview } from "react-icons/md";
-import { HiOutlineLightBulb } from "react-icons/hi";
-import { BiTask, BiTrendingUp } from "react-icons/bi";
-import { BsFillCalendarCheckFill, BsGraphUpArrow } from "react-icons/bs";
 
 export default function MentorHomeDashboard() {
   const { user } = useAuth();
@@ -150,8 +125,8 @@ export default function MentorHomeDashboard() {
           : 0;
 
         const completedTasks = allRankedInterns.filter(i => i.completionRate > 80).length;
-        const completionRate = allRankedInterns.length > 0 
-          ? (completedTasks / allRankedInterns.length) * 100 
+        const completionRate = allRankedInterns.length > 0
+          ? (completedTasks / allRankedInterns.length) * 100
           : 0;
 
         setStats(prev => ({
@@ -190,30 +165,28 @@ export default function MentorHomeDashboard() {
   // Navigation handlers
   const handleViewAllInterns = () => navigate('/dashboard/Mentor/interns');
   const handleViewAnalytics = () => navigate('/dashboard/Mentor/analytics');
-  const handleViewExecutionTeam = () => navigate('/dashboard/Mentor/execution-team');
   const handleViewLORRequests = () => navigate('/dashboard/Mentor/lor-requests');
   const handleViewTasks = () => navigate('/dashboard/Mentor/task');
-
   const handleAddIntern = () => {
     navigate('/dashboard/Mentor/interns', { state: { action: 'add' } });
   };
 
   const handleUpdateIntern = (intern) => {
-    navigate('/dashboard/Mentor/interns', { 
-      state: { 
-        action: 'edit', 
-        internId: intern._id || intern.id 
-      } 
+    navigate('/dashboard/Mentor/interns', {
+      state: {
+        action: 'edit',
+        internId: intern._id || intern.id
+      }
     });
   };
 
   const handleGenerateLOR = (intern) => {
-    navigate('/dashboard/Mentor/lor-requests', { 
-      state: { 
+    navigate('/dashboard/Mentor/lor-requests', {
+      state: {
         action: 'generate',
         internId: intern._id || intern.id,
-        internName: intern.name 
-      } 
+        internName: intern.name
+      }
     });
   };
 
@@ -239,7 +212,6 @@ export default function MentorHomeDashboard() {
         avatar: `https://ui-avatars.com/api/?name=${intern?.name?.replace(' ', '+') || 'Intern'}&background=0D9488&color=fff&size=128`,
         email: intern?.email || `${intern?.name?.toLowerCase().replace(' ', '.')}@example.com`,
         project: ['E-commerce Platform', 'Dashboard UI', 'API Gateway', 'Mobile App', 'Cloud Service', 'AI Integration'][index % 6],
-        skills: ['React', 'Node.js', 'Python', 'AWS', 'Docker', 'MongoDB'].slice(0, 3),
         github: `https://github.com/${intern?.name?.toLowerCase().replace(' ', '')}`,
         linkedin: `https://linkedin.com/in/${intern?.name?.toLowerCase().replace(' ', '')}`
       }))
@@ -247,96 +219,53 @@ export default function MentorHomeDashboard() {
 
   // Enhanced quick stats with icons and colors
   const quickStats = [
-    { 
-      id: 'stat-total-interns', 
-      label: 'Total Interns', 
-      value: stats.totalInterns, 
-      icon: FaUserGraduate, 
+    {
+      id: 'stat-total-interns',
+      label: 'Total Interns',
+      value: stats.totalInterns,
+      icon: FaUserGraduate,
       color: 'from-teal-500 to-cyan-500',
       bgColor: 'bg-teal-50',
       iconColor: 'text-teal-600',
-      change: '+12%', 
-      changeType: 'increase' 
+      change: '+12%',
+      changeType: 'increase'
     },
-    { 
-      id: 'stat-pending-tasks', 
-      label: 'Pending Reviews', 
-      value: stats.pendingInterns, 
-      icon: MdOutlineRateReview, 
+    {
+      id: 'stat-pending-tasks',
+      label: 'Pending Reviews',
+      value: stats.pendingInterns,
+      icon: MdOutlineRateReview,
       color: 'from-amber-500 to-orange-500',
       bgColor: 'bg-amber-50',
       iconColor: 'text-amber-600',
-      change: '+5', 
-      changeType: 'increase' 
+      change: '+5',
+      changeType: 'increase'
     },
-    { 
-      id: 'stat-avg-score', 
-      label: 'Avg. Score', 
-      value: stats.averageScore, 
-      icon: FaStar, 
+    {
+      id: 'stat-avg-score',
+      label: 'Avg. Score',
+      value: stats.averageScore,
+      icon: FaStar,
       color: 'from-purple-500 to-pink-500',
       bgColor: 'bg-purple-50',
       iconColor: 'text-purple-600',
-      change: '+2.5%', 
-      changeType: 'increase', 
-      suffix: '' 
+      change: '+2.5%',
+      changeType: 'increase',
+      suffix: ''
     },
-    { 
-      id: 'stat-lor-requests', 
-      label: 'LOR Requests', 
-      value: stats.pendingLORRequests, 
-      icon: FaFileAlt, 
+    {
+      id: 'stat-lor-requests',
+      label: 'LOR Requests',
+      value: stats.pendingLORRequests,
+      icon: FaFileAlt,
       color: 'from-emerald-500 to-green-500',
       bgColor: 'bg-emerald-50',
       iconColor: 'text-emerald-600',
-      change: '+3', 
-      changeType: 'increase' 
+      change: '+3',
+      changeType: 'increase'
     },
   ];
 
-  // Enhanced upcoming tasks
-  const upcomingTasks = [
-    { 
-      id: 'task-1', 
-      title: 'Review Frontend Code', 
-      intern: 'Alice Johnson', 
-      internAvatar: 'https://ui-avatars.com/api/?name=Alice+Johnson&background=0D9488&color=fff', 
-      deadline: 'Today, 5:00 PM', 
-      priority: 'High',
-      type: 'Code Review',
-      project: 'E-commerce Platform'
-    },
-    { 
-      id: 'task-2', 
-      title: 'Weekly Progress Meeting', 
-      intern: 'All Interns', 
-      internAvatar: 'https://ui-avatars.com/api/?name=All+Interns&background=0891B2&color=fff', 
-      deadline: 'Tomorrow, 10:00 AM', 
-      priority: 'Medium',
-      type: 'Meeting',
-      project: 'General'
-    },
-    { 
-      id: 'task-3', 
-      title: 'Code Review Session', 
-      intern: 'Bob Smith', 
-      internAvatar: 'https://ui-avatars.com/api/?name=Bob+Smith&background=0D9488&color=fff', 
-      deadline: 'Tomorrow, 3:00 PM', 
-      priority: 'High',
-      type: 'Code Review',
-      project: 'API Gateway'
-    },
-    { 
-      id: 'task-4', 
-      title: 'Documentation Review', 
-      intern: 'Carol Davis', 
-      internAvatar: 'https://ui-avatars.com/api/?name=Carol+Davis&background=0D9488&color=fff', 
-      deadline: 'Wed, 11:00 AM', 
-      priority: 'Low',
-      type: 'Documentation',
-      project: 'Dashboard UI'
-    },
-  ];
 
   // Top performers with more details
   const topPerformers = getAllRankedInterns().slice(0, 3).map((intern, idx) => ({
@@ -357,53 +286,44 @@ export default function MentorHomeDashboard() {
 
   // Enhanced quick actions
   const quickActions = [
-    { 
-      id: 'action-add-intern', 
-      label: 'Add Intern', 
-      icon: FaUserPlus, 
-      color: 'teal', 
+    {
+      id: 'action-add-intern',
+      label: 'Add Intern',
+      icon: FaUserPlus,
+      color: 'teal',
       gradient: 'from-teal-500 to-teal-600',
       onClick: handleAddIntern,
       description: 'Add a new intern to the program',
-      shortcut: '⌘N'
     },
-    { 
-      id: 'action-update-intern', 
-      label: 'Update Intern', 
-      icon: FaEdit, 
-      color: 'cyan', 
+    {
+      id: 'action-update-intern',
+      label: 'Update Intern',
+      icon: FaEdit,
+      color: 'cyan',
       gradient: 'from-cyan-500 to-cyan-600',
       onClick: handleViewAllInterns,
       description: 'Edit intern details and progress',
-      shortcut: '⌘U'
     },
-    { 
-      id: 'action-generate-lor', 
-      label: 'Generate LOR', 
-      icon: FaFileAlt, 
-      color: 'purple', 
+    {
+      id: 'action-generate-lor',
+      label: 'Generate LOR',
+      icon: FaFileAlt,
+      color: 'purple',
       gradient: 'from-purple-500 to-purple-600',
       onClick: handleViewLORRequests,
       description: 'Create recommendation letter',
-      shortcut: '⌘L'
     },
-    { 
-      id: 'action-view-tasks', 
-      label: 'View Tasks', 
-      icon: FaTasks, 
-      color: 'emerald', 
+    {
+      id: 'action-view-tasks',
+      label: 'View Tasks',
+      icon: FaTasks,
+      color: 'emerald',
       gradient: 'from-emerald-500 to-emerald-600',
       onClick: handleViewTasks,
       description: 'Manage and review tasks',
-      shortcut: '⌘T'
     },
   ];
 
-  const deadlines = [
-    { id: 'deadline-1', task: 'Intern Reviews', date: 'Today', count: stats.pendingInterns, color: 'red', icon: FaClockRegular },
-    { id: 'deadline-2', task: 'LOR Approvals', date: 'Tomorrow', count: stats.pendingLORRequests, color: 'amber', icon: FaFileAlt },
-    { id: 'deadline-3', task: 'Weekly Reports', date: 'Friday', count: 8, color: 'teal', icon: FaChartLine },
-  ];
 
   const getScoreColor = (score) => {
     if (score >= 85) return 'text-teal-600';
@@ -422,7 +342,7 @@ export default function MentorHomeDashboard() {
   };
 
   const markNotificationAsRead = (id) => {
-    setNotifications(notifications.map(notif => 
+    setNotifications(notifications.map(notif =>
       notif.id === id ? { ...notif, read: true } : notif
     ));
   };
@@ -438,14 +358,14 @@ export default function MentorHomeDashboard() {
       )}
 
       {/* Header Section */}
-     
+
 
       <div className="max-w-7xl mx-auto  py-2">
         {/* Welcome Banner */}
         <div className="bg-gradient-to-r from-teal-600 via-teal-500 to-cyan-600 rounded-2xl shadow-xl p-8 text-white mb-8 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full transform translate-x-32 -translate-y-32"></div>
           <div className="absolute bottom-0 left-0 w-48 h-48 bg-white opacity-10 rounded-full transform -translate-x-24 translate-y-24"></div>
-          
+
           <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between">
             <div>
               <h1 className="text-4xl font-bold flex items-center gap-3 mb-3">
@@ -457,7 +377,7 @@ export default function MentorHomeDashboard() {
                 Here's what's happening with your interns today
               </p>
             </div>
-            
+
             <div className="flex gap-3 mt-6 md:mt-0">
               <button
                 onClick={handleViewAnalytics}
@@ -491,23 +411,6 @@ export default function MentorHomeDashboard() {
               <span className="font-semibold">Bronze: {rankingCounts.bronze}</span>
             </div>
           </div>
-
-          {/* Quick Date Navigation */}
-          <div className="flex gap-2 mt-6">
-            {['Today', 'This Week', 'This Month'].map((item) => (
-              <button
-                key={`date-${item.toLowerCase()}`}
-                className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-                  selectedTimeframe === item.toLowerCase()
-                    ? 'bg-white text-teal-600 shadow-lg scale-105'
-                    : 'bg-white/10 hover:bg-white/20 hover:scale-105'
-                }`}
-                onClick={() => setSelectedTimeframe(item.toLowerCase())}
-              >
-                {item}
-              </button>
-            ))}
-          </div>
         </div>
 
         {/* Quick Stats Grid */}
@@ -518,7 +421,9 @@ export default function MentorHomeDashboard() {
               className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer overflow-hidden"
               onClick={stat.label === 'LOR Requests' ? handleViewLORRequests :
                        stat.label === 'Total Interns' ? handleViewAllInterns :
-                       stat.label === 'Pending Reviews' ? handleViewTasks : undefined}
+                       stat.label === 'Pending Reviews' ? handleViewTasks :
+                       stat.label === 'Avg. Score' ? handleViewAnalytics : undefined
+                      }
             >
               <div className="p-6">
                 <div className="flex items-center justify-between mb-4">
@@ -538,8 +443,8 @@ export default function MentorHomeDashboard() {
                   </p>
                   <div className="text-xs text-gray-400 flex items-center gap-1">
                     vs last month
-                    {stat.changeType === 'increase' ? 
-                      <FaArrowUp className="w-3 h-3 text-green-500" /> : 
+                    {stat.changeType === 'increase' ?
+                      <FaArrowUp className="w-3 h-3 text-green-500" /> :
                       <FaArrowDown className="w-3 h-3 text-red-500" />
                     }
                   </div>
@@ -547,23 +452,6 @@ export default function MentorHomeDashboard() {
               </div>
               <div className={`h-1 bg-gradient-to-r ${stat.color} transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left`}></div>
             </div>
-          ))}
-        </div>
-
-        {/* Tabs Navigation */}
-        <div className="flex gap-2 mb-6 bg-white p-1 rounded-xl shadow-sm inline-flex">
-          {['Overview', 'Tasks', 'Analytics', 'Reports'].map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab.toLowerCase())}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                activeTab === tab.toLowerCase()
-                  ? 'bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-md'
-                  : 'text-gray-600 hover:bg-gray-100'
-              }`}
-            >
-              {tab}
-            </button>
           ))}
         </div>
 
@@ -598,17 +486,15 @@ export default function MentorHomeDashboard() {
                   </button>
                 </div>
               </div>
-              
+
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead className="bg-gray-50">
                     <tr className="text-gray-600 text-sm">
                       <th className="py-4 px-6 text-left font-semibold">Intern</th>
                       <th className="py-4 px-6 text-left font-semibold">Department</th>
-                      <th className="py-4 px-6 text-left font-semibold">Project</th>
+                      <th className="py-4 px-6 text-left font-semibold">Course</th>
                       <th className="py-4 px-6 text-left font-semibold">Progress</th>
-                      <th className="py-4 px-6 text-left font-semibold">Status</th>
-                      <th className="py-4 px-6 text-left font-semibold">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -623,10 +509,10 @@ export default function MentorHomeDashboard() {
                           <tr key={intern.id} className="hover:bg-teal-50/30 border-b last:border-b-0 transition-colors group">
                             <td className="py-4 px-6">
                               <div className="flex items-center gap-3">
-                                <img 
-                                  src={intern.avatar} 
-                                  alt={intern.name} 
-                                  className="w-10 h-10 rounded-full ring-2 ring-teal-100 group-hover:ring-teal-300 transition-all" 
+                                <img
+                                  src={intern.avatar}
+                                  alt={intern.name}
+                                  className="w-10 h-10 rounded-full ring-2 ring-teal-100 group-hover:ring-teal-300 transition-all"
                                 />
                                 <div>
                                   <p className="font-medium text-gray-800">{intern.name}</p>
@@ -640,14 +526,7 @@ export default function MentorHomeDashboard() {
                               </span>
                             </td>
                             <td className="py-4 px-6">
-                              <p className="text-gray-600 text-sm">{intern.project}</p>
-                              <div className="flex gap-1 mt-1">
-                                {intern.skills?.slice(0, 2).map((skill, idx) => (
-                                  <span key={idx} className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">
-                                    {skill}
-                                  </span>
-                                ))}
-                              </div>
+                              <p className="text-gray-600 text-sm">{intern.course}</p>
                             </td>
                             <td className="py-4 px-6">
                               <div className="flex items-center gap-2">
@@ -658,40 +537,6 @@ export default function MentorHomeDashboard() {
                                   ></div>
                                 </div>
                                 <span className="text-xs font-medium text-gray-600">{intern.progress}%</span>
-                              </div>
-                            </td>
-                            <td className="py-4 px-6">
-                              <span className={`px-3 py-1 rounded-full text-xs font-medium
-                                ${intern.status === 'Approve' ? 'bg-green-100 text-green-700 border border-green-200' :
-                                  intern.status === 'Rejected' ? 'bg-red-100 text-red-700 border border-red-200' :
-                                  'bg-yellow-100 text-yellow-700 border border-yellow-200'
-                                }`}>
-                                {intern.status}
-                              </span>
-                            </td>
-                            <td className="py-4 px-6">
-                              <div className="flex items-center gap-2">
-                                <button
-                                  onClick={() => setSelectedIntern(intern)}
-                                  className="p-2 hover:bg-teal-100 rounded-lg transition-colors group"
-                                  title="View Details"
-                                >
-                                  <FaEye className="w-4 h-4 text-gray-500 group-hover:text-teal-600 transition-colors" />
-                                </button>
-                                <button
-                                  onClick={() => handleUpdateIntern(intern)}
-                                  className="p-2 hover:bg-teal-100 rounded-lg transition-colors group"
-                                  title="Update Intern"
-                                >
-                                  <FaEdit className="w-4 h-4 text-gray-500 group-hover:text-teal-600 transition-colors" />
-                                </button>
-                                <button
-                                  onClick={() => handleGenerateLOR(intern)}
-                                  className="p-2 hover:bg-teal-100 rounded-lg transition-colors group"
-                                  title="Generate LOR"
-                                >
-                                  <FaFileAlt className="w-4 h-4 text-gray-500 group-hover:text-teal-600 transition-colors" />
-                                </button>
                               </div>
                             </td>
                           </tr>
@@ -717,63 +562,83 @@ export default function MentorHomeDashboard() {
               </div>
             </div>
 
-            {/* Upcoming Tasks */}
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-                  <FaTasks className="w-5 h-5 text-teal-600" />
-                  Upcoming Tasks
-                </h3>
-                <button
-                  onClick={handleViewTasks}
-                  className="text-sm text-teal-600 hover:text-teal-700 flex items-center gap-1"
-                >
-                  View All Tasks
-                  <FaAngleRight className="w-4 h-4" />
-                </button>
-              </div>
-              
-              <div className="space-y-4">
-                {upcomingTasks.map((task) => (
-                  <div
-                    key={task.id}
-                    className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl hover:bg-teal-50 transition-colors group cursor-pointer"
-                  >
-                    <img 
-                      src={task.internAvatar} 
-                      alt={task.intern} 
-                      className="w-10 h-10 rounded-full ring-2 ring-white group-hover:ring-teal-200 transition-all" 
-                    />
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h4 className="font-medium text-gray-800">{task.title}</h4>
-                        <span className={`text-xs px-2 py-0.5 rounded-full border ${getPriorityColor(task.priority)}`}>
-                          {task.priority}
-                        </span>
+                  <div className="bg-white rounded-2xl shadow-lg p-6">
+                        <div className="flex items-center justify-between mb-6">
+                          <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                            <FaTasks className="w-5 h-5 text-teal-600" />
+                            Intern Management
+                          </h3>
+                          <button
+                            onClick={()=>navigate(`/dashboard/Mentor/interns`)}
+                            className="text-sm text-teal-600 hover:text-teal-700 flex items-center gap-1"
+                          >
+                            Manage All
+                            <FaAngleRight className="w-4 h-4" />
+                          </button>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4"
+                        >
+                          {/* Add Intern Single */}
+                          <div className="p-4 bg-gray-50 rounded-xl hover:bg-teal-50 transition-colors group cursor-pointer relative">
+                            <div className="flex flex-col items-center text-center"
+                              onClick={()=>navigate(`/dashboard/Mentor/interns`)}
+                              >
+                              <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center mb-3 group-hover:bg-teal-200 transition-colors"
+                              >
+                                <FaUserPlus className="w-6 h-6 text-teal-600"
+                                />
+                              </div>
+                              <h4 className="font-medium text-gray-800 mb-1">Add Intern</h4>
+                              <p className="text-xs text-gray-500">Single entry</p>
+                            </div>
+                          </div>
+
+                          {/* Add Intern Bulk */}
+                          <div className="p-4 bg-gray-50 rounded-xl hover:bg-teal-50 transition-colors group cursor-pointer relative">
+                            <div className="flex flex-col items-center text-center"
+                                onClick={()=>navigate(`/dashboard/Mentor/interns`)}
+                            >
+                              <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-3 group-hover:bg-purple-200 transition-colors">
+                                <FaUpload className="w-6 h-6 text-purple-600" />
+                              </div>
+                              <h4 className="font-medium text-gray-800 mb-1">Bulk Upload</h4>
+                              <p className="text-xs text-gray-500">CSV/Excel import</p>
+                            </div>
+                          </div>
+
+                          {/* Update Intern Single */}
+                          <div className="p-4 bg-gray-50 rounded-xl hover:bg-teal-50 transition-colors group cursor-pointer relative">
+                            <div className="flex flex-col items-center text-center"
+                                       onClick={()=>navigate(`/dashboard/Mentor/interns`)}
+                            >
+                              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-3 group-hover:bg-blue-200 transition-colors">
+                                <FaUserEdit className="w-6 h-6 text-blue-600" />
+                              </div>
+                              <h4 className="font-medium text-gray-800 mb-1">Update Intern</h4>
+                              <p className="text-xs text-gray-500">Single record</p>
+                            </div>
+                          </div>
+
+                          {/* Update Intern Bulk */}
+                          <div className="p-4 bg-gray-50 rounded-xl hover:bg-teal-50 transition-colors group cursor-pointer relative">
+                            <div className="flex flex-col items-center text-center"
+                                  onClick={()=>navigate(`/dashboard/Mentor/interns`)}
+                            >
+                              <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mb-3 group-hover:bg-orange-200 transition-colors">
+                                <FaDatabase className="w-6 h-6 text-orange-600" />
+                              </div>
+                              <h4 className="font-medium text-gray-800 mb-1">Bulk Update</h4>
+                              <p className="text-xs text-gray-500">Mass updates</p>
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-3 text-xs text-gray-500">
-                        <span className="flex items-center gap-1">
-                          <FaUser className="w-3 h-3" />
-                          {task.intern}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <FaClock className="w-3 h-3" />
-                          {task.deadline}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <FaCode className="w-3 h-3" />
-                          {task.type}
-                        </span>
-                      </div>
-                    </div>
-                    <button className="opacity-0 group-hover:opacity-100 transition-opacity px-3 py-1.5 bg-teal-600 text-white text-sm rounded-lg hover:bg-teal-700">
-                      Start
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
+
+
           </div>
+
+
 
           {/* Right Column */}
           <div className="space-y-8">
@@ -792,56 +657,10 @@ export default function MentorHomeDashboard() {
                   </div>
                 </div>
               </div>
-              
-              <div className="grid grid-cols-2 gap-3 mb-6">
-                <div className="text-center p-3 bg-teal-50 rounded-xl">
-                  <p className="text-2xl font-bold text-teal-600">{stats.totalInterns}</p>
-                  <p className="text-xs text-gray-600">Total Interns</p>
-                </div>
-                <div className="text-center p-3 bg-cyan-50 rounded-xl">
-                  <p className="text-2xl font-bold text-cyan-600">{stats.activeProjects}</p>
-                  <p className="text-xs text-gray-600">Projects</p>
-                </div>
-              </div>
 
-              <div className="space-y-3">
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-gray-600">Completion Rate</span>
-                  <span className="font-semibold text-gray-800">{stats.completionRate}%</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div 
-                    className="bg-gradient-to-r from-teal-600 to-cyan-600 h-2 rounded-full transition-all duration-500"
-                    style={{ width: `${stats.completionRate}%` }}
-                  ></div>
-                </div>
-              </div>
+
             </div>
 
-            {/* Upcoming Deadlines */}
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2 mb-6">
-                <BsFillCalendarCheckFill className="w-5 h-5 text-teal-600" />
-                Upcoming Deadlines
-              </h3>
-              
-              <div className="space-y-4">
-                {deadlines.map((deadline) => (
-                  <div key={deadline.id} className="flex items-center gap-4">
-                    <div className={`w-10 h-10 bg-${deadline.color}-100 rounded-xl flex items-center justify-center`}>
-                      <deadline.icon className={`w-5 h-5 text-${deadline.color}-600`} />
-                    </div>
-                    <div className="flex-1">
-                      <p className="font-medium text-gray-800">{deadline.task}</p>
-                      <p className="text-xs text-gray-500">{deadline.date}</p>
-                    </div>
-                    <span className={`px-3 py-1 bg-${deadline.color}-100 text-${deadline.color}-700 rounded-full text-xs font-medium`}>
-                      {deadline.count} pending
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
 
             {/* Top Performers */}
             <div className="bg-white rounded-2xl shadow-lg p-6">
@@ -854,7 +673,7 @@ export default function MentorHomeDashboard() {
                   This Month
                 </span>
               </div>
-              
+
               <div className="space-y-4">
                 {topPerformers.length > 0 ? (
                   topPerformers.map((intern, index) => (
@@ -887,7 +706,7 @@ export default function MentorHomeDashboard() {
                   </div>
                 )}
               </div>
-              
+
               <button
                 onClick={handleViewAnalytics}
                 className="w-full mt-6 px-4 py-2 border border-teal-600 text-teal-600 rounded-xl hover:bg-teal-50 transition-colors text-sm font-medium"
@@ -902,7 +721,7 @@ export default function MentorHomeDashboard() {
                 <FaRocket className="w-5 h-5 text-teal-600" />
                 Quick Actions
               </h3>
-              
+
               <div className="grid grid-cols-2 gap-3">
                 {quickActions.map((action) => (
                   <button
@@ -923,23 +742,6 @@ export default function MentorHomeDashboard() {
                   </button>
                 ))}
               </div>
-              
-              <div className="mt-6 pt-4 border-t border-gray-100">
-                <p className="text-xs text-gray-500 text-center">
-                  Click to perform quick actions
-                </p>
-              </div>
-            </div>
-
-            {/* Motivational Quote */}
-            <div className="bg-gradient-to-r from-teal-600 to-cyan-600 rounded-2xl shadow-lg p-6 text-white">
-              <HiOutlineLightBulb className="w-10 h-10 mb-4 opacity-75" />
-              <p className="text-lg font-medium mb-2">"The best way to predict the future is to create it."</p>
-              <p className="text-sm text-teal-100">- Peter Drucker</p>
-              <div className="mt-4 flex items-center gap-2 text-sm">
-                <FaRocket className="w-4 h-4" />
-                <span>Keep inspiring your interns!</span>
-              </div>
             </div>
           </div>
         </div>
@@ -952,10 +754,10 @@ export default function MentorHomeDashboard() {
               <div className="bg-gradient-to-r from-teal-600 to-cyan-600 p-6 sticky top-0">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-4">
-                    <img 
-                      src={selectedIntern.avatar} 
-                      alt={selectedIntern.name} 
-                      className="w-20 h-20 rounded-2xl border-4 border-white shadow-xl" 
+                    <img
+                      src={selectedIntern.avatar}
+                      alt={selectedIntern.name}
+                      className="w-20 h-20 rounded-2xl border-4 border-white shadow-xl"
                     />
                     <div className="text-white">
                       <h2 className="text-2xl font-bold">{selectedIntern.name}</h2>
@@ -1014,60 +816,10 @@ export default function MentorHomeDashboard() {
                       <div className="bg-teal-600 h-1.5 rounded-full" style={{ width: `${selectedIntern.progress}%` }}></div>
                     </div>
                   </div>
-                  <div className="text-center p-4 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl">
-                    <p className="text-2xl font-bold text-purple-600">{selectedIntern.tasksCompleted}/{selectedIntern.totalTasks}</p>
-                    <p className="text-xs text-gray-600">Tasks Done</p>
-                  </div>
                   <div className="text-center p-4 bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl">
                     <p className="text-2xl font-bold text-amber-600">4.5</p>
                     <p className="text-xs text-gray-600">Rating</p>
                   </div>
-                </div>
-
-                {/* Recent Activity */}
-                <div>
-                  <h4 className="text-sm font-semibold text-gray-700 mb-3">Recent Activity</h4>
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3 text-sm">
-                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                      <p className="text-gray-600">Completed task: "API Integration"</p>
-                      <span className="text-xs text-gray-400">2 hours ago</span>
-                    </div>
-                    <div className="flex items-center gap-3 text-sm">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                      <p className="text-gray-600">Submitted code review</p>
-                      <span className="text-xs text-gray-400">Yesterday</span>
-                    </div>
-                    <div className="flex items-center gap-3 text-sm">
-                      <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                      <p className="text-gray-600">Joined team meeting</p>
-                      <span className="text-xs text-gray-400">2 days ago</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex gap-3 pt-4">
-                  <button 
-                    onClick={() => {
-                      setSelectedIntern(null);
-                      handleUpdateIntern(selectedIntern);
-                    }}
-                    className="flex-1 px-4 py-3 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-xl hover:shadow-lg transition-all flex items-center justify-center gap-2 group"
-                  >
-                    <FaEdit className="group-hover:rotate-12 transition-transform" />
-                    Update Intern
-                  </button>
-                  <button 
-                    onClick={() => {
-                      setSelectedIntern(null);
-                      handleGenerateLOR(selectedIntern);
-                    }}
-                    className="flex-1 px-4 py-3 border-2 border-teal-600 text-teal-600 rounded-xl hover:bg-teal-50 transition-all flex items-center justify-center gap-2 group"
-                  >
-                    <FaFileAlt className="group-hover:scale-110 transition-transform" />
-                    Generate LOR
-                  </button>
                 </div>
               </div>
             </div>

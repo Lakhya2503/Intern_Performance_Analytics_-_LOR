@@ -40,6 +40,7 @@ import { requestHandler } from '../../../utils';
 import LORCard from '../../cards/LORCard';
 import LORFormModal from '../../form/LORFormModal';
 import TemplateUploadModal from '../../form/TemplateUploadModal';
+import {toast} from 'react-hot-toast'
 
 // ==================== CONSTANTS ====================
 const STATUS_OPTIONS = [
@@ -120,33 +121,33 @@ const InternsLorRequest = () => {
   const [generatedInterns, setGeneratedInterns] = useState([]);
   const [pendingInterns, setPendingInterns] = useState([]);
   const [rejectedInterns, setRejectedInterns] = useState([]);
-  
+
   const [selectedIntern, setSelectedIntern] = useState(null);
   const [sendingEmailFor, setSendingEmailFor] = useState(null);
   const [notification, setNotification] = useState({ show: false, type: '', message: '' });
   const [bulkUploadResult, setBulkUploadResult] = useState(null);
-  
+
   // View state
   const [viewMode, setViewMode] = useState(VIEW_OPTIONS.CARD);
-  
+
   // State for rejection confirmation and suggestions
   const [showRejectionConfirm, setShowRejectionConfirm] = useState(false);
   const [rejectingIntern, setRejectingIntern] = useState(null);
   const [showSuggestionDropdown, setShowSuggestionDropdown] = useState(false);
   const [customRejectionMessage, setCustomRejectionMessage] = useState('');
-  
+
   // State for update confirmation (for rejected interns)
   const [showUpdateConfirm, setShowUpdateConfirm] = useState(false);
   const [updatingIntern, setUpdatingIntern] = useState(null);
-  
+
   // State for resend email confirmation
   const [showResendConfirm, setShowResendConfirm] = useState(false);
   const [resendIntern, setResendIntern] = useState(null);
-  
+
   // State for generate LOR for rejected intern confirmation
   const [showGenerateRejectedConfirm, setShowGenerateRejectedConfirm] = useState(false);
   const [generateRejectedIntern, setGenerateRejectedIntern] = useState(null);
-  
+
   // Hover state for cards
   const [hoveredItem, setHoveredItem] = useState(null);
 
@@ -200,17 +201,13 @@ const InternsLorRequest = () => {
   });
 
   // ==================== NOTIFICATION HANDLER ====================
-  const showNotification = useCallback((type, message) => {
-    setNotification({ show: true, type, message });
-    setTimeout(() => setNotification({ show: false, type: '', message: '' }), 5000);
-  }, []);
 
   // ==================== API CALLS ====================
 
   // 1. Fetch Generated LOR Interns
   const fetchGeneratedInterns = async () => {
     setLoading(prev => ({ ...prev, generated: true }));
-    
+
     await requestHandler(
       () => internsWithLor(),
       null,
@@ -238,7 +235,7 @@ const InternsLorRequest = () => {
       },
       (err) => {
         console.error('Error fetching generated interns:', err);
-        showNotification('error', 'Failed to fetch generated LOR interns');
+        toast.success('error', 'Failed to fetch generated LOR interns');
       }
     );
 
@@ -248,7 +245,7 @@ const InternsLorRequest = () => {
   // 2. Fetch Pending LOR Interns
   const fetchPendingInterns = async () => {
     setLoading(prev => ({ ...prev, pending: true }));
-    
+
     await requestHandler(
       () => internsWithNoLor(),
       null,
@@ -271,7 +268,7 @@ const InternsLorRequest = () => {
       },
       (err) => {
         console.error('Error fetching pending interns:', err);
-        showNotification('error', 'Failed to fetch pending LOR interns');
+        toast.success('error', 'Failed to fetch pending LOR interns');
       }
     );
 
@@ -281,7 +278,7 @@ const InternsLorRequest = () => {
   // 3. Fetch Rejected LOR Interns
   const fetchRejectedInterns = async () => {
     setLoading(prev => ({ ...prev, rejected: true }));
-    
+
     await requestHandler(
       () => rejectedInternForLor(),
       null,
@@ -307,7 +304,7 @@ const InternsLorRequest = () => {
       },
       (err) => {
         console.error('Error fetching rejected interns:', err);
-        showNotification('error', 'Failed to fetch rejected LOR interns');
+        toast.success('error', 'Failed to fetch rejected LOR interns');
       }
     );
 
@@ -328,11 +325,11 @@ const InternsLorRequest = () => {
     } catch (err) {
       setError('Failed to fetch data. Please try again.');
       console.error('Fetch error:', err);
-      showNotification('error', 'Failed to fetch data. Please try again.');
+      toast.success('error', 'Failed to fetch data. Please try again.');
     } finally {
       setLoading(prev => ({ ...prev, initial: false }));
     }
-  }, [showNotification]);
+  }, [toast.success]);
 
   // ==================== COMBINED INTERNS FOR DISPLAY ====================
   const allInterns = useMemo(() => {
@@ -350,11 +347,11 @@ const InternsLorRequest = () => {
         intern.domain?.toLowerCase().includes(searchTerm);
 
       const matchesStatus = filters.status === 'all' || intern.status === filters.status;
-      
-      const matchesDepartment = !filters.department || 
+
+      const matchesDepartment = !filters.department ||
         intern.department?.toLowerCase().includes(filters.department.toLowerCase());
-      
-      const matchesDomain = !filters.domain || 
+
+      const matchesDomain = !filters.domain ||
         intern.domain?.toLowerCase().includes(filters.domain.toLowerCase());
 
       return matchesSearch && matchesStatus && matchesDepartment && matchesDomain;
@@ -416,13 +413,13 @@ const InternsLorRequest = () => {
       () => generateLorAndSend(selectedIntern._id, payload),
       null,
       () => {
-        showNotification('success', `✨ LOR generated and sent successfully to ${selectedIntern.name}`);
+        toast.success('success', `✨ LOR generated and sent successfully to ${selectedIntern.name}`);
         setModals(prev => ({ ...prev, generate: false }));
         setSelectedIntern(null);
         fetchAllData();
       },
       (err) => {
-        showNotification('error', 'Failed to generate LOR: ' + err.message);
+        toast.success('error', 'Failed to generate LOR: ' + err.message);
       }
     );
 
@@ -471,7 +468,7 @@ const InternsLorRequest = () => {
     if (!selectedIntern) return;
 
     if (!rejectionData.comment?.trim()) {
-      showNotification('error', 'Please provide a rejection reason');
+      toast.success('error', 'Please provide a rejection reason');
       return;
     }
 
@@ -481,13 +478,13 @@ const InternsLorRequest = () => {
       () => rejectToGenLor(selectedIntern._id, rejectionData),
       null,
       () => {
-        showNotification('success', `❌ LOR request rejected for ${selectedIntern.name}`);
+        toast.success('success', `❌ LOR request rejected for ${selectedIntern.name}`);
         setModals(prev => ({ ...prev, rejection: false }));
         setSelectedIntern(null);
         fetchAllData();
       },
       (err) => {
-        showNotification('error', 'Failed to reject LOR: ' + err.message);
+        toast.success('error', 'Failed to reject LOR: ' + err.message);
       }
     );
 
@@ -502,19 +499,19 @@ const InternsLorRequest = () => {
 
   const confirmResendEmail = async () => {
     if (!resendIntern) return;
-    
+
     setShowResendConfirm(false);
     setSendingEmailFor(resendIntern._id);
-    
+
     await requestHandler(
       () => updateAndSendLor(resendIntern._id),
       null,
       () => {
-        showNotification('success', `✅ LOR email resent successfully to ${resendIntern.name}`);
+        toast.success('success', `✅ LOR email resent successfully to ${resendIntern.name}`);
         fetchAllData();
       },
       (err) => {
-        showNotification('error', 'Failed to resend email: ' + err.message);
+        toast.success('error', 'Failed to resend email: ' + err.message);
       }
     );
 
@@ -535,7 +532,7 @@ const InternsLorRequest = () => {
 
   const confirmGenerateRejected = async () => {
     if (!generateRejectedIntern) return;
-    
+
     setShowGenerateRejectedConfirm(false);
     setLoading(prev => ({ ...prev, action: true }));
     setSendingEmailFor(generateRejectedIntern._id);
@@ -544,11 +541,11 @@ const InternsLorRequest = () => {
       () => updateAndSendLor(generateRejectedIntern._id),
       null,
       () => {
-        showNotification('success', `✅ LOR generated and sent successfully to ${generateRejectedIntern.name}`);
+        toast.success('success', `✅ LOR generated and sent successfully to ${generateRejectedIntern.name}`);
         fetchAllData();
       },
       (err) => {
-        showNotification('error', 'Failed to generate LOR: ' + err.message);
+        toast.success('error', 'Failed to generate LOR: ' + err.message);
       }
     );
 
@@ -572,14 +569,14 @@ const InternsLorRequest = () => {
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       'text/csv'
     ];
-    
+
     if (!validTypes.includes(file.type)) {
-      showNotification('error', 'Please upload only Excel or CSV files');
+      toast.success('error', 'Please upload only Excel or CSV files');
       return;
     }
 
     if (file.size > 10 * 1024 * 1024) {
-      showNotification('error', 'File size should be less than 10MB');
+      toast.success('error', 'File size should be less than 10MB');
       return;
     }
 
@@ -598,17 +595,17 @@ const InternsLorRequest = () => {
       null,
       (res) => {
         setBulkUploadResult(res.data);
-        showNotification('success', `✅ Bulk upload completed! ${res.data.successCount || 0} interns processed successfully.`);
+        toast.success('success', `✅ Bulk upload completed! ${res.data.successCount || 0} interns processed successfully.`);
         fetchAllData();
-        
+
         if (fileInputRef.current) {
           fileInputRef.current.value = '';
         }
       },
       (err) => {
         console.error('Bulk upload error:', err);
-        showNotification('error', err.message || 'Failed to upload file. Please check the format and try again.');
-        
+        toast.success('error', err.message || 'Failed to upload file. Please check the format and try again.');
+
         if (fileInputRef.current) {
           fileInputRef.current.value = '';
         }
@@ -621,7 +618,7 @@ const InternsLorRequest = () => {
   // ==================== TEMPLATE UPLOAD HANDLER ====================
   const handleTemplateUpload = async (file) => {
     if (!file) {
-      showNotification('error', 'Please select a file to upload');
+      toast.success('error', 'Please select a file to upload');
       return;
     }
 
@@ -634,12 +631,12 @@ const InternsLorRequest = () => {
       () => uploadLorTemplate(formData),
       null,
       () => {
-        showNotification('success', '✅ Template uploaded successfully!');
+        toast.success('success', '✅ Template uploaded successfully!');
         setModals(prev => ({ ...prev, template: false }));
       },
       (err) => {
         console.error('Upload error:', err);
-        showNotification('error', err.message || 'Failed to upload template. Please try again.');
+        toast.success('error', err.message || 'Failed to upload template. Please try again.');
       }
     );
 
@@ -674,7 +671,6 @@ const InternsLorRequest = () => {
 
   const handleRefresh = () => {
     fetchAllData();
-    showNotification('info', 'Refreshing data...');
   };
 
   const clearFilters = () => {
@@ -763,8 +759,8 @@ const InternsLorRequest = () => {
               <button
                 onClick={() => setViewMode(VIEW_OPTIONS.CARD)}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
-                  viewMode === VIEW_OPTIONS.CARD 
-                    ? 'bg-white text-indigo-600' 
+                  viewMode === VIEW_OPTIONS.CARD
+                    ? 'bg-white text-indigo-600'
                     : 'text-white hover:bg-white/20'
                 }`}
                 title="Card View"
@@ -774,8 +770,8 @@ const InternsLorRequest = () => {
               <button
                 onClick={() => setViewMode(VIEW_OPTIONS.LIST)}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
-                  viewMode === VIEW_OPTIONS.LIST 
-                    ? 'bg-white text-indigo-600' 
+                  viewMode === VIEW_OPTIONS.LIST
+                    ? 'bg-white text-indigo-600'
                     : 'text-white hover:bg-white/20'
                 }`}
                 title="List View"
@@ -878,7 +874,7 @@ const InternsLorRequest = () => {
                 <FaTimesCircle />
               </button>
             </div>
-            
+
             {bulkUploadResult.errors?.length > 0 && (
               <div className="mt-3 p-3 bg-yellow-500/20 rounded-lg">
                 <p className="text-sm text-yellow-100 mb-2">Errors:</p>
@@ -948,7 +944,7 @@ const InternsLorRequest = () => {
             {STATUS_OPTIONS.map(option => {
               const Icon = option.icon;
               const isActive = filters.status === option.value;
-              
+
               const getColorClasses = (color) => {
                 switch(color) {
                   case 'green':
@@ -1091,8 +1087,8 @@ const InternsLorRequest = () => {
                   </thead>
                   <tbody className="divide-y divide-gray-100">
                     {paginatedInterns.map((intern) => (
-                      <tr 
-                        key={intern.id} 
+                      <tr
+                        key={intern.id}
                         className="hover:bg-gray-50 transition-colors"
                         onMouseEnter={() => setHoveredItem(intern._id)}
                         onMouseLeave={() => setHoveredItem(null)}
@@ -1137,7 +1133,7 @@ const InternsLorRequest = () => {
                                 </button>
                               </>
                             )}
-                            
+
                             {intern.status === 'generated' && (
                               <>
                                 <button
@@ -1165,7 +1161,7 @@ const InternsLorRequest = () => {
                                 )}
                               </>
                             )}
-                            
+
                             {intern.status === 'rejected' && (
                               <button
                                 onClick={() => handleGenerateRejectedClick(intern)}
@@ -1413,7 +1409,7 @@ const InternsLorRequest = () => {
                     <span className="text-gray-600">Select a rejection message</span>
                     <FaChevronDown className="w-4 h-4 text-gray-400" />
                   </button>
-                  
+
                   {showSuggestionDropdown && (
                     <div className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
                       {REJECTION_SUGGESTIONS.map((suggestion, index) => (
@@ -1529,8 +1525,8 @@ const InternsLorRequest = () => {
               {rejectedInterns.length > 0 ? (
                 <div className="space-y-4">
                   {rejectedInterns.map((intern) => (
-                    <div 
-                      key={intern.id} 
+                    <div
+                      key={intern.id}
                       className="bg-white border border-red-200 rounded-xl p-5 hover:shadow-md transition-all hover:border-red-300"
                     >
                       <div className="flex flex-col md:flex-row md:items-start gap-4">
@@ -1560,7 +1556,7 @@ const InternsLorRequest = () => {
                               </button>
                             </div>
                           </div>
-                          
+
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                             <div className="space-y-2">
                               <div className="flex items-center gap-2 text-gray-600">
@@ -1568,7 +1564,7 @@ const InternsLorRequest = () => {
                                 <span className="text-gray-500">Email:</span>
                                 <span className="text-gray-700 font-medium truncate">{intern.email}</span>
                               </div>
-                              
+
                               {intern.department && (
                                 <div className="flex items-center gap-2 text-gray-600">
                                   <FaBuilding className="w-3 h-3 text-gray-400" />
@@ -1576,7 +1572,7 @@ const InternsLorRequest = () => {
                                   <span className="text-gray-700 font-medium">{intern.department}</span>
                                 </div>
                               )}
-                              
+
                               {intern.domain && (
                                 <div className="flex items-center gap-2 text-gray-600">
                                   <FaRocket className="w-3 h-3 text-gray-400" />
@@ -1596,7 +1592,7 @@ const InternsLorRequest = () => {
                                   </span>
                                 </div>
                               )}
-                              
+
                               {intern.rejectedAt && (
                                 <div className="flex items-center gap-2 text-gray-600">
                                   <FaClock className="w-3 h-3 text-gray-400" />
@@ -1647,7 +1643,7 @@ const InternsLorRequest = () => {
             opacity: 1;
           }
         }
-        
+
         @keyframes fadeIn {
           from {
             opacity: 0;
@@ -1656,11 +1652,11 @@ const InternsLorRequest = () => {
             opacity: 1;
           }
         }
-        
+
         .animate-slideIn {
           animation: slideIn 0.3s ease-out;
         }
-        
+
         .animate-fadeIn {
           animation: fadeIn 0.2s ease-out;
         }

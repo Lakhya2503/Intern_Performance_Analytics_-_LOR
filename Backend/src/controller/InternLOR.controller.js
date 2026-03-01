@@ -120,7 +120,7 @@ const uploadBulkInternsForLogGeneration = asyncHandler(async(req,res)=>{
                       },
                   })
 
-                  
+
 
 
                   if(internCreateForLor.approval.status) {
@@ -150,7 +150,6 @@ const internRejectOfGenLor = asyncHandler(async(req,res)=>{
     const approvestatus = approveVerify(status)
 
       const mentor = req.user
-
 
 
       if(!mentor.role === "Mentor") {

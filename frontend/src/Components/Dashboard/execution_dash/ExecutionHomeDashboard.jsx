@@ -1,75 +1,39 @@
-// src/pages/Execution/ExecutionHomeDashboard.jsx
-import { useState, useEffect } from "react";
+// src/pages/Mentor/MentorHomeDashboard.jsx
+import { useEffect, useState } from "react";
+import { BsGraphUpArrow } from "react-icons/bs";
+import {
+  FaAngleRight,
+  FaArrowDown,
+  FaArrowUp,
+  FaDatabase,
+  FaEdit,
+  FaEnvelope,
+  FaFileAlt,
+  FaGithub,
+  FaLinkedin,
+  FaPhone,
+  FaRocket,
+  FaSearch,
+  FaSpinner,
+  FaStar,
+  FaTasks,
+  FaTimes,
+  FaTrophy,
+  FaUpload,
+  FaUserEdit,
+  FaUserGraduate,
+  FaUserPlus,
+  FaUsers
+} from "react-icons/fa";
+import { MdOutlineRateReview } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../Context/AuthContext";
 import {
   getAllInterns,
-  scoreRankingInterns,
+  internsWithLor,
+  scoreRankingInterns
 } from "../../../api/index";
 import { requestHandler } from "../../../utils/index";
-import {
-  FaUsers,
-  FaTasks,
-  FaCheckCircle,
-  FaClock,
-  FaExclamationTriangle,
-  FaChartLine,
-  FaUserGraduate,
-  FaFileAlt,
-  FaCalendarCheck,
-  FaStar,
-  FaComments,
-  FaRocket,
-  FaAward,
-  FaRegClock,
-  FaArrowUp,
-  FaArrowDown,
-  FaEye,
-  FaDownload,
-  FaFilter,
-  FaSearch,
-  FaEllipsisV,
-  FaUserPlus,
-  FaBell,
-  FaRegCalendarAlt,
-  FaRegCheckCircle,
-  FaRegClock as FaRegClockOutline,
-  FaCode,
-  FaMobile,
-  FaServer,
-  FaPen,
-  FaCamera,
-  FaChartBar,
-  FaThumbsUp,
-  FaExclamationCircle,
-  FaSpinner,
-  FaCheckDouble,
-  FaHourglassHalf,
-  FaCalendarAlt,
-  FaUserCheck,
-  FaUserClock,
-  FaUserTimes,
-  FaEnvelope,
-  FaPhone,
-  FaMapMarkerAlt,
-  FaLinkedin,
-  FaGithub,
-  FaTwitter,
-  FaAngleRight,
-  FaAngleLeft,
-  FaTimes,
-  FaUpload,
-  FaTrophy,
-  FaClipboardList,
-  FaCheckSquare,
-  FaFlag,
-  FaUserCog,
-  FaProjectDiagram,
-  FaBug,
-  FaLightbulb,
-  FaHandshake
-} from "react-icons/fa";
-import { MdPendingActions, MdAssignment, MdFeedback, MdOutlineTask } from "react-icons/md";
 
 export default function ExecutionHomeDashboard() {
   const { user } = useAuth();
@@ -79,24 +43,27 @@ export default function ExecutionHomeDashboard() {
   const [loading, setLoading] = useState(false);
   const [interns, setInterns] = useState([]);
   const [rankingData, setRankingData] = useState({ gold: [], silver: [], bronze: [] });
+  const [lorRequests, setLorRequests] = useState([]);
   const [selectedTimeframe, setSelectedTimeframe] = useState('weekly');
-  const [showNotifications, setShowNotifications] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedIntern, setSelectedIntern] = useState(null);
+  const [activeTab, setActiveTab] = useState('overview');
+  const [notifications, setNotifications] = useState([
+    { id: 1, message: 'New LOR request from John Doe', time: '5 min ago', read: false },
+    { id: 2, message: 'Task review pending for Alice', time: '1 hour ago', read: false },
+    { id: 3, message: 'Weekly report ready', time: '2 hours ago', read: true },
+  ]);
+  const [showNotifications, setShowNotifications] = useState(false);
+
   const [stats, setStats] = useState({
     totalInterns: 0,
-    activeProjects: 12,
-    completedTasks: 156,
-    pendingTasks: 43,
-    upcomingDeadlines: 8,
-    teamEfficiency: 87,
-    averageResponseTime: '2.4h',
-    satisfactionRate: 94,
-    totalMeetings: 24,
-    resourcesAllocated: 18,
-    bugsReported: 23,
-    bugsResolved: 19,
-    clientFeedback: 4.8
+    pendingInterns: 0,
+    approvedInterns: 0,
+    rejectedInterns: 0,
+    pendingLORRequests: 0,
+    averageScore: 0,
+    activeProjects: 0,
+    completionRate: 0
   });
 
   // Fetch dashboard data
@@ -115,9 +82,18 @@ export default function ExecutionHomeDashboard() {
         const internsData = response?.data || [];
         setInterns(Array.isArray(internsData) ? internsData : []);
 
+        const pending = Array.isArray(internsData) ? internsData.filter(intern => intern?.status === "pending").length : 0;
+        const approved = Array.isArray(internsData) ? internsData.filter(intern => intern?.status === "Approve").length : 0;
+        const rejected = Array.isArray(internsData) ? internsData.filter(intern => intern?.status === "Rejected").length : 0;
+        const activeProjects = Array.isArray(internsData) ? new Set(internsData.map(i => i.project)).size : 0;
+
         setStats(prev => ({
           ...prev,
-          totalInterns: Array.isArray(internsData) ? internsData.length : 0
+          totalInterns: Array.isArray(internsData) ? internsData.length : 0,
+          pendingInterns: pending,
+          approvedInterns: approved,
+          rejectedInterns: rejected,
+          activeProjects
         }));
       },
       (error) => {
@@ -137,6 +113,28 @@ export default function ExecutionHomeDashboard() {
           silver: Array.isArray(rankings.silver) ? rankings.silver : [],
           bronze: Array.isArray(rankings.bronze) ? rankings.bronze : []
         });
+
+        const allRankedInterns = [
+          ...(Array.isArray(rankings.gold) ? rankings.gold : []),
+          ...(Array.isArray(rankings.silver) ? rankings.silver : []),
+          ...(Array.isArray(rankings.bronze) ? rankings.bronze : [])
+        ];
+
+        const scores = allRankedInterns.map(item => item?.score || 0);
+        const avgScore = scores.length > 0
+          ? scores.reduce((acc, curr) => acc + curr, 0) / scores.length
+          : 0;
+
+        const completedTasks = allRankedInterns.filter(i => i.completionRate > 80).length;
+        const completionRate = allRankedInterns.length > 0
+          ? (completedTasks / allRankedInterns.length) * 100
+          : 0;
+
+        setStats(prev => ({
+          ...prev,
+          averageScore: avgScore.toFixed(1),
+          completionRate: Math.round(completionRate)
+        }));
       },
       (error) => {
         console.error('Error fetching rankings:', error);
@@ -144,677 +142,691 @@ export default function ExecutionHomeDashboard() {
       }
     );
 
+    // Fetch LOR requests
+    await requestHandler(
+      async () => internsWithLor({ status: 'pending' }),
+      setLoading,
+      (response) => {
+        const lorData = Array.isArray(response?.data) ? response.data : [];
+        setLorRequests(lorData);
+        setStats(prev => ({
+          ...prev,
+          pendingLORRequests: lorData.length
+        }));
+      },
+      (error) => {
+        console.error('Error fetching LOR requests:', error);
+        setLorRequests([]);
+      }
+    );
+
     setLoading(false);
   };
 
   // Navigation handlers
-  const handleViewAllInterns = () => {
-    navigate('/dashboard/ExecutionTeam/interns');
+  const handleViewAllInterns = () => navigate('/dashboard/Mentor/interns');
+  const handleViewAnalytics = () => navigate('/dashboard/Mentor/analytics');
+  const handleViewLORRequests = () => navigate('/dashboard/Mentor/lor-requests');
+  const handleViewTasks = () => navigate('/dashboard/Mentor/task');
+  const handleAddIntern = () => {
+    navigate('/dashboard/Mentor/interns', { state: { action: 'add' } });
   };
 
-  const handleViewProjects = () => {
-    navigate('/dashboard/ExecutionTeam/projects');
+  const handleUpdateIntern = (intern) => {
+    navigate('/dashboard/Mentor/interns', {
+      state: {
+        action: 'edit',
+        internId: intern._id || intern.id
+      }
+    });
   };
 
-  const handleViewTasks = () => {
-    navigate('/dashboard/ExecutionTeam/tasks');
+  const handleGenerateLOR = (intern) => {
+    navigate('/dashboard/Mentor/lor-requests', {
+      state: {
+        action: 'generate',
+        internId: intern._id || intern.id,
+        internName: intern.name
+      }
+    });
   };
 
-  const handleViewTeam = () => {
-    navigate('/dashboard/ExecutionTeam/team');
-  };
+  // Safe array length
+  const safeArrayLength = (arr) => Array.isArray(arr) ? arr.length : 0;
 
-  const handleViewReports = () => {
-    navigate('/dashboard/ExecutionTeam/reports');
-  };
-
-  const handleViewAnalytics = () => {
-    navigate('/dashboard/ExecutionTeam/analytics');
-  };
-
-  const handleViewMeetings = () => {
-    navigate('/dashboard/ExecutionTeam/meetings');
-  };
-
-  const handleViewResources = () => {
-    navigate('/dashboard/ExecutionTeam/resources');
-  };
-
-  const handleViewBugs = () => {
-    navigate('/dashboard/ExecutionTeam/bugs');
-  };
-
-  // Safely get array length with fallback
-  const safeArrayLength = (arr) => {
-    return Array.isArray(arr) ? arr.length : 0;
-  };
-
-  // Combine all ranked interns
-  const getAllRankedInterns = () => {
-    return [
-      ...(rankingData.gold || []),
-      ...(rankingData.silver || []),
-      ...(rankingData.bronze || [])
-    ];
-  };
-
-  // Project distribution data
-  const projectStats = [
-    { id: 'proj-frontend', name: 'Frontend Projects', count: 4, color: 'teal', icon: FaCode, progress: 85 },
-    { id: 'proj-backend', name: 'Backend Projects', count: 3, color: 'cyan', icon: FaServer, progress: 72 },
-    { id: 'proj-mobile', name: 'Mobile Apps', count: 2, color: 'emerald', icon: FaMobile, progress: 68 },
-    { id: 'proj-uiux', name: 'UI/UX Design', count: 2, color: 'purple', icon: FaPen, progress: 91 },
-    { id: 'proj-qa', name: 'QA Testing', count: 1, color: 'amber', icon: FaBug, progress: 95 },
+  // Get all ranked interns
+  const getAllRankedInterns = () => [
+    ...(rankingData.gold || []),
+    ...(rankingData.silver || []),
+    ...(rankingData.bronze || [])
   ];
 
-  // Active projects with details
-  const activeProjects = [
-    {
-      id: 'project-1',
-      name: 'E-commerce Platform',
-      lead: 'Alice Johnson',
-      team: 8,
-      progress: 75,
-      deadline: 'Dec 30, 2024',
-      priority: 'High',
-      status: 'on-track',
-      department: 'Full Stack'
-    },
-    {
-      id: 'project-2',
-      name: 'Mobile Banking App',
-      lead: 'Bob Smith',
-      team: 6,
-      progress: 60,
-      deadline: 'Jan 15, 2025',
-      priority: 'High',
-      status: 'on-track',
-      department: 'Mobile'
-    },
-    {
-      id: 'project-3',
-      name: 'Admin Dashboard',
-      lead: 'Carol Davis',
-      team: 4,
-      progress: 90,
-      deadline: 'Dec 15, 2024',
-      priority: 'Medium',
-      status: 'ahead',
-      department: 'Frontend'
-    },
-    {
-      id: 'project-4',
-      name: 'API Gateway',
-      lead: 'David Wilson',
-      team: 3,
-      progress: 45,
-      deadline: 'Feb 1, 2025',
-      priority: 'Medium',
-      status: 'at-risk',
-      department: 'Backend'
-    },
-    {
-      id: 'project-5',
-      name: 'Analytics Platform',
-      lead: 'Eva Brown',
-      team: 5,
-      progress: 30,
-      deadline: 'Mar 10, 2025',
-      priority: 'Low',
-      status: 'on-track',
-      department: 'Data'
-    },
-  ];
-
-  // Team members with roles
-  const teamMembers = Array.isArray(interns)
-    ? interns.slice(0, 8).map((intern, index) => ({
+  // Enhanced recent interns list
+  const recentInterns = Array.isArray(interns)
+    ? interns.slice(0, 6).map((intern, index) => ({
         ...intern,
-        id: intern?._id || intern?.id || `member-${index}`,
-        name: intern?.name || `Team Member ${index + 1}`,
-        role: ['Lead Developer', 'UI/UX Designer', 'Backend Engineer', 'QA Tester', 'Frontend Developer', 'DevOps', 'Project Manager', 'Mobile Developer'][index % 8],
-        department: intern?.department || ['Engineering', 'Design', 'QA', 'Product'][index % 4],
-        status: ['active', 'active', 'active', 'on-leave', 'active', 'active', 'active', 'active'][index % 8],
-        tasksCompleted: Math.floor(Math.random() * 45) + 20,
-        avatar: `https://ui-avatars.com/api/?name=${intern?.name?.replace(' ', '+') || 'Team+Member'}&background=0D9488&color=fff&size=128`,
+        id: intern?._id || intern?.id || `intern-${index}`,
+        lastActive: ['Just now', '2 hours ago', 'Yesterday', '3 days ago'][index % 4],
+        progress: Math.floor(Math.random() * 30) + 70,
+        tasksCompleted: Math.floor(Math.random() * 15) + 10,
+        totalTasks: 25,
+        avatar: `https://ui-avatars.com/api/?name=${intern?.name?.replace(' ', '+') || 'Intern'}&background=0D9488&color=fff&size=128`,
+        email: intern?.email || `${intern?.name?.toLowerCase().replace(' ', '.')}@example.com`,
+        project: ['E-commerce Platform', 'Dashboard UI', 'API Gateway', 'Mobile App', 'Cloud Service', 'AI Integration'][index % 6],
+        github: `https://github.com/${intern?.name?.toLowerCase().replace(' ', '')}`,
+        linkedin: `https://linkedin.com/in/${intern?.name?.toLowerCase().replace(' ', '')}`
       }))
     : [];
 
-  // Upcoming meetings
-  const upcomingMeetings = [
-    { id: 'meeting-1', title: 'Sprint Planning', date: 'Today, 3:00 PM', attendees: 12, room: 'Conference A', host: 'John Doe' },
-    { id: 'meeting-2', title: 'Code Review Session', date: 'Tomorrow, 10:00 AM', attendees: 8, room: 'Virtual', host: 'Alice Johnson' },
-    { id: 'meeting-3', title: 'Client Demo', date: 'Tomorrow, 2:00 PM', attendees: 15, room: 'Conference B', host: 'Bob Smith' },
-    { id: 'meeting-4', title: 'Weekly Sync', date: 'Wed, 11:00 AM', attendees: 20, room: 'Main Hall', host: 'Carol Davis' },
-    { id: 'meeting-5', title: 'Retrospective', date: 'Fri, 4:00 PM', attendees: 10, room: 'Virtual', host: 'David Wilson' },
-  ];
-
-  // Recent activities
-  const recentActivities = [
-    { id: 'act-1', user: 'Alice Johnson', action: 'completed task', target: 'API Integration', time: '5 min ago', type: 'completion' },
-    { id: 'act-2', user: 'Bob Smith', action: 'created new branch', target: 'feature/auth', time: '15 min ago', type: 'code' },
-    { id: 'act-3', user: 'Carol Davis', action: 'commented on', target: 'UI Design Review', time: '1 hour ago', type: 'comment' },
-    { id: 'act-4', user: 'David Wilson', action: 'deployed to', target: 'staging environment', time: '2 hours ago', type: 'deploy' },
-    { id: 'act-5', user: 'Eva Brown', action: 'reported bug', target: '#234 - Login issue', time: '3 hours ago', type: 'bug' },
-    { id: 'act-6', user: 'Frank Miller', action: 'merged PR', target: '#89 - Dashboard UI', time: '5 hours ago', type: 'merge' },
-  ];
-
-  // Bugs/issues tracker
-  const bugsList = [
-    { id: 'bug-1', title: 'Login page not responsive', project: 'E-commerce Platform', severity: 'High', status: 'in-progress', assignee: 'Alice Johnson' },
-    { id: 'bug-2', title: 'API timeout on payment', project: 'Mobile Banking App', severity: 'Critical', status: 'pending', assignee: 'Bob Smith' },
-    { id: 'bug-3', title: 'Chart not loading', project: 'Analytics Platform', severity: 'Medium', status: 'resolved', assignee: 'Carol Davis' },
-    { id: 'bug-4', title: 'Broken links in footer', project: 'Admin Dashboard', severity: 'Low', status: 'in-progress', assignee: 'David Wilson' },
-  ];
-
-  // Resource allocation
-  const resources = [
-    { id: 'res-1', name: 'Development Servers', allocated: 8, total: 10, status: 'optimal' },
-    { id: 'res-2', name: 'Database Connections', allocated: 12, total: 15, status: 'optimal' },
-    { id: 'res-3', name: 'API Rate Limits', allocated: 75, total: 100, status: 'warning' },
-    { id: 'res-4', name: 'Storage', allocated: 450, total: 500, unit: 'GB', status: 'optimal' },
-  ];
-
-  // Quick stats cards
+  // Enhanced quick stats with icons and colors
   const quickStats = [
-    { id: 'stat-active-projects', label: 'Active Projects', value: stats.activeProjects, icon: FaProjectDiagram, color: 'teal', change: '+2', changeType: 'increase' },
-    { id: 'stat-completed-tasks', label: 'Completed Tasks', value: stats.completedTasks, icon: FaCheckCircle, color: 'green', change: '+28', changeType: 'increase' },
-    { id: 'stat-pending-tasks', label: 'Pending Tasks', value: stats.pendingTasks, icon: FaTasks, color: 'amber', change: '-12', changeType: 'decrease' },
-    { id: 'stat-team-efficiency', label: 'Team Efficiency', value: `${stats.teamEfficiency}%`, icon: FaChartLine, color: 'cyan', change: '+5%', changeType: 'increase' },
+    {
+      id: 'stat-total-interns',
+      label: 'Total Interns',
+      value: stats.totalInterns,
+      icon: FaUserGraduate,
+      color: 'from-teal-500 to-cyan-500',
+      bgColor: 'bg-teal-50',
+      iconColor: 'text-teal-600',
+      change: '+12%',
+      changeType: 'increase'
+    },
+    {
+      id: 'stat-pending-tasks',
+      label: 'Pending Reviews',
+      value: stats.pendingInterns,
+      icon: MdOutlineRateReview,
+      color: 'from-amber-500 to-orange-500',
+      bgColor: 'bg-amber-50',
+      iconColor: 'text-amber-600',
+      change: '+5',
+      changeType: 'increase'
+    },
+    {
+      id: 'stat-avg-score',
+      label: 'Avg. Score',
+      value: stats.averageScore,
+      icon: FaStar,
+      color: 'from-purple-500 to-pink-500',
+      bgColor: 'bg-purple-50',
+      iconColor: 'text-purple-600',
+      change: '+2.5%',
+      changeType: 'increase',
+      suffix: ''
+    },
+    {
+      id: 'stat-lor-requests',
+      label: 'LOR Requests',
+      value: stats.pendingLORRequests,
+      icon: FaFileAlt,
+      color: 'from-emerald-500 to-green-500',
+      bgColor: 'bg-emerald-50',
+      iconColor: 'text-emerald-600',
+      change: '+3',
+      changeType: 'increase'
+    },
   ];
 
-  // Quick actions for execution team
+
+  // Top performers with more details
+  const topPerformers = getAllRankedInterns().slice(0, 3).map((intern, idx) => ({
+    ...intern,
+    id: intern?._id || intern?.id || `top-${idx}`,
+    name: intern?.name || 'Intern',
+    department: intern?.department || 'General',
+    score: Math.round(intern?.score || 0),
+    achievement: ['Outstanding Performance', 'Most Improved', 'Best Project'][idx],
+    projectsCompleted: Math.floor(Math.random() * 5) + 3
+  }));
+
+  const rankingCounts = {
+    gold: safeArrayLength(rankingData.gold),
+    silver: safeArrayLength(rankingData.silver),
+    bronze: safeArrayLength(rankingData.bronze)
+  };
+
+  // Enhanced quick actions
   const quickActions = [
-    { id: 'action-create-task', label: 'Create Task', icon: MdAssignment, color: 'teal', onClick: handleViewTasks },
-    { id: 'action-start-project', label: 'Start Project', icon: FaRocket, color: 'cyan', onClick: handleViewProjects },
-    { id: 'action-schedule-meeting', label: 'Schedule Meeting', icon: FaCalendarCheck, color: 'emerald', onClick: handleViewMeetings },
-    { id: 'action-assign-resource', label: 'Assign Resource', icon: FaUserCog, color: 'purple', onClick: handleViewResources },
-    { id: 'action-report-bug', label: 'Report Bug', icon: FaBug, color: 'red', onClick: handleViewBugs },
-    { id: 'action-view-analytics', label: 'Analytics', icon: FaChartBar, color: 'blue', onClick: handleViewAnalytics },
+    {
+      id: 'action-add-intern',
+      label: 'Add Intern',
+      icon: FaUserPlus,
+      color: 'teal',
+      gradient: 'from-teal-500 to-teal-600',
+      onClick: handleAddIntern,
+      description: 'Add a new intern to the program',
+    },
+    {
+      id: 'action-update-intern',
+      label: 'Update Intern',
+      icon: FaEdit,
+      color: 'cyan',
+      gradient: 'from-cyan-500 to-cyan-600',
+      onClick: handleViewAllInterns,
+      description: 'Edit intern details and progress',
+    },
+    {
+      id: 'action-generate-lor',
+      label: 'Generate LOR',
+      icon: FaFileAlt,
+      color: 'purple',
+      gradient: 'from-purple-500 to-purple-600',
+      onClick: handleViewLORRequests,
+      description: 'Create recommendation letter',
+    },
+    {
+      id: 'action-view-tasks',
+      label: 'View Tasks',
+      icon: FaTasks,
+      color: 'emerald',
+      gradient: 'from-emerald-500 to-emerald-600',
+      onClick: handleViewTasks,
+      description: 'Manage and review tasks',
+    },
   ];
 
-  // Performance metrics
-  const performanceMetrics = [
-    { id: 'metric-1', label: 'Satisfaction Rate', value: `${stats.satisfactionRate}%`, icon: FaThumbsUp, color: 'green', trend: '+2%' },
-    { id: 'metric-2', label: 'Avg Response Time', value: stats.averageResponseTime, icon: FaClock, color: 'cyan', trend: '-0.3h' },
-    { id: 'metric-3', label: 'Bugs Resolved', value: `${stats.bugsResolved}/${stats.bugsReported}`, icon: FaBug, color: 'amber', trend: '+5' },
-    { id: 'metric-4', label: 'Client Feedback', value: stats.clientFeedback, icon: FaStar, color: 'yellow', trend: '+0.2' },
-  ];
 
-  // Get status color
-  const getStatusColor = (status) => {
-    switch(status) {
-      case 'on-track': return 'text-green-600 bg-green-100';
-      case 'ahead': return 'text-teal-600 bg-teal-100';
-      case 'at-risk': return 'text-red-600 bg-red-100';
-      case 'active': return 'text-green-600 bg-green-100';
-      case 'on-leave': return 'text-yellow-600 bg-yellow-100';
-      default: return 'text-gray-600 bg-gray-100';
+  const getScoreColor = (score) => {
+    if (score >= 85) return 'text-teal-600';
+    if (score >= 70) return 'text-cyan-600';
+    if (score >= 50) return 'text-amber-600';
+    return 'text-gray-500';
+  };
+
+  const getPriorityColor = (priority) => {
+    switch(priority.toLowerCase()) {
+      case 'high': return 'bg-red-100 text-red-700 border-red-200';
+      case 'medium': return 'bg-amber-100 text-amber-700 border-amber-200';
+      case 'low': return 'bg-green-100 text-green-700 border-green-200';
+      default: return 'bg-gray-100 text-gray-700 border-gray-200';
     }
   };
 
-  // Get priority color
-  const getPriorityColor = (priority) => {
-    switch(priority) {
-      case 'Critical': return 'text-red-600 bg-red-100';
-      case 'High': return 'text-orange-600 bg-orange-100';
-      case 'Medium': return 'text-yellow-600 bg-yellow-100';
-      case 'Low': return 'text-blue-600 bg-blue-100';
-      default: return 'text-gray-600 bg-gray-100';
-    }
+  const markNotificationAsRead = (id) => {
+    setNotifications(notifications.map(notif =>
+      notif.id === id ? { ...notif, read: true } : notif
+    ));
   };
 
   return (
-    <div className="space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Loading Overlay */}
       {loading && (
-        <div className="fixed top-4 right-4 z-50 bg-teal-600 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2">
+        <div className="fixed top-4 right-4 z-50 bg-gradient-to-r from-teal-600 to-cyan-600 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 animate-pulse">
           <FaSpinner className="animate-spin" />
           <span>Updating dashboard...</span>
         </div>
       )}
 
-      {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-teal-600 via-teal-500 to-cyan-600 rounded-2xl shadow-xl p-6 text-white">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-          <div>
-            <h1 className="text-3xl font-bold flex items-center gap-3">
-              Welcome back, {user?.username || 'Team'}!
-              <span className="text-2xl">🚀</span>
-            </h1>
-            <p className="text-teal-100 mt-2 flex items-center gap-2">
-              <FaRocket className="w-4 h-4" />
-              Execution team dashboard - Track projects, tasks, and team performance
-            </p>
-          </div>
-          <div className="flex gap-3 mt-4 md:mt-0">
-            <button
-              onClick={handleViewAnalytics}
-              className="flex items-center gap-2 px-4 py-2 bg-white/20 rounded-xl hover:bg-white/30 transition-colors"
-            >
-              <FaChartLine className="w-4 h-4" />
-              <span className="text-sm">Analytics</span>
-            </button>
-            <button
-              onClick={handleViewMeetings}
-              className="flex items-center gap-2 px-4 py-2 bg-white text-teal-600 rounded-xl hover:bg-teal-50 transition-colors"
-            >
-              <FaCalendarCheck className="w-4 h-4" />
-              <span className="text-sm">Schedule Meeting</span>
-            </button>
-          </div>
-        </div>
+      {/* Header Section */}
 
-        {/* Quick Date Navigation */}
-        <div className="flex gap-2 mt-6">
-          {['Today', 'This Week', 'This Month', 'Quarter'].map((item) => (
-            <button
-              key={`date-${item.toLowerCase()}`}
-              className={`px-4 py-1.5 rounded-lg text-sm transition-colors ${
-                selectedTimeframe === item.toLowerCase()
-                  ? 'bg-white text-teal-600 font-medium'
-                  : 'bg-white/10 hover:bg-white/20'
-              }`}
-              onClick={() => setSelectedTimeframe(item.toLowerCase())}
-            >
-              {item}
-            </button>
-          ))}
-        </div>
-      </div>
 
-      {/* Quick Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {quickStats.map((stat) => (
-          <div
-            key={stat.id}
-            className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 border-l-4 border-teal-500 group cursor-pointer"
-            onClick={stat.label === 'Active Projects' ? handleViewProjects :
-                     stat.label === 'Pending Tasks' ? handleViewTasks : undefined}
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-500 text-sm font-medium">{stat.label}</p>
-                <h2 className="text-3xl font-bold mt-2 text-gray-800">
-                  {stat.value}
-                </h2>
-              </div>
-              <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                <stat.icon className="w-6 h-6 text-teal-600" />
-              </div>
+      <div className="max-w-7xl mx-auto  py-2">
+        {/* Welcome Banner */}
+        <div className="bg-gradient-to-r from-teal-600 via-teal-500 to-cyan-600 rounded-2xl shadow-xl p-8 text-white mb-8 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full transform translate-x-32 -translate-y-32"></div>
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-white opacity-10 rounded-full transform -translate-x-24 translate-y-24"></div>
+
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between">
+            <div>
+              <h1 className="text-4xl font-bold flex items-center gap-3 mb-3">
+                Welcome back, {user?.username || 'Mentor'}!
+                <span className="text-3xl animate-bounce">👋</span>
+              </h1>
+              <p className="text-teal-100 flex items-center gap-2 text-lg">
+                <FaRocket className="w-5 h-5" />
+                Here's what's happening with your interns today
+              </p>
             </div>
-            <div className="mt-4 flex items-center gap-2">
-              <span className={`text-xs font-medium flex items-center gap-1 ${
-                stat.changeType === 'increase' ? 'text-green-600' : 'text-red-600'
-              }`}>
-                {stat.changeType === 'increase' ? <FaArrowUp /> : <FaArrowDown />}
-                {stat.change}
-              </span>
-              <span className="text-xs text-gray-400">vs last month</span>
-            </div>
-          </div>
-        ))}
-      </div>
 
-      {/* Main Dashboard Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column - Projects */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Active Projects */}
-          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-            <div className="bg-gradient-to-r from-teal-50 to-cyan-50 px-6 py-4 border-b border-teal-100 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-                <FaProjectDiagram className="w-5 h-5 text-teal-600" />
-                Active Projects
-              </h2>
+            <div className="flex gap-3 mt-6 md:mt-0">
               <button
-                onClick={handleViewProjects}
-                className="text-teal-600 hover:text-teal-700 text-sm font-medium flex items-center gap-1"
+                onClick={handleViewAnalytics}
+                className="flex items-center gap-2 px-6 py-3 bg-white/20 rounded-xl hover:bg-white/30 transition-all hover:scale-105 backdrop-blur-sm"
               >
-                View All <FaAngleRight />
+                <BsGraphUpArrow className="w-5 h-5" />
+                <span>Analytics</span>
+              </button>
+              <button
+                onClick={handleAddIntern}
+                className="flex items-center gap-2 px-6 py-3 bg-white text-teal-600 rounded-xl hover:bg-teal-50 transition-all hover:scale-105 shadow-lg"
+              >
+                <FaUserPlus className="w-5 h-5" />
+                <span>Add Intern</span>
               </button>
             </div>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="bg-gray-50 text-gray-600 text-sm">
-                    <th className="py-4 px-6 text-left">Project</th>
-                    <th className="py-4 px-6 text-left">Lead</th>
-                    <th className="py-4 px-6 text-left">Team</th>
-                    <th className="py-4 px-6 text-left">Progress</th>
-                    <th className="py-4 px-6 text-left">Deadline</th>
-                    <th className="py-4 px-6 text-left">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {activeProjects.map((project) => (
-                    <tr key={project.id} className="hover:bg-teal-50/30 border-b last:border-b-0">
-                      <td className="py-4 px-6">
-                        <div>
-                          <p className="font-medium text-gray-800">{project.name}</p>
-                          <p className="text-xs text-gray-500">{project.department}</p>
-                        </div>
-                      </td>
-                      <td className="py-4 px-6 text-gray-600">{project.lead}</td>
-                      <td className="py-4 px-6">
-                        <span className="px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-xs">
-                          {project.team} members
-                        </span>
-                      </td>
-                      <td className="py-4 px-6">
-                        <div className="flex items-center gap-2">
-                          <div className="w-16 bg-gray-200 rounded-full h-2">
-                            <div
-                              className="bg-teal-600 h-2 rounded-full"
-                              style={{ width: `${project.progress}%` }}
-                            ></div>
-                          </div>
-                          <span className="text-xs text-gray-600">{project.progress}%</span>
-                        </div>
-                      </td>
-                      <td className="py-4 px-6">
-                        <span className="text-sm text-gray-600">{project.deadline}</span>
-                      </td>
-                      <td className="py-4 px-6">
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(project.status)}`}>
-                          {project.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
           </div>
 
-          {/* Team Members */}
-          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-            <div className="bg-gradient-to-r from-teal-50 to-cyan-50 px-6 py-4 border-b border-teal-100 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-                <FaUsers className="w-5 h-5 text-teal-600" />
-                Team Members
-              </h2>
-              <div className="flex items-center gap-3">
-                <div className="relative">
-                  <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                  <input
-                    type="text"
-                    placeholder="Search team..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
-                  />
+          {/* Ranking Stats */}
+          <div className="flex flex-wrap gap-4 mt-6">
+            <div className="flex items-center gap-2 bg-white/10 rounded-xl px-4 py-2 backdrop-blur-sm">
+              <FaTrophy className="w-5 h-5 text-yellow-300" />
+              <span className="font-semibold">Gold: {rankingCounts.gold}</span>
+            </div>
+            <div className="flex items-center gap-2 bg-white/10 rounded-xl px-4 py-2 backdrop-blur-sm">
+              <FaTrophy className="w-5 h-5 text-gray-300" />
+              <span className="font-semibold">Silver: {rankingCounts.silver}</span>
+            </div>
+            <div className="flex items-center gap-2 bg-white/10 rounded-xl px-4 py-2 backdrop-blur-sm">
+              <FaTrophy className="w-5 h-5 text-amber-600" />
+              <span className="font-semibold">Bronze: {rankingCounts.bronze}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          {quickStats.map((stat) => (
+            <div
+              key={stat.id}
+              className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer overflow-hidden"
+              onClick={stat.label === 'LOR Requests' ? handleViewLORRequests :
+                       stat.label === 'Total Interns' ? handleViewAllInterns :
+                       stat.label === 'Pending Reviews' ? handleViewTasks :
+                       stat.label === 'Avg. Score' ? handleViewAnalytics : undefined
+                      }
+            >
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className={`w-12 h-12 ${stat.bgColor} rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform`}>
+                    <stat.icon className={`w-6 h-6 ${stat.iconColor}`} />
+                  </div>
+                  <span className={`text-xs font-medium px-2 py-1 rounded-full ${
+                    stat.changeType === 'increase' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                  }`}>
+                    {stat.change}
+                  </span>
                 </div>
-                <button
-                  onClick={handleViewTeam}
-                  className="text-teal-600 hover:text-teal-700 text-sm font-medium"
-                >
-                  View All
-                </button>
+                <h3 className="text-gray-500 text-sm font-medium mb-1">{stat.label}</h3>
+                <div className="flex items-end justify-between">
+                  <p className="text-3xl font-bold text-gray-800">
+                    {stat.value}{stat.suffix || ''}
+                  </p>
+                  <div className="text-xs text-gray-400 flex items-center gap-1">
+                    vs last month
+                    {stat.changeType === 'increase' ?
+                      <FaArrowUp className="w-3 h-3 text-green-500" /> :
+                      <FaArrowDown className="w-3 h-3 text-red-500" />
+                    }
+                  </div>
+                </div>
+              </div>
+              <div className={`h-1 bg-gradient-to-r ${stat.color} transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left`}></div>
+            </div>
+          ))}
+        </div>
+
+        {/* Main Dashboard Content */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Left Column */}
+          <div className="lg:col-span-2 space-y-8">
+            {/* Recent Interns Table */}
+            <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+              <div className="bg-gradient-to-r from-teal-50 to-cyan-50 px-6 py-4 border-b border-teal-100 flex items-center justify-between">
+                <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                  <FaUsers className="w-5 h-5 text-teal-600" />
+                  Recent Interns
+                </h2>
+                <div className="flex items-center gap-3">
+                  <div className="relative">
+                    <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                    <input
+                      type="text"
+                      placeholder="Search interns..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                    />
+                  </div>
+                  <button
+                    onClick={handleViewAllInterns}
+                    className="flex items-center gap-1 text-teal-600 hover:text-teal-700 text-sm font-medium group"
+                  >
+                    View All
+                    <FaAngleRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </button>
+                </div>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50">
+                    <tr className="text-gray-600 text-sm">
+                      <th className="py-4 px-6 text-left font-semibold">Intern</th>
+                      <th className="py-4 px-6 text-left font-semibold">Department</th>
+                      <th className="py-4 px-6 text-left font-semibold">Course</th>
+                      <th className="py-4 px-6 text-left font-semibold">Progress</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {recentInterns.length > 0 ? (
+                      recentInterns
+                        .filter(intern =>
+                          intern.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          intern.department?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          intern.project?.toLowerCase().includes(searchTerm.toLowerCase())
+                        )
+                        .map((intern) => (
+                          <tr key={intern.id} className="hover:bg-teal-50/30 border-b last:border-b-0 transition-colors group">
+                            <td className="py-4 px-6">
+                              <div className="flex items-center gap-3">
+                                <img
+                                  src={intern.avatar}
+                                  alt={intern.name}
+                                  className="w-10 h-10 rounded-full ring-2 ring-teal-100 group-hover:ring-teal-300 transition-all"
+                                />
+                                <div>
+                                  <p className="font-medium text-gray-800">{intern.name}</p>
+                                  <p className="text-xs text-gray-500">{intern.email}</p>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="py-4 px-6">
+                              <span className="px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-xs font-medium">
+                                {intern.department || 'General'}
+                              </span>
+                            </td>
+                            <td className="py-4 px-6">
+                              <p className="text-gray-600 text-sm">{intern.course}</p>
+                            </td>
+                            <td className="py-4 px-6">
+                              <div className="flex items-center gap-2">
+                                <div className="w-20 bg-gray-200 rounded-full h-2 overflow-hidden">
+                                  <div
+                                    className="bg-gradient-to-r from-teal-600 to-cyan-600 h-2 rounded-full transition-all duration-500"
+                                    style={{ width: `${intern.progress}%` }}
+                                  ></div>
+                                </div>
+                                <span className="text-xs font-medium text-gray-600">{intern.progress}%</span>
+                              </div>
+                            </td>
+                          </tr>
+                        ))
+                    ) : (
+                      <tr>
+                        <td colSpan="6" className="py-12 text-center">
+                          <div className="flex flex-col items-center gap-3">
+                            <FaUsers className="w-12 h-12 text-gray-300" />
+                            <p className="text-gray-500">No interns found</p>
+                            <button
+                              onClick={handleAddIntern}
+                              className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors text-sm"
+                            >
+                              Add Your First Intern
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
               </div>
             </div>
-            <div className="divide-y max-h-96 overflow-y-auto">
-              {teamMembers.length > 0 ? (
-                teamMembers
-                  .filter(member =>
-                    member.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    member.role?.toLowerCase().includes(searchTerm.toLowerCase())
-                  )
-                  .map((member) => (
-                    <div key={member.id} className="p-4 hover:bg-teal-50/30">
-                      <div className="flex items-center gap-3">
-                        <img src={member.avatar} alt={member.name} className="w-10 h-10 rounded-full" />
-                        <div className="flex-1">
-                          <div className="flex items-center justify-between">
-                            <p className="font-medium text-gray-800">{member.name}</p>
-                            <span className={`text-xs px-2 py-1 rounded-full ${getStatusColor(member.status)}`}>
-                              {member.status}
-                            </span>
+
+                  <div className="bg-white rounded-2xl shadow-lg p-6">
+                        <div className="flex items-center justify-between mb-6">
+                          <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                            <FaTasks className="w-5 h-5 text-teal-600" />
+                            Intern Management
+                          </h3>
+                          <button
+                            onClick={()=>navigate(`/dashboard/Mentor/interns`)}
+                            className="text-sm text-teal-600 hover:text-teal-700 flex items-center gap-1"
+                          >
+                            Manage All
+                            <FaAngleRight className="w-4 h-4" />
+                          </button>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4"
+                        >
+                          {/* Add Intern Single */}
+                          <div className="p-4 bg-gray-50 rounded-xl hover:bg-teal-50 transition-colors group cursor-pointer relative">
+                            <div className="flex flex-col items-center text-center"
+                              onClick={()=>navigate(`/dashboard/Mentor/interns`)}
+                              >
+                              <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center mb-3 group-hover:bg-teal-200 transition-colors"
+                              >
+                                <FaUserPlus className="w-6 h-6 text-teal-600"
+                                />
+                              </div>
+                              <h4 className="font-medium text-gray-800 mb-1">Add Intern</h4>
+                              <p className="text-xs text-gray-500">Single entry</p>
+                            </div>
                           </div>
-                          <p className="text-sm text-gray-500">{member.role}</p>
-                          <div className="flex items-center gap-4 mt-2">
-                            <span className="text-xs text-gray-500">{member.department}</span>
-                            <span className="text-xs text-gray-500">{member.tasksCompleted} tasks</span>
+
+                          {/* Add Intern Bulk */}
+                          <div className="p-4 bg-gray-50 rounded-xl hover:bg-teal-50 transition-colors group cursor-pointer relative">
+                            <div className="flex flex-col items-center text-center"
+                                onClick={()=>navigate(`/dashboard/Mentor/interns`)}
+                            >
+                              <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-3 group-hover:bg-purple-200 transition-colors">
+                                <FaUpload className="w-6 h-6 text-purple-600" />
+                              </div>
+                              <h4 className="font-medium text-gray-800 mb-1">Bulk Upload</h4>
+                              <p className="text-xs text-gray-500">CSV/Excel import</p>
+                            </div>
+                          </div>
+
+                          {/* Update Intern Single */}
+                          <div className="p-4 bg-gray-50 rounded-xl hover:bg-teal-50 transition-colors group cursor-pointer relative">
+                            <div className="flex flex-col items-center text-center"
+                                       onClick={()=>navigate(`/dashboard/Mentor/interns`)}
+                            >
+                              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-3 group-hover:bg-blue-200 transition-colors">
+                                <FaUserEdit className="w-6 h-6 text-blue-600" />
+                              </div>
+                              <h4 className="font-medium text-gray-800 mb-1">Update Intern</h4>
+                              <p className="text-xs text-gray-500">Single record</p>
+                            </div>
+                          </div>
+
+                          {/* Update Intern Bulk */}
+                          <div className="p-4 bg-gray-50 rounded-xl hover:bg-teal-50 transition-colors group cursor-pointer relative">
+                            <div className="flex flex-col items-center text-center"
+                                  onClick={()=>navigate(`/dashboard/Mentor/interns`)}
+                            >
+                              <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mb-3 group-hover:bg-orange-200 transition-colors">
+                                <FaDatabase className="w-6 h-6 text-orange-600" />
+                              </div>
+                              <h4 className="font-medium text-gray-800 mb-1">Bulk Update</h4>
+                              <p className="text-xs text-gray-500">Mass updates</p>
+                            </div>
                           </div>
                         </div>
                       </div>
+
+
+          </div>
+
+
+
+          {/* Right Column */}
+          <div className="space-y-8">
+            {/* Profile Overview */}
+            <div className="bg-white rounded-2xl shadow-lg p-6">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-16 h-16 bg-gradient-to-r from-teal-600 to-cyan-600 rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-lg">
+                  {user?.username?.charAt(0) || 'M'}
+                </div>
+                <div>
+                  <h3 className="font-bold text-gray-800">{user?.username || 'Mentor'}</h3>
+                  <p className="text-sm text-gray-500">Senior Mentor</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                    <span className="text-xs text-gray-500">Online</span>
+                  </div>
+                </div>
+              </div>
+
+
+            </div>
+
+
+            {/* Top Performers */}
+            <div className="bg-white rounded-2xl shadow-lg p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                  <FaTrophy className="w-5 h-5 text-yellow-500" />
+                  Top Performers
+                </h3>
+                <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full">
+                  This Month
+                </span>
+              </div>
+
+              <div className="space-y-4">
+                {topPerformers.length > 0 ? (
+                  topPerformers.map((intern, index) => (
+                    <div key={intern.id} className="flex items-center gap-3 p-3 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl hover:from-teal-50 hover:to-cyan-50 transition-all">
+                      <div className="relative">
+                        <div className="w-12 h-12 bg-gradient-to-r from-teal-600 to-cyan-600 rounded-xl flex items-center justify-center text-white font-bold text-lg">
+                          {intern.name?.charAt(0) || 'I'}
+                        </div>
+                        <span className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-400 rounded-full flex items-center justify-center text-xs font-bold text-white">
+                          {index + 1}
+                        </span>
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-medium text-gray-800">{intern.name}</p>
+                        <p className="text-xs text-gray-500">{intern.department}</p>
+                        <p className="text-xs text-teal-600 mt-1">{intern.achievement}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className={`text-lg font-bold ${getScoreColor(intern.score)}`}>
+                          {intern.score}%
+                        </p>
+                        <p className="text-xs text-gray-500">{intern.projectsCompleted} projects</p>
+                      </div>
                     </div>
                   ))
-              ) : (
-                <div className="p-4 text-center text-gray-500">
-                  No team members found
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Right Column */}
-        <div className="space-y-6">
-          {/* Performance Metrics */}
-          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-            <div className="bg-gradient-to-r from-purple-50 to-pink-50 px-6 py-4 border-b border-purple-100">
-              <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-                <FaChartLine className="w-5 h-5 text-purple-600" />
-                Performance Metrics
-              </h2>
-            </div>
-            <div className="p-4">
-              <div className="grid grid-cols-2 gap-4">
-                {performanceMetrics.map((metric) => (
-                  <div key={metric.id} className="text-center p-3 bg-gray-50 rounded-xl">
-                    <div className={`w-10 h-10 bg-${metric.color}-100 rounded-full flex items-center justify-center mx-auto mb-2`}>
-                      <metric.icon className={`w-5 h-5 text-${metric.color}-600`} />
-                    </div>
-                    <p className="text-lg font-bold text-gray-800">{metric.value}</p>
-                    <p className="text-xs text-gray-500 mt-1">{metric.label}</p>
-                    <span className={`text-xs text-${metric.color}-600 font-medium mt-1 block`}>
-                      {metric.trend}
-                    </span>
+                ) : (
+                  <div className="text-center py-8">
+                    <FaTrophy className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                    <p className="text-gray-500">No ranking data available</p>
                   </div>
+                )}
+              </div>
+
+              <button
+                onClick={handleViewAnalytics}
+                className="w-full mt-6 px-4 py-2 border border-teal-600 text-teal-600 rounded-xl hover:bg-teal-50 transition-colors text-sm font-medium"
+              >
+                View Full Rankings
+              </button>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="bg-white rounded-2xl shadow-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2 mb-6">
+                <FaRocket className="w-5 h-5 text-teal-600" />
+                Quick Actions
+              </h3>
+
+              <div className="grid grid-cols-2 gap-3">
+                {quickActions.map((action) => (
+                  <button
+                    key={action.id}
+                    onClick={action.onClick}
+                    className="group relative p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl hover:shadow-lg transition-all hover:-translate-y-1"
+                    title={action.description}
+                  >
+                    <div className={`w-10 h-10 bg-gradient-to-r ${action.gradient} rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform shadow-lg`}>
+                      <action.icon className="w-5 h-5 text-white" />
+                    </div>
+                    <span className={`text-xs font-medium text-${action.color}-700 block`}>
+                      {action.label}
+                    </span>
+                    <span className="text-[10px] text-gray-400 mt-1 block opacity-0 group-hover:opacity-100 transition-opacity">
+                      {action.shortcut}
+                    </span>
+                  </button>
                 ))}
               </div>
             </div>
           </div>
-
-          {/* Upcoming Meetings */}
-          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-            <div className="bg-gradient-to-r from-teal-50 to-cyan-50 px-6 py-4 border-b border-teal-100 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-                <FaCalendarCheck className="w-5 h-5 text-teal-600" />
-                Upcoming Meetings
-              </h2>
-              <button
-                onClick={handleViewMeetings}
-                className="text-teal-600 hover:text-teal-700"
-              >
-                <FaAngleRight />
-              </button>
-            </div>
-            <div className="divide-y max-h-80 overflow-y-auto">
-              {upcomingMeetings.map((meeting) => (
-                <div key={meeting.id} className="p-4 hover:bg-teal-50/30">
-                  <h3 className="font-medium text-gray-800 text-sm">{meeting.title}</h3>
-                  <div className="flex items-center gap-2 mt-2">
-                    <FaRegClock className="w-3 h-3 text-gray-400" />
-                    <span className="text-xs text-gray-500">{meeting.date}</span>
-                  </div>
-                  <div className="flex items-center gap-3 mt-2">
-                    <span className="text-xs text-gray-500">{meeting.room}</span>
-                    <span className="text-xs text-gray-500">{meeting.attendees} attendees</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Recent Activities */}
-          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-            <div className="bg-gradient-to-r from-amber-50 to-orange-50 px-6 py-4 border-b border-amber-100">
-              <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-                <FaClipboardList className="w-5 h-5 text-amber-600" />
-                Recent Activities
-              </h2>
-            </div>
-            <div className="divide-y max-h-80 overflow-y-auto">
-              {recentActivities.map((activity) => (
-                <div key={activity.id} className="p-3 hover:bg-amber-50/30">
-                  <p className="text-sm">
-                    <span className="font-medium text-gray-800">{activity.user}</span>
-                    <span className="text-gray-600"> {activity.action} </span>
-                    <span className="font-medium text-gray-800">{activity.target}</span>
-                  </p>
-                  <p className="text-xs text-gray-500 mt-1">{activity.time}</p>
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
-      </div>
 
-      {/* Bottom Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Bugs Tracker */}
-        <div className="bg-white rounded-2xl shadow-lg p-6">
-          <h3 className="font-semibold text-gray-800 flex items-center gap-2 mb-4">
-            <FaBug className="w-4 h-4 text-red-500" />
-            Issues & Bugs
-          </h3>
-          <div className="space-y-3">
-            {bugsList.map((bug) => (
-              <div key={bug.id} className="flex items-start justify-between p-3 bg-gray-50 rounded-xl">
+        {/* Intern Detail Modal */}
+        {selectedIntern && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" onClick={() => setSelectedIntern(null)}>
+            <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+              {/* Modal Header */}
+              <div className="bg-gradient-to-r from-teal-600 to-cyan-600 p-6 sticky top-0">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-4">
+                    <img
+                      src={selectedIntern.avatar}
+                      alt={selectedIntern.name}
+                      className="w-20 h-20 rounded-2xl border-4 border-white shadow-xl"
+                    />
+                    <div className="text-white">
+                      <h2 className="text-2xl font-bold">{selectedIntern.name}</h2>
+                      <p className="text-teal-100">{selectedIntern.department} • {selectedIntern.project}</p>
+                      <div className="flex gap-2 mt-2">
+                        <a href={selectedIntern.github} target="_blank" rel="noopener noreferrer" className="p-1.5 bg-white/20 rounded-lg hover:bg-white/30 transition-colors">
+                          <FaGithub className="w-4 h-4" />
+                        </a>
+                        <a href={selectedIntern.linkedin} target="_blank" rel="noopener noreferrer" className="p-1.5 bg-white/20 rounded-lg hover:bg-white/30 transition-colors">
+                          <FaLinkedin className="w-4 h-4" />
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setSelectedIntern(null)}
+                    className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+                  >
+                    <FaTimes className="w-5 h-5 text-white" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Modal Body */}
+              <div className="p-6 space-y-6">
+                {/* Contact Info */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                    <FaEnvelope className="w-4 h-4 text-teal-600" />
+                    <span className="text-sm text-gray-600">{selectedIntern.email}</span>
+                  </div>
+                  <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                    <FaPhone className="w-4 h-4 text-teal-600" />
+                    <span className="text-sm text-gray-600">{selectedIntern.phone || '+1 234 567 890'}</span>
+                  </div>
+                </div>
+
+                {/* Skills */}
                 <div>
-                  <p className="font-medium text-gray-800 text-sm">{bug.title}</p>
-                  <p className="text-xs text-gray-500 mt-1">{bug.project} • {bug.assignee}</p>
-                </div>
-                <div className="text-right">
-                  <span className={`text-xs px-2 py-1 rounded-full ${getPriorityColor(bug.severity)}`}>
-                    {bug.severity}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Resource Allocation */}
-        <div className="bg-white rounded-2xl shadow-lg p-6">
-          <h3 className="font-semibold text-gray-800 flex items-center gap-2 mb-4">
-            <FaServer className="w-4 h-4 text-teal-600" />
-            Resource Allocation
-          </h3>
-          <div className="space-y-4">
-            {resources.map((resource) => (
-              <div key={resource.id}>
-                <div className="flex justify-between text-sm mb-1">
-                  <span className="text-gray-600">{resource.name}</span>
-                  <span className="font-medium">
-                    {resource.allocated}/{resource.total} {resource.unit || ''}
-                  </span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div
-                    className={`h-2 rounded-full ${
-                      resource.status === 'optimal' ? 'bg-teal-600' : 'bg-yellow-500'
-                    }`}
-                    style={{ width: `${(resource.allocated / resource.total) * 100}%` }}
-                  ></div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="bg-white rounded-2xl shadow-lg p-6">
-          <h3 className="font-semibold text-gray-800 flex items-center gap-2 mb-4">
-            <FaRocket className="w-4 h-4 text-teal-600" />
-            Quick Actions
-          </h3>
-          <div className="grid grid-cols-2 gap-3">
-            {quickActions.map((action) => (
-              <button
-                key={action.id}
-                onClick={action.onClick}
-                className={`p-4 bg-${action.color}-50 rounded-xl hover:bg-${action.color}-100 transition-colors text-center group`}
-              >
-                <action.icon className={`w-6 h-6 text-${action.color}-600 mx-auto mb-2 group-hover:scale-110 transition-transform`} />
-                <span className={`text-xs font-medium text-${action.color}-700`}>{action.label}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Intern Detail Modal */}
-      {selectedIntern && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="bg-gradient-to-r from-teal-600 to-cyan-600 p-6 sticky top-0">
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-4">
-                  <img src={selectedIntern.avatar} alt={selectedIntern.name} className="w-16 h-16 rounded-full border-4 border-white" />
-                  <div className="text-white">
-                    <h2 className="text-2xl font-bold">{selectedIntern.name}</h2>
-                    <p className="text-teal-100">{selectedIntern.role} • {selectedIntern.department}</p>
+                  <h4 className="text-sm font-semibold text-gray-700 mb-3">Skills</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedIntern.skills?.map((skill, idx) => (
+                      <span key={idx} className="px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-xs font-medium">
+                        {skill}
+                      </span>
+                    ))}
                   </div>
                 </div>
-                <button
-                  onClick={() => setSelectedIntern(null)}
-                  className="p-2 hover:bg-white/20 rounded-lg transition-colors"
-                >
-                  <FaTimes className="w-5 h-5 text-white" />
-                </button>
-              </div>
-            </div>
-            <div className="p-6 space-y-6">
-              {/* Contact Info */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-                  <FaEnvelope className="w-4 h-4 text-teal-600" />
-                  <span className="text-sm text-gray-600">{selectedIntern.email || 'email@example.com'}</span>
-                </div>
-                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-                  <FaPhone className="w-4 h-4 text-teal-600" />
-                  <span className="text-sm text-gray-600">+1 234 567 890</span>
-                </div>
-              </div>
 
-              {/* Performance Stats */}
-              <div className="grid grid-cols-3 gap-4">
-                <div className="text-center p-3 bg-teal-50 rounded-xl">
-                  <p className="text-2xl font-bold text-teal-600">{selectedIntern.tasksCompleted || 0}</p>
-                  <p className="text-xs text-gray-600">Tasks Done</p>
+                {/* Progress Stats */}
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="text-center p-4 bg-gradient-to-br from-teal-50 to-cyan-50 rounded-xl">
+                    <p className="text-2xl font-bold text-teal-600">{selectedIntern.progress}%</p>
+                    <p className="text-xs text-gray-600">Overall Progress</p>
+                    <div className="w-full bg-white rounded-full h-1.5 mt-2">
+                      <div className="bg-teal-600 h-1.5 rounded-full" style={{ width: `${selectedIntern.progress}%` }}></div>
+                    </div>
+                  </div>
+                  <div className="text-center p-4 bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl">
+                    <p className="text-2xl font-bold text-amber-600">4.5</p>
+                    <p className="text-xs text-gray-600">Rating</p>
+                  </div>
                 </div>
-                <div className="text-center p-3 bg-cyan-50 rounded-xl">
-                  <p className="text-2xl font-bold text-cyan-600">4.8</p>
-                  <p className="text-xs text-gray-600">Rating</p>
-                </div>
-                <div className="text-center p-3 bg-purple-50 rounded-xl">
-                  <p className="text-2xl font-bold text-purple-600">12</p>
-                  <p className="text-xs text-gray-600">Projects</p>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex gap-3">
-                <button className="flex-1 px-4 py-2 bg-teal-600 text-white rounded-xl hover:bg-teal-700 transition-colors">
-                  Assign Task
-                </button>
-                <button
-                  onClick={() => {
-                    setSelectedIntern(null);
-                    navigate(`/dashboard/Execution/team/${selectedIntern.id}`);
-                  }}
-                  className="flex-1 px-4 py-2 border border-teal-600 text-teal-600 rounded-xl hover:bg-teal-50 transition-colors"
-                >
-                  View Profile
-                </button>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

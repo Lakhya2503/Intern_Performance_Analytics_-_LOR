@@ -369,57 +369,9 @@ const Analytics = () => {
               Comprehensive overview of intern performance and metrics
             </p>
           </div>
-          <div className="flex gap-3">
-            <button
-              onClick={() => {
-                fetchInterns();
-                fetchRankingData();
-              }}
-              className="p-2 rounded-lg hover:bg-white/50 transition-colors"
-              title="Refresh data"
-            >
-              <RefreshCw size={20} color={colors.primary} />
-            </button>
-            <button
-              className="px-4 py-2 rounded-lg flex items-center gap-2 text-white transition-all duration-300 hover:shadow-lg"
-              style={{
-                background: `linear-gradient(135deg, ${colors.primary} 0%, ${colors.secondary} 100%)`
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = `linear-gradient(135deg, ${colors.dark} 0%, ${colors.darker} 100%)`;
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = `linear-gradient(135deg, ${colors.primary} 0%, ${colors.secondary} 100%)`;
-              }}
-            >
-              <Download size={18} />
-              Export Report
-            </button>
-          </div>
+
         </div>
 
-        {/* Navigation Tabs */}
-        <div className="flex gap-4 mt-6 border-b border-gray-200">
-          {['overview', 'performance', 'departments', 'mentors'].map(tab => (
-            <button
-              key={tab}
-              onClick={() => setSelectedView(tab)}
-              className={`px-4 py-2 capitalize font-medium transition-colors relative ${
-                selectedView === tab
-                  ? 'text-indigo-600'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              {tab}
-              {selectedView === tab && (
-                <div
-                  className="absolute bottom-0 left-0 right-0 h-0.5"
-                  style={{ background: `linear-gradient(90deg, ${colors.primary}, ${colors.secondary})` }}
-                />
-              )}
-            </button>
-          ))}
-        </div>
       </div>
 
       {/* Stats Grid */}

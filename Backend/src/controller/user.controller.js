@@ -197,11 +197,15 @@ const updateAvatar = asyncHandler(async(req,res)=>{
 
       const userWithProfile = await Profile.findOne({ user: req.user._id }).populate({path : "user", select : "-password -refreshToken"})
 
+      console.log("file.path", req.files?.avatar[0]?.path);
+
       const file = req.files?.avatar[0]
 
-      console.log(file.path);
+      // console.log(file);
 
-        const avatarFile = await uploadFiles(file);
+
+
+        const avatarFile = await uploadFiles(file.path);
 
         if (!avatarFile || !avatarFile.url) {
           throw new ApiError(500, "Failed to upload avatar file");

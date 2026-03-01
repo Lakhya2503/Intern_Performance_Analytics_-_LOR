@@ -89,21 +89,23 @@ function AppContent() {
 <Toaster
   position="top-right"
   toastOptions={{
-    duration: 2000,
+    duration: 500,
     style: {
-      fontSize: "16px", // Increased from 14px
+      fontSize: "16px",
       background: "#fff",
       color: "#333",
       border: "1px solid #e5e7eb",
       boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.02)",
-      borderRadius: "12px", // Increased from 8px
-      padding: "20px", // Increased from 16px
-      minWidth: "320px", // Added minimum width
-      maxWidth: "400px", // Added maximum width
+      borderRadius: "12px",
+      padding: "20px",
+      minWidth: "300px",
+      maxWidth: "400px",
     },
+
+    // Default variants
     success: {
       style: {
-        borderLeft: "6px solid #10b981", // Thicker border
+        borderLeft: "6px solid #10b981",
         background: "linear-gradient(to right, #f0fdf4, #ffffff)",
         borderTop: "1px solid #dcfce7",
         borderRight: "1px solid #dcfce7",
@@ -180,302 +182,552 @@ function AppContent() {
       },
     },
 
-    // Material Design style variants with larger icons
-    "success-material": {
-      style: {
-        backgroundColor: "#10b981",
-        color: "#ffffff",
-        border: "none",
-        boxShadow: "0 12px 20px -8px rgba(16, 185, 129, 0.4)",
-        borderRadius: "16px",
-        padding: "20px",
-      },
-      icon: "🎉", // Custom icon
-      iconTheme: {
-        primary: "#fff",
-        secondary: "#10b981",
-      },
-    },
-    "error-material": {
-      style: {
-        backgroundColor: "#ef4444",
-        color: "#ffffff",
-        border: "none",
-        boxShadow: "0 12px 20px -8px rgba(239, 68, 68, 0.4)",
-        borderRadius: "16px",
-        padding: "20px",
-      },
-      icon: "⚠️", // Custom icon
-      iconTheme: {
-        primary: "#fff",
-        secondary: "#ef4444",
-      },
-    },
-    "info-material": {
-      style: {
-        backgroundColor: "#3b82f6",
-        color: "#ffffff",
-        border: "none",
-        boxShadow: "0 12px 20px -8px rgba(59, 130, 246, 0.4)",
-        borderRadius: "16px",
-        padding: "20px",
-      },
-      icon: "ℹ️", // Custom icon
-      iconTheme: {
-        primary: "#fff",
-        secondary: "#3b82f6",
-      },
-    },
-    "warning-material": {
-      style: {
-        backgroundColor: "#f59e0b",
-        color: "#ffffff",
-        border: "none",
-        boxShadow: "0 12px 20px -8px rgba(245, 158, 11, 0.4)",
-        borderRadius: "16px",
-        padding: "20px",
-      },
-      icon: "⚡", // Custom icon
-      iconTheme: {
-        primary: "#fff",
-        secondary: "#f59e0b",
-      },
-    },
+    // NEW VARIANTS START HERE
 
-    // Gradient variants with larger icons
-    "success-gradient": {
+    // Vibrant Solid variants
+    "success-solid": {
       style: {
-        background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+        background: "#10b981",
         color: "#ffffff",
         border: "none",
         boxShadow: "0 12px 20px -8px rgba(16, 185, 129, 0.5)",
-        borderRadius: "16px",
-        padding: "22px",
+        borderRadius: "12px",
+        padding: "20px",
+        fontWeight: "500",
       },
-      icon: "✅", // Custom icon
+      icon: "✓",
       iconTheme: {
-        primary: "#fff",
+        primary: "#ffffff",
         secondary: "#10b981",
       },
     },
-    "error-gradient": {
+    "error-solid": {
       style: {
-        background: "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)",
+        background: "#ef4444",
         color: "#ffffff",
         border: "none",
         boxShadow: "0 12px 20px -8px rgba(239, 68, 68, 0.5)",
-        borderRadius: "16px",
-        padding: "22px",
+        borderRadius: "12px",
+        padding: "20px",
+        fontWeight: "500",
       },
-      icon: "❌", // Custom icon
+      icon: "✕",
       iconTheme: {
-        primary: "#fff",
+        primary: "#ffffff",
         secondary: "#ef4444",
       },
     },
-    "info-gradient": {
+    "info-solid": {
       style: {
-        background: "linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)",
+        background: "#3b82f6",
         color: "#ffffff",
         border: "none",
         boxShadow: "0 12px 20px -8px rgba(59, 130, 246, 0.5)",
-        borderRadius: "16px",
-        padding: "22px",
+        borderRadius: "12px",
+        padding: "20px",
+        fontWeight: "500",
       },
-      icon: "🔵", // Custom icon
+      icon: "ⓘ",
       iconTheme: {
-        primary: "#fff",
+        primary: "#ffffff",
         secondary: "#3b82f6",
       },
     },
-    "warning-gradient": {
+    "warning-solid": {
       style: {
-        background: "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)",
+        background: "#f59e0b",
         color: "#ffffff",
         border: "none",
         boxShadow: "0 12px 20px -8px rgba(245, 158, 11, 0.5)",
-        borderRadius: "16px",
-        padding: "22px",
+        borderRadius: "12px",
+        padding: "20px",
+        fontWeight: "500",
       },
-      icon: "🔶", // Custom icon
+      icon: "⚠",
       iconTheme: {
-        primary: "#fff",
+        primary: "#ffffff",
         secondary: "#f59e0b",
       },
     },
 
-    // New Pastel variants
+    // Pastel variants (enhanced)
     "success-pastel": {
       style: {
-        background: "#d1fae5",
+        background: "linear-gradient(145deg, #d1fae5, #ecfdf5)",
         color: "#065f46",
-        borderLeft: "6px solid #10b981",
-        borderTop: "1px solid #a7f3d0",
-        borderRight: "1px solid #a7f3d0",
-        borderBottom: "1px solid #a7f3d0",
-        borderRadius: "12px",
-        padding: "20px",
-        boxShadow: "0 8px 16px -4px rgba(16, 185, 129, 0.2)",
+        borderLeft: "8px solid #10b981",
+        borderRadius: "16px 12px 12px 16px",
+        padding: "20px 24px",
+        boxShadow: "0 10px 25px -5px rgba(16, 185, 129, 0.3)",
+        border: "1px solid #a7f3d0",
       },
-      icon: "🌱", // Custom icon
+      icon: "🌱",
     },
     "error-pastel": {
       style: {
-        background: "#fee2e2",
+        background: "linear-gradient(145deg, #fee2e2, #fef2f2)",
         color: "#991b1b",
-        borderLeft: "6px solid #ef4444",
-        borderTop: "1px solid #fecaca",
-        borderRight: "1px solid #fecaca",
-        borderBottom: "1px solid #fecaca",
-        borderRadius: "12px",
-        padding: "20px",
-        boxShadow: "0 8px 16px -4px rgba(239, 68, 68, 0.2)",
+        borderLeft: "8px solid #ef4444",
+        borderRadius: "16px 12px 12px 16px",
+        padding: "20px 24px",
+        boxShadow: "0 10px 25px -5px rgba(239, 68, 68, 0.3)",
+        border: "1px solid #fecaca",
       },
-      icon: "💔", // Custom icon
+      icon: "💔",
     },
     "info-pastel": {
       style: {
-        background: "#dbeafe",
+        background: "linear-gradient(145deg, #dbeafe, #eff6ff)",
         color: "#1e3a8a",
-        borderLeft: "6px solid #3b82f6",
-        borderTop: "1px solid #bfdbfe",
-        borderRight: "1px solid #bfdbfe",
-        borderBottom: "1px solid #bfdbfe",
-        borderRadius: "12px",
-        padding: "20px",
-        boxShadow: "0 8px 16px -4px rgba(59, 130, 246, 0.2)",
+        borderLeft: "8px solid #3b82f6",
+        borderRadius: "16px 12px 12px 16px",
+        padding: "20px 24px",
+        boxShadow: "0 10px 25px -5px rgba(59, 130, 246, 0.3)",
+        border: "1px solid #bfdbfe",
       },
-      icon: "💡", // Custom icon
+      icon: "💡",
     },
     "warning-pastel": {
       style: {
-        background: "#fef3c7",
+        background: "linear-gradient(145deg, #fef3c7, #fffbeb)",
         color: "#92400e",
-        borderLeft: "6px solid #f59e0b",
-        borderTop: "1px solid #fde68a",
-        borderRight: "1px solid #fde68a",
-        borderBottom: "1px solid #fde68a",
-        borderRadius: "12px",
-        padding: "20px",
-        boxShadow: "0 8px 16px -4px rgba(245, 158, 11, 0.2)",
+        borderLeft: "8px solid #f59e0b",
+        borderRadius: "16px 12px 12px 16px",
+        padding: "20px 24px",
+        boxShadow: "0 10px 25px -5px rgba(245, 158, 11, 0.3)",
+        border: "1px solid #fde68a",
       },
-      icon: "🌟", // Custom icon
+      icon: "🌟",
     },
 
-    // New Neon variants
+    // Neon variants (enhanced)
     "success-neon": {
       style: {
-        background: "#000",
+        background: "#0a0f0f",
         color: "#10b981",
         border: "2px solid #10b981",
-        boxShadow: "0 0 20px rgba(16, 185, 129, 0.6)",
+        boxShadow: "0 0 30px rgba(16, 185, 129, 0.8), inset 0 0 10px rgba(16, 185, 129, 0.3)",
         borderRadius: "8px",
         padding: "20px",
-        textShadow: "0 0 8px rgba(16, 185, 129, 0.5)",
+        textShadow: "0 0 8px rgba(16, 185, 129, 0.8)",
+        fontWeight: "500",
       },
-      icon: "⚡", // Custom icon
-      iconTheme: {
-        primary: "#10b981",
-        secondary: "#000",
-      },
+      icon: "⚡",
     },
     "error-neon": {
       style: {
-        background: "#000",
+        background: "#0f0a0a",
         color: "#ef4444",
         border: "2px solid #ef4444",
-        boxShadow: "0 0 20px rgba(239, 68, 68, 0.6)",
+        boxShadow: "0 0 30px rgba(239, 68, 68, 0.8), inset 0 0 10px rgba(239, 68, 68, 0.3)",
         borderRadius: "8px",
         padding: "20px",
-        textShadow: "0 0 8px rgba(239, 68, 68, 0.5)",
+        textShadow: "0 0 8px rgba(239, 68, 68, 0.8)",
+        fontWeight: "500",
       },
-      icon: "🔥", // Custom icon
-      iconTheme: {
-        primary: "#ef4444",
-        secondary: "#000",
-      },
+      icon: "🔥",
     },
     "info-neon": {
       style: {
-        background: "#000",
+        background: "#0a0a0f",
         color: "#3b82f6",
         border: "2px solid #3b82f6",
-        boxShadow: "0 0 20px rgba(59, 130, 246, 0.6)",
+        boxShadow: "0 0 30px rgba(59, 130, 246, 0.8), inset 0 0 10px rgba(59, 130, 246, 0.3)",
         borderRadius: "8px",
         padding: "20px",
-        textShadow: "0 0 8px rgba(59, 130, 246, 0.5)",
+        textShadow: "0 0 8px rgba(59, 130, 246, 0.8)",
+        fontWeight: "500",
       },
-      icon: "💫", // Custom icon
-      iconTheme: {
-        primary: "#3b82f6",
-        secondary: "#000",
-      },
+      icon: "💫",
     },
     "warning-neon": {
       style: {
-        background: "#000",
+        background: "#0f0a00",
         color: "#f59e0b",
         border: "2px solid #f59e0b",
-        boxShadow: "0 0 20px rgba(245, 158, 11, 0.6)",
+        boxShadow: "0 0 30px rgba(245, 158, 11, 0.8), inset 0 0 10px rgba(245, 158, 11, 0.3)",
         borderRadius: "8px",
         padding: "20px",
-        textShadow: "0 0 8px rgba(245, 158, 11, 0.5)",
+        textShadow: "0 0 8px rgba(245, 158, 11, 0.8)",
+        fontWeight: "500",
       },
-      icon: "⚡", // Custom icon
-      iconTheme: {
-        primary: "#f59e0b",
-        secondary: "#000",
-      },
+      icon: "⚡",
     },
 
-    // Glassmorphism variants
+    // Glassmorphism variants (enhanced)
     "success-glass": {
       style: {
         background: "rgba(16, 185, 129, 0.1)",
-        backdropFilter: "blur(10px)",
+        backdropFilter: "blur(12px)",
+        WebkitBackdropFilter: "blur(12px)",
         color: "#10b981",
         border: "1px solid rgba(16, 185, 129, 0.3)",
-        boxShadow: "0 8px 32px 0 rgba(16, 185, 129, 0.2)",
+        boxShadow: "0 8px 32px 0 rgba(16, 185, 129, 0.3)",
         borderRadius: "16px",
         padding: "22px",
       },
-      icon: "✨", // Custom icon
+      icon: "✨",
     },
     "error-glass": {
       style: {
         background: "rgba(239, 68, 68, 0.1)",
-        backdropFilter: "blur(10px)",
+        backdropFilter: "blur(12px)",
+        WebkitBackdropFilter: "blur(12px)",
         color: "#ef4444",
         border: "1px solid rgba(239, 68, 68, 0.3)",
-        boxShadow: "0 8px 32px 0 rgba(239, 68, 68, 0.2)",
+        boxShadow: "0 8px 32px 0 rgba(239, 68, 68, 0.3)",
         borderRadius: "16px",
         padding: "22px",
       },
-      icon: "💢", // Custom icon
+      icon: "💢",
     },
     "info-glass": {
       style: {
         background: "rgba(59, 130, 246, 0.1)",
-        backdropFilter: "blur(10px)",
+        backdropFilter: "blur(12px)",
+        WebkitBackdropFilter: "blur(12px)",
         color: "#3b82f6",
         border: "1px solid rgba(59, 130, 246, 0.3)",
-        boxShadow: "0 8px 32px 0 rgba(59, 130, 246, 0.2)",
+        boxShadow: "0 8px 32px 0 rgba(59, 130, 246, 0.3)",
         borderRadius: "16px",
         padding: "22px",
       },
-      icon: "🌀", // Custom icon
+      icon: "🌀",
     },
     "warning-glass": {
       style: {
         background: "rgba(245, 158, 11, 0.1)",
-        backdropFilter: "blur(10px)",
+        backdropFilter: "blur(12px)",
+        WebkitBackdropFilter: "blur(12px)",
         color: "#f59e0b",
         border: "1px solid rgba(245, 158, 11, 0.3)",
-        boxShadow: "0 8px 32px 0 rgba(245, 158, 11, 0.2)",
+        boxShadow: "0 8px 32px 0 rgba(245, 158, 11, 0.3)",
         borderRadius: "16px",
         padding: "22px",
       },
-      icon: "⭐", // Custom icon
+      icon: "⭐",
+    },
+
+    // Minimal variants
+    "success-minimal": {
+      style: {
+        background: "#ffffff",
+        color: "#10b981",
+        border: "1px solid #10b981",
+        borderRadius: "6px",
+        padding: "16px 20px",
+        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.05)",
+      },
+      icon: "✓",
+    },
+    "error-minimal": {
+      style: {
+        background: "#ffffff",
+        color: "#ef4444",
+        border: "1px solid #ef4444",
+        borderRadius: "6px",
+        padding: "16px 20px",
+        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.05)",
+      },
+      icon: "✕",
+    },
+    "info-minimal": {
+      style: {
+        background: "#ffffff",
+        color: "#3b82f6",
+        border: "1px solid #3b82f6",
+        borderRadius: "6px",
+        padding: "16px 20px",
+        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.05)",
+      },
+      icon: "ⓘ",
+    },
+    "warning-minimal": {
+      style: {
+        background: "#ffffff",
+        color: "#f59e0b",
+        border: "1px solid #f59e0b",
+        borderRadius: "6px",
+        padding: "16px 20px",
+        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.05)",
+      },
+      icon: "⚠",
+    },
+
+    // Dark mode variants
+    "success-dark": {
+      style: {
+        background: "#1e2a2a",
+        color: "#10b981",
+        border: "1px solid #2d3a3a",
+        boxShadow: "0 8px 20px rgba(0, 0, 0, 0.5)",
+        borderRadius: "10px",
+        padding: "18px 22px",
+      },
+      iconTheme: {
+        primary: "#10b981",
+        secondary: "#1e2a2a",
+      },
+    },
+    "error-dark": {
+      style: {
+        background: "#2a1e1e",
+        color: "#ef4444",
+        border: "1px solid #3a2d2d",
+        boxShadow: "0 8px 20px rgba(0, 0, 0, 0.5)",
+        borderRadius: "10px",
+        padding: "18px 22px",
+      },
+      iconTheme: {
+        primary: "#ef4444",
+        secondary: "#2a1e1e",
+      },
+    },
+    "info-dark": {
+      style: {
+        background: "#1e1e2a",
+        color: "#3b82f6",
+        border: "1px solid #2d2d3a",
+        boxShadow: "0 8px 20px rgba(0, 0, 0, 0.5)",
+        borderRadius: "10px",
+        padding: "18px 22px",
+      },
+      iconTheme: {
+        primary: "#3b82f6",
+        secondary: "#1e1e2a",
+      },
+    },
+    "warning-dark": {
+      style: {
+        background: "#2a1e0a",
+        color: "#f59e0b",
+        border: "1px solid #3a2d1a",
+        boxShadow: "0 8px 20px rgba(0, 0, 0, 0.5)",
+        borderRadius: "10px",
+        padding: "18px 22px",
+      },
+      iconTheme: {
+        primary: "#f59e0b",
+        secondary: "#2a1e0a",
+      },
+    },
+
+    // Gradient variants (new colors)
+    "success-gradient": {
+      style: {
+        background: "linear-gradient(135deg, #10b981 0%, #34d399 50%, #059669 100%)",
+        color: "#ffffff",
+        border: "none",
+        boxShadow: "0 15px 25px -8px rgba(16, 185, 129, 0.5)",
+        borderRadius: "16px",
+        padding: "22px",
+      },
+      icon: "✓",
+    },
+    "error-gradient": {
+      style: {
+        background: "linear-gradient(135deg, #ef4444 0%, #f87171 50%, #dc2626 100%)",
+        color: "#ffffff",
+        border: "none",
+        boxShadow: "0 15px 25px -8px rgba(239, 68, 68, 0.5)",
+        borderRadius: "16px",
+        padding: "22px",
+      },
+      icon: "✕",
+    },
+    "info-gradient": {
+      style: {
+        background: "linear-gradient(135deg, #3b82f6 0%, #60a5fa 50%, #2563eb 100%)",
+        color: "#ffffff",
+        border: "none",
+        boxShadow: "0 15px 25px -8px rgba(59, 130, 246, 0.5)",
+        borderRadius: "16px",
+        padding: "22px",
+      },
+      icon: "ⓘ",
+    },
+    "warning-gradient": {
+      style: {
+        background: "linear-gradient(135deg, #f59e0b 0%, #fbbf24 50%, #d97706 100%)",
+        color: "#ffffff",
+        border: "none",
+        boxShadow: "0 15px 25px -8px rgba(245, 158, 11, 0.5)",
+        borderRadius: "16px",
+        padding: "22px",
+      },
+      icon: "⚠",
+    },
+
+    // Rainbow variants
+    "success-rainbow": {
+      style: {
+        background: "linear-gradient(90deg, #10b981, #34d399, #10b981, #34d399)",
+        backgroundSize: "300% 100%",
+        color: "#ffffff",
+        border: "none",
+        boxShadow: "0 10px 20px rgba(16, 185, 129, 0.3)",
+        borderRadius: "12px",
+        padding: "20px",
+        animation: "gradient 3s ease infinite",
+      },
+      icon: "🌈",
+    },
+    "error-rainbow": {
+      style: {
+        background: "linear-gradient(90deg, #ef4444, #f87171, #ef4444, #f87171)",
+        backgroundSize: "300% 100%",
+        color: "#ffffff",
+        border: "none",
+        boxShadow: "0 10px 20px rgba(239, 68, 68, 0.3)",
+        borderRadius: "12px",
+        padding: "20px",
+        animation: "gradient 3s ease infinite",
+      },
+      icon: "🔥",
+    },
+
+    // Bordered variants
+    "success-bordered": {
+      style: {
+        background: "#ffffff",
+        color: "#10b981",
+        border: "3px solid #10b981",
+        borderRadius: "20px",
+        padding: "18px 24px",
+        boxShadow: "none",
+      },
+      icon: "✓",
+    },
+    "error-bordered": {
+      style: {
+        background: "#ffffff",
+        color: "#ef4444",
+        border: "3px solid #ef4444",
+        borderRadius: "20px",
+        padding: "18px 24px",
+        boxShadow: "none",
+      },
+      icon: "✕",
+    },
+
+    // Shadow variants
+    "success-shadow": {
+      style: {
+        background: "linear-gradient(145deg, #ffffff, #f0fdf4)",
+        color: "#065f46",
+        border: "none",
+        boxShadow: "20px 20px 30px rgba(16, 185, 129, 0.2), -10px -10px 20px #ffffff",
+        borderRadius: "20px",
+        padding: "20px",
+      },
+      icon: "✨",
+    },
+    "error-shadow": {
+      style: {
+        background: "linear-gradient(145deg, #ffffff, #fef2f2)",
+        color: "#991b1b",
+        border: "none",
+        boxShadow: "20px 20px 30px rgba(239, 68, 68, 0.2), -10px -10px 20px #ffffff",
+        borderRadius: "20px",
+        padding: "20px",
+      },
+      icon: "💔",
+    },
+
+    // Outline variants
+    "success-outline": {
+      style: {
+        background: "transparent",
+        color: "#10b981",
+        border: "2px dashed #10b981",
+        borderRadius: "8px",
+        padding: "18px 22px",
+        boxShadow: "none",
+      },
+      icon: "✓",
+    },
+    "error-outline": {
+      style: {
+        background: "transparent",
+        color: "#ef4444",
+        border: "2px dotted #ef4444",
+        borderRadius: "8px",
+        padding: "18px 22px",
+        boxShadow: "none",
+      },
+      icon: "✕",
+    },
+
+    // Soft variants
+    "success-soft": {
+      style: {
+        background: "#ecfdf5",
+        color: "#065f46",
+        border: "none",
+        borderRadius: "30px",
+        padding: "16px 28px",
+        boxShadow: "0 4px 10px rgba(16, 185, 129, 0.1)",
+      },
+      icon: "🌿",
+    },
+    "error-soft": {
+      style: {
+        background: "#fef2f2",
+        color: "#991b1b",
+        border: "none",
+        borderRadius: "30px",
+        padding: "16px 28px",
+        boxShadow: "0 4px 10px rgba(239, 68, 68, 0.1)",
+      },
+      icon: "🌸",
+    },
+    "info-soft": {
+      style: {
+        background: "#eff6ff",
+        color: "#1e3a8a",
+        border: "none",
+        borderRadius: "30px",
+        padding: "16px 28px",
+        boxShadow: "0 4px 10px rgba(59, 130, 246, 0.1)",
+      },
+      icon: "🐚",
+    },
+    "warning-soft": {
+      style: {
+        background: "#fffbeb",
+        color: "#92400e",
+        border: "none",
+        borderRadius: "30px",
+        padding: "16px 28px",
+        boxShadow: "0 4px 10px rgba(245, 158, 11, 0.1)",
+      },
+      icon: "🍂",
+    },
+
+    // Compact variants
+    "success-compact": {
+      style: {
+        background: "#10b981",
+        color: "#ffffff",
+        border: "none",
+        borderRadius: "4px",
+        padding: "12px 16px",
+        fontSize: "14px",
+        minWidth: "200px",
+      },
+      icon: "✓",
+    },
+    "error-compact": {
+      style: {
+        background: "#ef4444",
+        color: "#ffffff",
+        border: "none",
+        borderRadius: "4px",
+        padding: "12px 16px",
+        fontSize: "14px",
+        minWidth: "200px",
+      },
+      icon: "✕",
     },
   }}
 />
@@ -561,3 +813,4 @@ function App() {
 }
 
 export default App;
+  

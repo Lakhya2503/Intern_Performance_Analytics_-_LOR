@@ -13,7 +13,13 @@ export const internsFieldsEnum =  {
     department : "string",
     mentor : "string",
     score : "number",
-    isActive : "boolean"
+    isActive : "boolean",
+    taskCompletion :"number",
+    taskQuality  :"number",
+    deadlineAdherence  :"number",
+    attendance  :"number",
+    mentorFeedback  :"number",
+    communication  :"number",
 }
 
 
