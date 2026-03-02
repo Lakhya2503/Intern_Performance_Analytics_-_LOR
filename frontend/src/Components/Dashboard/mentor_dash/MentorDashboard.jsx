@@ -168,9 +168,9 @@ export default function MentorDashboard() {
             </div>
             {!isSidebarCollapsed && (
               <div className="animate-fadeIn">
-                <h1 className="font-bold text-lg">{user?.username || 'Mentor'}</h1>
+                <h1 className="font-bold text-lg">{`${user?.username.slice(0,8)}....` || `${user?.fullName?.slice(0,8)}....` || 'Mentor'}</h1>
                 <p className="text-xs text-teal-200 flex items-center gap-1">
-                  <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                  <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse font-bold"></span>
                   {user?.role || 'Mentor'}
                 </p>
               </div>

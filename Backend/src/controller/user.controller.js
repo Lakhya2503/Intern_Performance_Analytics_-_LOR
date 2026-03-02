@@ -70,7 +70,7 @@ const registerUser = asyncHandler(async(req,res)=>{
         { email  }
       )
 
-      console.log(isUserExsist);
+      console.log("isUserExsist",isUserExsist);
 
 
       if(!isUserExsist) {
@@ -123,7 +123,7 @@ const loggedInUser = asyncHandler(async(req,res)=>{
           $or : [{ email } , { username }]
       })
 
-      if(user){
+      if(!user){
         throw new ApiError(400, "User not found")
       }
 
