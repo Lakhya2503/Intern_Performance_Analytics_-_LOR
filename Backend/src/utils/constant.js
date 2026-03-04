@@ -68,7 +68,7 @@ export const teachnicalDepartmentPara = {
 }
 
 export const nonTeachnicalDepartmentPara = {
-     firstPara : "Throughout his tenure, he consistently demonstrated a high level of professionalism, dedication, and commitment to assigned responsibilities. He showcased a strong understanding of core concepts related to his domain and applied his skills effectively to deliver quality outcomes aligned with organizational goals.",
+  firstPara : "Throughout his tenure, he consistently demonstrated a high level of professionalism, dedication, and commitment to assigned responsibilities. He showcased a strong understanding of core concepts related to his domain and applied his skills effectively to deliver quality outcomes aligned with organizational goals.",
 
   secondPara : "He was actively involved in coordination, documentation, reporting, communication handling, and operational support activities. His ability to manage responsibilities efficiently, maintain accuracy in records, and ensure timely task completion contributed positively to team productivity..",
 

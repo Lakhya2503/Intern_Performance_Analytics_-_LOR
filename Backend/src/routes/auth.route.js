@@ -9,7 +9,8 @@ import {
   loggedOutUser,
   registerUser,
   updateAvatar,
-  updateProfileFileds
+  updateProfileFileds,
+  accessRefershToken
 } from '../controller/user.controller.js'
 import verifyJWT from '../middleware/auth.middleware.js'
 import { uploadImage } from '../middleware/multer.middleware.js'
@@ -27,6 +28,8 @@ router.route("/auth/change/current-password").put(verifyJWT, changeCurrentPasswo
 
 router.route("/auth/fetch-user").get(verifyJWT, fetchUser)
 
+router.route("/auth/token-refresh").post(accessRefershToken)
+
 router.route("/auth/delete-account").delete(verifyJWT, deleteAccount)
 
 router.route("/auth/update-user-profile").post(verifyJWT, updateProfileFileds)
@@ -36,12 +39,15 @@ router.route("/auth/update-user-profile-avatar").post(uploadImage.fields(
              name : "avatar",
              maxCount : 1
             }]
-          ), verifyJWT, updateAvatar)
+          ), verifyJWT, updateAvatar
+)
+
 
 
 router.route("/auth/update-authorization/:excustionTeamId").post(verifyJWT, isAuthorizationChanged)
 
 router.route("/auth/fetch-execution-team").get(verifyJWT, fetchAllExcutionTemMembers)
+
 
 
 export default router

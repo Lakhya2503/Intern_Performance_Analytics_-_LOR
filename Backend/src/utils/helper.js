@@ -30,8 +30,8 @@ export const getChangeField = (oldObj, newObj, internFieldType) => {
         const newValue = castValue(newObj[key], type);
         const oldValue = castValue(oldObj[key], type);
 
-        console.log("newValue", newValue);
-        console.log("oldValue", oldValue);
+        // console.log("newValue", newValue);
+        // console.log("oldValue", oldValue);
 
 
         if(type === "date") {
@@ -78,6 +78,19 @@ export const approveVerify = (status) =>{
           } else {
             approvestatus = undefined;
           }
+
+          return approvestatus
+}
+
+export const authType = (status) => {
+      let approvestatus;
+      if( status === "true" || status === true || status === 1 || status === "1" ) {
+        approvestatus = true;
+      } else if (status === "false" || status === false || status === 0 || status === "0") {
+        approvestatus = false
+      } else {
+        approvestatus = undefined;
+      }
 
           return approvestatus
 }

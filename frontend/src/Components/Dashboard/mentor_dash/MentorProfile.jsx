@@ -287,7 +287,7 @@ const MentorProfile = () => {
               {/* Name and Role */}
               <div className="mb-10">
                 <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
-                  {profile?.fullName?.toUpperCase() || profile?.user?.username?.toUpperCase()  || "Mentor"}
+                  {profile?.fullName?.toUpperCase() || profile?.user?.username?.toUpperCase()}
                 </h1>
                 <div className="flex items-center gap-3 font-bold text-zinc-700">
                   <FaBriefcase className="text-sm" />
@@ -497,7 +497,7 @@ const MentorProfile = () => {
                       <div>
                         <p className="text-sm text-indigo-600">Role</p>
                         <p className="font-medium text-gray-800">
-                          {profile?.user?.role || 'Mentor'}
+                          {profile?.user?.role}
                         </p>
                       </div>
                     </div>

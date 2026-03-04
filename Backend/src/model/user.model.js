@@ -15,7 +15,7 @@ const userSchema = new Schema(
         unique: true,
         trim: true,
         lowercase: true,
-        match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Please enter a valid email']
+        match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Email format is incorrect. Use a valid format such as name@example.com (e.g., jane.smith@gmail.com) .']
       },
       password : {
         type : String,

@@ -11,13 +11,12 @@ import {
   FiAlertCircle,
   FiArrowRight,
   FiChevronDown,
-  FiUserPlus,
-  FiUsers,
   FiUserCheck,
-  FiShield
+  FiUsers,
+  FiShield,
+  FiInfo
 } from "react-icons/fi";
-import { MdOutlinePrivacyTip } from "react-icons/md";
-import { Athenura, AthnuraTitleImage, RegisterImg } from "../../../public/images";
+import { Athenura, AthnuraTitleImage } from "../../../public/images";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -33,16 +32,35 @@ const Register = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [agreeTerms, setAgreeTerms] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState(0);
+
+  // Password strength checker
+  const checkPasswordStrength = (password) => {
+    let strength = 0;
+    if (password.length >= 8) strength += 1;
+    if (password.match(/[a-z]/)) strength += 1;
+    if (password.match(/[A-Z]/)) strength += 1;
+    if (password.match(/[0-9]/)) strength += 1;
+    if (password.match(/[^a-zA-Z0-9]/)) strength += 1;
+    setPasswordStrength(strength);
+  };
 
   const handleChange = (e) => {
+    const { name, value } = e.target;
+
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [name]: value
     });
-    if (errors[e.target.name]) {
+
+    if (name === 'password') {
+      checkPasswordStrength(value);
+    }
+
+    if (errors[name]) {
       setErrors({
         ...errors,
-        [e.target.name]: ""
+        [name]: ""
       });
     }
   };
@@ -60,6 +78,8 @@ const Register = () => {
       newErrors.username = "Username is required";
     } else if (formData.username.length < 3) {
       newErrors.username = "Username must be at least 3 characters";
+    } else if (!/^[a-zA-Z0-9_]+$/.test(formData.username)) {
+      newErrors.username = "Username can only contain letters, numbers, and underscores";
     }
 
     if (!formData.password) {
@@ -105,6 +125,17 @@ const Register = () => {
     }
   };
 
+  // Get password strength color and text
+  const getStrengthInfo = () => {
+    const strengths = ['Very Weak', 'Weak', 'Fair', 'Good', 'Strong', 'Very Strong'];
+    const colors = ['bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-blue-500', 'bg-green-500', 'bg-emerald-500'];
+    return {
+      text: strengths[passwordStrength] || 'Very Weak',
+      color: colors[passwordStrength] || 'bg-red-500',
+      width: `${(passwordStrength + 1) * 16.67}%`
+    };
+  };
+
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-slate-50 via-teal-50 to-cyan-50 flex items-center justify-center p-4 sm:p-6 lg:p-8">
       {/* Main Container */}
@@ -141,29 +172,21 @@ const Register = () => {
 
                 {/* Feature List */}
                 <div className="space-y-4 max-w-sm mx-auto">
-
-                    <div className="flex items-center text-white bg-white/10 rounded-xl p-3 backdrop-blur-sm">
-                      <FiUserCheck className="w-5 h-5 mr-3 flex-shrink-0 text-white" />
-                      <span className="text-sm font-medium">
-                        Learn from experienced mentors
-                      </span>
-                    </div>
-
-                    <div className="flex items-center text-white bg-white/10 rounded-xl p-3 backdrop-blur-sm">
-                      <FiUsers className="w-5 h-5 mr-3 flex-shrink-0 text-white" />
-                      <span className="text-sm font-medium">
-                        Collaborate with execution-focused teams
-                      </span>
-                    </div>
-
-                    <div className="flex items-center text-white bg-white/10 rounded-xl p-3 backdrop-blur-sm">
-                      <FiShield className="w-5 h-5 mr-3 flex-shrink-0 text-white" />
-                      <span className="text-sm font-medium">
-                        Secure, private, and trusted platform
-                      </span>
-                    </div>
-
+                  <div className="flex items-center text-white bg-white/10 rounded-xl p-3 backdrop-blur-sm">
+                    <FiUserCheck className="w-5 h-5 mr-3 flex-shrink-0" />
+                    <span className="text-sm font-medium">Learn from experienced mentors</span>
                   </div>
+
+                  <div className="flex items-center text-white bg-white/10 rounded-xl p-3 backdrop-blur-sm">
+                    <FiUsers className="w-5 h-5 mr-3 flex-shrink-0" />
+                    <span className="text-sm font-medium">Collaborate with execution-focused teams</span>
+                  </div>
+
+                  <div className="flex items-center text-white bg-white/10 rounded-xl p-3 backdrop-blur-sm">
+                    <FiShield className="w-5 h-5 mr-3 flex-shrink-0" />
+                    <span className="text-sm font-medium">Secure, private, and trusted platform</span>
+                  </div>
+                </div>
 
                 {/* Testimonial/Quote */}
                 <div className="mt-8 p-4 bg-white/10 rounded-xl backdrop-blur-sm">
@@ -198,6 +221,17 @@ const Register = () => {
                 </p>
               </div>
 
+              {/* Info Message */}
+              <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-xl flex items-start space-x-3">
+                <div className="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                  <FiInfo className="w-5 h-5 text-blue-600" />
+                </div>
+                <div className="text-sm text-blue-800">
+                  <span className="font-semibold">Almost there!</span>
+                  <p className="mt-1">Fill in your details to create your account and start your journey.</p>
+                </div>
+              </div>
+
               {/* Error Alert */}
               {errors.form && (
                 <div className="mb-6 p-4 bg-gradient-to-r from-red-50 to-orange-50 border-l-4 border-red-500 rounded-r-xl text-red-600 text-sm animate-slideDown shadow-md">
@@ -224,8 +258,8 @@ const Register = () => {
                       onChange={handleChange}
                       className="w-full px-4 py-4 bg-white border-2 border-slate-200 rounded-xl text-slate-900 font-medium outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-100 transition-all appearance-none cursor-pointer hover:border-slate-300"
                     >
-                      <option value="Mentor">Mentor</option>
-                      <option value="ExecutionTeam">Execution Team</option>
+                      <option value="Mentor">👨‍🏫 Mentor</option>
+                      <option value="ExecutionTeam">👥 Execution Team</option>
                     </select>
                     <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 group-hover:text-teal-600 transition-colors">
                       <FiChevronDown className="w-5 h-5" />
@@ -255,6 +289,11 @@ const Register = () => {
                           : 'border-slate-200 focus:border-teal-500 focus:ring-4 focus:ring-teal-100'
                         } hover:border-slate-300`}
                     />
+                    {formData.email && !errors.email && (
+                      <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                        <FiCheckCircle className="w-5 h-5 text-green-500" />
+                      </div>
+                    )}
                   </div>
                   {errors.email && (
                     <p className="text-red-500 text-sm mt-1.5 ml-1 flex items-center animate-slideDown">
@@ -286,11 +325,21 @@ const Register = () => {
                           : 'border-slate-200 focus:border-teal-500 focus:ring-4 focus:ring-teal-100'
                         } hover:border-slate-300`}
                     />
+                    {formData.username && !errors.username && (
+                      <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                        <FiCheckCircle className="w-5 h-5 text-green-500" />
+                      </div>
+                    )}
                   </div>
                   {errors.username && (
                     <p className="text-red-500 text-sm mt-1.5 ml-1 flex items-center animate-slideDown">
                       <FiAlertCircle className="w-4 h-4 mr-1.5 flex-shrink-0" />
                       {errors.username}
+                    </p>
+                  )}
+                  {!errors.username && formData.username && (
+                    <p className="text-xs text-teal-600 mt-1 ml-1">
+                      ✓ Username available
                     </p>
                   )}
                 </div>
@@ -329,6 +378,50 @@ const Register = () => {
                       )}
                     </button>
                   </div>
+
+                  {/* Password Strength Indicator */}
+                  {formData.password && (
+                    <div className="mt-2 space-y-1">
+                      <div className="flex justify-between items-center">
+                        <div className="flex space-x-1 w-full">
+                          {[0,1,2,3,4,5].map((index) => (
+                            <div
+                              key={index}
+                              className={`h-1 flex-1 rounded-full transition-all duration-300 ${
+                                index <= passwordStrength
+                                  ? getStrengthInfo().color
+                                  : 'bg-slate-200'
+                              }`}
+                            />
+                          ))}
+                        </div>
+                        <span className="text-xs font-medium ml-2 text-slate-600">
+                          {getStrengthInfo().text}
+                        </span>
+                      </div>
+
+                      {/* Password Requirements */}
+                      <div className="grid grid-cols-2 gap-1 mt-2">
+                        <div className={`text-xs flex items-center ${formData.password.length >= 8 ? 'text-green-600' : 'text-slate-400'}`}>
+                          <FiCheckCircle className={`w-3 h-3 mr-1 ${formData.password.length >= 8 ? 'text-green-600' : 'text-slate-300'}`} />
+                          8+ characters
+                        </div>
+                        <div className={`text-xs flex items-center ${/[A-Z]/.test(formData.password) ? 'text-green-600' : 'text-slate-400'}`}>
+                          <FiCheckCircle className={`w-3 h-3 mr-1 ${/[A-Z]/.test(formData.password) ? 'text-green-600' : 'text-slate-300'}`} />
+                          Uppercase
+                        </div>
+                        <div className={`text-xs flex items-center ${/[a-z]/.test(formData.password) ? 'text-green-600' : 'text-slate-400'}`}>
+                          <FiCheckCircle className={`w-3 h-3 mr-1 ${/[a-z]/.test(formData.password) ? 'text-green-600' : 'text-slate-300'}`} />
+                          Lowercase
+                        </div>
+                        <div className={`text-xs flex items-center ${/[0-9]/.test(formData.password) ? 'text-green-600' : 'text-slate-400'}`}>
+                          <FiCheckCircle className={`w-3 h-3 mr-1 ${/[0-9]/.test(formData.password) ? 'text-green-600' : 'text-slate-300'}`} />
+                          Number
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   {errors.password && (
                     <p className="text-red-500 text-sm mt-1.5 ml-1 flex items-center animate-slideDown">
                       <FiAlertCircle className="w-4 h-4 mr-1.5 flex-shrink-0" />
@@ -395,7 +488,10 @@ const Register = () => {
                         Creating Account...
                       </>
                     ) : (
-                      'Sign Up'
+                      <>
+                        <FiUser className="w-5 h-5 mr-2" />
+                        Sign Up
+                      </>
                     )}
                   </span>
                 </button>

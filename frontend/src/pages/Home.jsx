@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import Hero from "../common/Hero";
+import { useAuth } from "../Context/AuthContext";
 
 const Home = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -12,6 +13,8 @@ const Home = () => {
     satisfaction: 0,
     countries: 0
   });
+
+  const { user } = useAuth()
 
   const statsRef = useRef(null);
   const heroRef = useRef(null);
@@ -169,7 +172,7 @@ const Home = () => {
   ];
 
   return (
-    <div className="bg-slate-50 min-h-screen">
+    <div className="bg-slate-50 min-h-fit">
       {/* Scroll Progress Bar */}
       <div
         className="fixed top-0 left-0 h-1 bg-gradient-to-r from-teal-500 to-cyan-500 z-50 transition-all duration-300"
@@ -185,7 +188,7 @@ const Home = () => {
       </div>
 
       {/* Stats Section */}
-      <section ref={statsRef} className="py-16 bg-white border-y border-slate-100">
+      <section ref={statsRef} className="py-0 bg-white border-y border-slate-100">
         <div className="container mx-auto px-6 md:px-12">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div className="text-center group cursor-pointer">
@@ -242,7 +245,7 @@ const Home = () => {
                 className="group relative bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 cursor-pointer"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
-                <div className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-5 rounded-2xl transition-opacity duration-500`} />
+                <div className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-5 rounded-2xl transition-opacity duration-500 overflow-hidden`} />
 
                 <div className="w-14 h-14 bg-gradient-to-br from-teal-100 to-cyan-100 rounded-xl flex items-center justify-center text-teal-600 mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
                   {feature.icon}
@@ -272,7 +275,7 @@ const Home = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-white overflow-x-hidden">
         <div className="container mx-auto px-6 md:px-12">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h4 className="text-teal-600 font-bold uppercase tracking-widest text-sm mb-4">
@@ -287,16 +290,22 @@ const Home = () => {
           </div>
 
           <div className="max-w-4xl mx-auto">
-            <div className="relative">
+            <div className="relative overflow-hidden">
               {/* Testimonial Card */}
               {testimonials.map((testimonial, index) => (
                 <div
                   key={index}
                   className={`transition-all duration-700 ${
                     activeTestimonial === index
-                      ? 'opacity-100 translate-x-0'
-                      : 'opacity-0 absolute top-0 left-0 translate-x-full'
+                      ? 'opacity-100 translate-x-0 relative'
+                      : 'opacity-0 absolute top-0 left-0 pointer-events-none'
+                  } ${activeTestimonial > index ? '-translate-x-full' : ''} ${
+                    activeTestimonial < index ? 'translate-x-full' : ''
                   }`}
+                  style={{
+                    width: '100%',
+                    visibility: activeTestimonial === index ? 'visible' : 'hidden'
+                  }}
                 >
                   <div className="bg-slate-50 rounded-3xl p-8 md:p-10 shadow-xl">
                     <div className="flex items-center gap-4 mb-6">
@@ -363,26 +372,26 @@ const Home = () => {
 
               <div className="flex flex-col sm:flex-row justify-center gap-4">
                 <Link
-                  to="/signup"
+                  to={ user && user?.role ? `/dashboard/${user.role}`  :  `/login` }
                   className="bg-white text-teal-700 px-8 py-4 rounded-xl font-bold hover:bg-teal-50 shadow-lg transition-all hover:scale-105 hover:shadow-2xl group/btn"
                 >
                   <span className="flex items-center gap-2">
-                    Start Free Trial
+                    Get Started
                     <svg className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                     </svg>
                   </span>
                 </Link>
-                <Link
+                {/* <Link
                   to="/contact"
                   className="border-2 border-white/30 text-white px-8 py-4 rounded-xl font-semibold hover:bg-white/10 transition-all hover:scale-105 backdrop-blur-sm"
                 >
                   Schedule Demo
-                </Link>
+                </Link> */}
               </div>
 
               {/* Trust badges */}
-              <div className="mt-8 flex flex-wrap justify-center items-center gap-6 text-sm">
+              {/* <div className="mt-8 flex flex-wrap justify-center items-center gap-6 text-sm">
                 <span className="flex items-center gap-1 bg-white/10 px-3 py-1 rounded-full">
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
@@ -395,7 +404,7 @@ const Home = () => {
                   </svg>
                   14-day free trial
                 </span>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

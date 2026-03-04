@@ -1,31 +1,32 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../../Context/AuthContext";
-import { 
-  FiUser, 
-  FiMail, 
-  FiLock, 
-  FiEye, 
-  FiEyeOff, 
-  FiCheckCircle,
+import { useEffect, useState } from "react";
+import {
   FiAlertCircle,
   FiArrowRight,
-  FiLogIn
+  FiCheckCircle,
+  FiEye,
+  FiEyeOff,
+  FiInfo,
+  FiLock,
+  FiMail,
+  FiUser
 } from "react-icons/fi";
+import { Link, useNavigate } from "react-router-dom";
 import { Athenura, AthnuraTitleImage } from "../../../public/images";
+import { useAuth } from "../../Context/AuthContext";
 
 const Login = () => {
   const navigate = useNavigate();
   const { login, loading: authLoading, user } = useAuth();
 
   const [formData, setFormData] = useState({
-    username: "",
+    identifier: "", // Changed to identifier for UI
     password: ""
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [rememberMe, setRememberMe] = useState(false);
+  const [inputType, setInputType] = useState(''); // Track if typing username or email
 
   // Redirect if already logged in
   useEffect(() => {
@@ -35,22 +36,36 @@ const Login = () => {
   }, [user, navigate]);
 
   const handleChange = (e) => {
+    const { name, value } = e.target;
+
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [name]: value
     });
-    if (errors[e.target.name]) {
+
+    // Detect if input is email or username for UI feedback
+    if (name === 'identifier') {
+      if (value.includes('@') && value.includes('.')) {
+        setInputType('email');
+      } else if (value.length > 0) {
+        setInputType('username');
+      } else {
+        setInputType('');
+      }
+    }
+
+    if (errors[name]) {
       setErrors({
         ...errors,
-        [e.target.name]: ""
+        [name]: ""
       });
     }
   };
 
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.username.trim()) {
-      newErrors.username = "Username or email is required";
+    if (!formData.identifier.trim()) {
+      newErrors.identifier = "Username or email is required";
     }
     if (!formData.password) {
       newErrors.password = "Password is required";
@@ -69,26 +84,42 @@ const Login = () => {
 
     setIsLoading(true);
     try {
-      const result = await login(formData);
+      // Your logic - detect if email or username
+      const isEmail = formData.identifier.includes('@');
+
+      const payload = {
+        password: formData.password,
+        ...(isEmail
+          ? { email: formData.identifier }
+          : { username: formData.identifier })
+      };
+
+      const result = await login(payload);
 
       if (result.success && rememberMe) {
-        localStorage.setItem('rememberedUser', formData.username);
+        localStorage.setItem('rememberedUser', formData.identifier);
       }
     } catch (error) {
       console.error("Login failed:", error);
       setErrors({
-        form: error.message || "Invalid username or password"
+        form: error.message || "Invalid username/email or password"
       });
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Load remembered username on component mount
+  // Load remembered identifier on component mount
   useEffect(() => {
     const rememberedUser = localStorage.getItem('rememberedUser');
     if (rememberedUser) {
-      setFormData(prev => ({ ...prev, username: rememberedUser }));
+      setFormData(prev => ({ ...prev, identifier: rememberedUser }));
+      // Detect type for UI
+      if (rememberedUser.includes('@') && rememberedUser.includes('.')) {
+        setInputType('email');
+      } else {
+        setInputType('username');
+      }
       setRememberMe(true);
     }
   }, []);
@@ -100,7 +131,7 @@ const Login = () => {
         {/* Split Card */}
         <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl shadow-teal-500/20 border border-white/40 overflow-hidden">
           <div className="flex flex-col lg:flex-row min-h-[800px] lg:min-h-[900px]">
-            {/* Left Side - Form (Switched) */}
+            {/* Left Side - Form */}
             <div className="w-full lg:w-1/2 p-8 sm:p-10 xl:p-12 order-1 lg:order-1 overflow-y-auto">
               {/* Header */}
               <div className="text-center mb-8">
@@ -124,6 +155,35 @@ const Login = () => {
                 </p>
               </div>
 
+              {/* Live Indicator - Shows what user is typing */}
+              {formData.identifier && (
+                <div className="mb-4 p-3 bg-gradient-to-r from-teal-50 to-cyan-50 border border-teal-200 rounded-xl flex items-center space-x-2">
+                  <div className={`w-2 h-2 rounded-full ${inputType === 'email' ? 'bg-blue-500' : 'bg-green-500'}`}></div>
+                  <span className="text-sm text-teal-700">
+                    Signing in with <span className="font-bold">{inputType === 'email' ? 'email address' : 'username'}</span>
+                  </span>
+                </div>
+              )}
+
+              {/* Info Message - Clear that users can use username OR email */}
+              <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-xl flex items-start space-x-3">
+                <div className="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                  <FiInfo className="w-5 h-5 text-blue-600" />
+                </div>
+                <div className="text-sm text-blue-800">
+                  <span className="font-semibold">Two ways to sign in:</span>
+                  <div className="flex items-center space-x-4 mt-1">
+                    <span className="flex items-center">
+                      <FiUser className="w-4 h-4 mr-1" /> Username
+                    </span>
+                    <span className="text-blue-300">|</span>
+                    <span className="flex items-center">
+                      <FiMail className="w-4 h-4 mr-1" /> Email
+                    </span>
+                  </div>
+                </div>
+              </div>
+
               {/* Error Alert */}
               {errors.form && (
                 <div className="mb-6 p-4 bg-gradient-to-r from-red-50 to-orange-50 border-l-4 border-red-500 rounded-r-xl text-red-600 text-sm animate-slideDown shadow-md">
@@ -137,38 +197,67 @@ const Login = () => {
               )}
 
               <form className="space-y-5" onSubmit={handleSubmit}>
-                {/* Username/Email Input */}
+                {/* Username/Email Input - Clear labeling */}
                 <div className="space-y-1.5">
                   <label className="block text-sm font-bold text-slate-700 ml-1 flex items-center">
                     <span className="w-1 h-4 bg-gradient-to-b from-teal-500 to-cyan-500 rounded-full mr-2"></span>
-                    Username or Email
+                    <span>Username <span className="text-slate-400 font-normal mx-1">or</span> Email</span>
                   </label>
                   <div className="relative group">
                     <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                      <FiMail className={`w-5 h-5 transition-colors duration-200 ${errors.username ? 'text-red-400' : 'text-slate-400 group-focus-within:text-teal-500'}`} />
+                      {/* Dynamic icon based on what user is typing */}
+                      {inputType === 'email' ? (
+                        <FiMail className={`w-5 h-5 transition-colors duration-200 ${errors.identifier ? 'text-red-400' : 'text-teal-500'}`} />
+                      ) : inputType === 'username' ? (
+                        <FiUser className={`w-5 h-5 transition-colors duration-200 ${errors.identifier ? 'text-red-400' : 'text-teal-500'}`} />
+                      ) : (
+                        // Show both icons when empty
+                        <div className="flex items-center space-x-1">
+                          <FiUser className="w-4 h-4 text-slate-400" />
+                          <span className="text-slate-300 text-xs">/</span>
+                          <FiMail className="w-4 h-4 text-slate-400" />
+                        </div>
+                      )}
                     </div>
                     <input
                       type="text"
-                      name="username"
-                      value={formData.username}
+                      name="identifier" // Changed to identifier
+                      value={formData.identifier}
                       onChange={handleChange}
-                      placeholder="Enter your username or email"
-                      className={`w-full pl-10 pr-4 py-4 bg-white border-2 rounded-xl text-slate-900 placeholder-slate-400 font-medium outline-none transition-all duration-200
-                        ${errors.username
+                      placeholder="Enter your username or email address"
+                      className={`w-full pl-16 pr-4 py-4 bg-white border-2 rounded-xl text-slate-900 placeholder-slate-400 font-medium outline-none transition-all duration-200
+                        ${errors.identifier
                           ? 'border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-100'
                           : 'border-slate-200 focus:border-teal-500 focus:ring-4 focus:ring-teal-100'
                         } hover:border-slate-300`}
                     />
-                    {formData.username && !errors.username && (
+                    {formData.identifier && !errors.identifier && (
                       <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
                         <FiCheckCircle className="w-5 h-5 text-green-500" />
                       </div>
                     )}
                   </div>
-                  {errors.username && (
+                  {errors.identifier && (
                     <p className="text-red-500 text-sm mt-1.5 ml-1 flex items-center animate-slideDown">
                       <FiAlertCircle className="w-4 h-4 mr-1.5 flex-shrink-0" />
-                      {errors.username}
+                      {errors.identifier}
+                    </p>
+                  )}
+
+                  {/* Helper text with examples */}
+                  {!errors.identifier && (
+                    <p className="text-xs text-slate-400 mt-2 ml-1 flex items-center">
+                      {!formData.identifier ? (
+                        <>
+                          <span className="bg-slate-100 px-2 py-1 rounded mr-2">example</span>
+                          <span className="text-slate-300">or</span>
+                          <span className="bg-slate-100 px-2 py-1 rounded ml-2">example@example.com</span>
+                        </>
+                      ) : inputType === 'email' ? (
+                        <span className="text-teal-600">📧 Will sign in with email</span>
+                      ) : (
+                        <span className="text-teal-600">👤 Will sign in with username</span>
+                      )}
                     </p>
                   )}
                 </div>
@@ -233,7 +322,7 @@ const Login = () => {
                       Remember me
                     </label>
                   </div>
-                  
+
                   <Link
                     to="/forgot-password"
                     className="text-sm font-semibold text-teal-600 hover:text-teal-700 transition-colors"
@@ -265,7 +354,7 @@ const Login = () => {
                       </>
                     ) : (
                       <>
-                        <FiLogIn className="w-5 h-5 mr-2" />
+                        {inputType === 'email' ? <FiMail className="w-5 h-5 mr-2" /> : <FiUser className="w-5 h-5 mr-2" />}
                         Sign In
                       </>
                     )}
@@ -296,7 +385,7 @@ const Login = () => {
               </form>
             </div>
 
-            {/* Right Side - Image (Switched) */}
+            {/* Right Side - Image */}
             <div className="w-full lg:w-1/2 bg-gradient-to-br from-teal-500 to-cyan-600 p-8 sm:p-10 xl:p-12 flex items-center justify-center relative overflow-hidden order-2 lg:order-2">
               {/* Decorative elements */}
               <div className="absolute inset-0">
@@ -308,13 +397,13 @@ const Login = () => {
               <div className="relative z-10 text-center w-full">
                 {/* Main Illustration/Image */}
                 <div className="mb-8 transform hover:scale-105 transition-transform duration-500">
-                  <img 
-                    src={Athenura} 
+                  <img
+                    src={Athenura}
                     alt="Team collaboration illustration"
                     className="w-full max-w-md mx-auto drop-shadow-2xl rounded-2xl"
                   />
                 </div>
-                
+
                 {/* Text Content */}
                 <h3 className="text-3xl xl:text-4xl font-bold text-white mb-4">
                   Welcome Back!
@@ -322,7 +411,7 @@ const Login = () => {
                 <p className="text-white/90 text-lg xl:text-xl mb-8 max-w-md mx-auto">
                   Access your account to continue collaborating with mentors and team members.
                 </p>
-                
+
                 {/* Feature List */}
                 <div className="space-y-4 max-w-sm mx-auto">
                     <div className="flex items-center text-white bg-white/10 rounded-xl p-3 backdrop-blur-sm">

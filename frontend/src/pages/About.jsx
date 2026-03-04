@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
+import { useAuth } from "../Context/AuthContext";
 
 const About = () => {
   const [activeValue, setActiveValue] = useState(0);
   const [statsVisible, setStatsVisible] = useState(false);
   const statsRef = useRef(null);
   const [counters, setCounters] = useState({ efficiency: 0, hours: 0 });
+
+  const { user } = useAuth()
 
   // Intersection Observer for stats animation
   useEffect(() => {
@@ -94,7 +97,11 @@ const About = () => {
   ];
 
   return (
+    <section ref={statsRef} className="py-0 bg-white border-y border-slate-100">
+
     <div className="bg-slate-50 min-h-screen">
+
+
       {/* --- Section 1: Intro / Mission with enhanced animations --- */}
       <section className="relative py-20 px-6 md:px-12 overflow-hidden">
         {/* Animated background blobs */}
@@ -131,14 +138,14 @@ const About = () => {
             </div>
 
             {/* New: Quick action buttons */}
-            <div className="flex gap-3 pt-4">
+            {/* <div className="flex gap-3 pt-4">
               <button className="px-4 py-2 bg-teal-50 text-teal-700 rounded-lg text-sm font-semibold hover:bg-teal-100 transition-colors">
                 Watch Demo
               </button>
               <button className="px-4 py-2 border border-teal-200 text-teal-600 rounded-lg text-sm font-semibold hover:bg-teal-50 transition-colors">
                 Read Case Studies
               </button>
-            </div>
+            </div> */}
           </div>
 
           {/* Image/Visual with hover effects */}
@@ -245,9 +252,9 @@ const About = () => {
 
           <div className="flex flex-col sm:flex-row justify-center gap-4 relative z-10">
             <Link
-              to="/signup"
-              className="bg-white text-teal-700 px-8 py-3.5 rounded-xl font-bold hover:bg-teal-50 shadow-lg transition-all hover:scale-110 hover:shadow-2xl group/btn"
-            >
+                  to={ user && user?.role ? `/dashboard/${user.role}`  :  `/login` }
+                  className="bg-white text-teal-700 px-8 py-4 rounded-xl font-bold hover:bg-teal-50 shadow-lg transition-all hover:scale-105 hover:shadow-2xl group/btn"
+                >
               <span className="flex items-center gap-2">
                 Get Started Now
                 <svg className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -256,15 +263,17 @@ const About = () => {
               </span>
             </Link>
             <Link
-              to="/contact"
+                 to={ user && user?.role ? `/dashboard/${user.role}`  :  `/login` }
               className="border border-white/30 text-white px-8 py-3.5 rounded-xl font-semibold hover:bg-white/10 transition-all hover:scale-105 backdrop-blur-sm"
             >
               Contact Sales
             </Link>
           </div>
 
+
+
           {/* Trust indicators */}
-          <div className="mt-8 flex justify-center items-center gap-6 text-white/80 text-sm relative z-10">
+          {/* <div className="mt-8 flex justify-center items-center gap-6 text-white/80 text-sm relative z-10">
             <span className="flex items-center gap-1">
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
@@ -277,7 +286,7 @@ const About = () => {
               </svg>
               ISO 27001 Certified
             </span>
-          </div>
+          </div> */}
         </div>
       </section>
 
@@ -323,6 +332,7 @@ const About = () => {
         }
       `}</style>
     </div>
+        </section>
   );
 };
 

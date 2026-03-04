@@ -1,5 +1,5 @@
 import { Home, User } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   FaChartBar,
   FaChevronLeft,
@@ -10,10 +10,7 @@ import {
   FaTachometerAlt,
   FaTasks,
   FaUsers,
-  FaBell,
-  FaSearch,
-  FaMoon,
-  FaSun
+  FaBell
 } from "react-icons/fa";
 import { FaPeopleGroup } from "react-icons/fa6";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
@@ -23,7 +20,7 @@ export default function MentorDashboard() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
-  const { user, logout } = useAuth(); // Removed checkTokenExpiration
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -77,6 +74,16 @@ export default function MentorDashboard() {
       textLight: "text-sky-600",
       borderLight: "border-sky-200",
       path: "/dashboard/Mentor/execution-team"
+    },
+    {
+      id: "notification",
+      label: "Notification",
+      icon: FaBell ,
+      gradient: "from-sky-400 to-blue-400",
+      bgLight: "bg-sky-50",
+      textLight: "text-sky-600",
+      borderLight: "border-sky-200",
+      path: "/dashboard/Mentor/notification"
     },
     {
       id: "lor-requests",
@@ -168,10 +175,10 @@ export default function MentorDashboard() {
             </div>
             {!isSidebarCollapsed && (
               <div className="animate-fadeIn">
-                <h1 className="font-bold text-lg">{`${user?.username.slice(0,8)}....` || `${user?.fullName?.slice(0,8)}....` || 'Mentor'}</h1>
+                <h1 className="font-bold text-lg">{`${user?.username.slice(0,8)}....` || `${user?.fullName?.slice(0,8)}....` }</h1>
                 <p className="text-xs text-teal-200 flex items-center gap-1">
                   <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse font-bold"></span>
-                  {user?.role || 'Mentor'}
+                  {user?.role }
                 </p>
               </div>
             )}
@@ -195,7 +202,7 @@ export default function MentorDashboard() {
                     onClick={() => handleNavigation(item.path)}
                     className={`w-full flex items-center ${
                       isSidebarCollapsed ? "justify-center" : "justify-between"
-                    } p-3 rounded-xl transition-all duration-300 group relative overflow-hidden ${
+                    } p-2 rounded-xl transition-all duration-300 group relative overflow-hidden ${
                       isActive
                         ? "bg-white text-teal-600 shadow-lg scale-105"
                         : "text-white/90 hover:bg-white/10 hover:scale-105"
@@ -225,7 +232,7 @@ export default function MentorDashboard() {
                     </div>
 
                     {!isSidebarCollapsed && (
-                      <span className={`w-2 h-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${
+                      <span className={`w-3 h-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${
                         isActive ? 'bg-teal-600' : 'bg-white/50'
                       }`}></span>
                     )}

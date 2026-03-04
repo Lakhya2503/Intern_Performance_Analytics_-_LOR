@@ -33,12 +33,15 @@ app.use(cookieParser())
 import authRouter from './routes/auth.route.js'
 import internRouter from './routes/intern.route.js'
 import lorRouter from './routes/internLOR.route.js'
+import contactRouter from './routes/contact.route.js'
 
 app.use('/api/lor/v1/user' , authRouter)
 
 app.use('/api/lor/v1/intern' , internRouter)
 
 app.use("/api/lor/v1/lor", lorRouter)
+
+app.use("/api/lor/v1/contact", contactRouter)
 
 
 

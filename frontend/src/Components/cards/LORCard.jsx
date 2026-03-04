@@ -58,7 +58,7 @@ const LORCard = ({
     if (isEmailSending) return;
     setIsSendingEmail(true);
     setShowResendConfirm(false);
-    
+
     try {
       if (onResendEmail) {
         await onResendEmail(intern);
@@ -173,14 +173,14 @@ const LORCard = ({
           <div className="absolute top-3 right-3">
             <div className="relative group">
               <span className={`
-                inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full 
+                inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full
                 text-xs font-medium border shadow-sm
                 ${getStatusConfig().bg} ${getStatusConfig().text} ${getStatusConfig().border}
               `}>
                 <StatusIcon className="w-3 h-3" />
                 {getStatusConfig().label}
               </span>
-              
+
               {/* Rejection tooltip */}
               {isRejected && rejectionComment && (
                 <div className="absolute right-0 mt-2 w-64 p-3 bg-white rounded-xl shadow-xl border border-red-100 z-20 hidden group-hover:block animate-fadeIn">
@@ -362,16 +362,16 @@ const GeneratedInfo = ({ generatedDate, lastEmailSent, emailSentCount, formatDat
           Emails sent: {emailSentCount} times
         </p>
       </div>
-    )} */}  
+    )} */}
   </div>
 );
 
 const RegenerateButton = ({ onGenerate }) => (
   <button
     onClick={onGenerate}
-    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 
-      bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl 
-      hover:from-indigo-600 hover:to-purple-700 transition-all duration-300 
+    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5
+      bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl
+      hover:from-indigo-600 hover:to-purple-700 transition-all duration-300
       transform hover:scale-105 hover:shadow-lg text-sm font-medium"
   >
     <FaMagic className="w-4 h-4" />
@@ -383,9 +383,9 @@ const PendingActions = ({ onGenerate, onReject }) => (
 <>
   <button
     onClick={onGenerate}
-    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 
-      bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl 
-      hover:from-indigo-600 hover:to-purple-700 transition-all duration-300 
+    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5
+      bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl
+      hover:from-indigo-600 hover:to-purple-700 transition-all duration-300
       transform hover:scale-105 hover:shadow-lg text-sm font-medium"
   >
     <FaMagic className="w-4 h-4" />
@@ -393,8 +393,8 @@ const PendingActions = ({ onGenerate, onReject }) => (
   </button>
   <button
     onClick={onReject}
-    className="flex items-center justify-center px-4 py-2.5 bg-red-50 
-      text-red-600 rounded-xl hover:bg-red-100 transition-all duration-300 
+    className="flex items-center justify-center px-4 py-2.5 bg-red-50
+      text-red-600 rounded-xl hover:bg-red-100 transition-all duration-300
       text-sm font-medium gap-2"
     title="Reject Request"
   >
@@ -410,11 +410,11 @@ const GeneratedActions = ({ onResend, onDownload, previewUrl, isEmailSending }) 
       onClick={onResend}
       disabled={isEmailSending}
       className={`
-        flex-1 flex items-center justify-center gap-2 px-4 py-2.5 
-        bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl 
+        flex-1 flex items-center justify-center gap-2 px-4 py-2.5
+        bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl
         transition-all duration-300 text-sm font-medium
-        ${isEmailSending 
-          ? 'opacity-75 cursor-not-allowed' 
+        ${isEmailSending
+          ? 'opacity-75 cursor-not-allowed'
           : 'hover:from-blue-600 hover:to-indigo-700 transform hover:scale-105 hover:shadow-lg'
         }
       `}
@@ -436,8 +436,8 @@ const GeneratedActions = ({ onResend, onDownload, previewUrl, isEmailSending }) 
       <button
         onClick={onDownload}
         disabled={isEmailSending}
-        className="flex items-center justify-center px-4 py-2.5 bg-gray-100 
-          text-gray-700 rounded-xl hover:bg-gray-200 transition-all duration-300 
+        className="flex items-center justify-center px-4 py-2.5 bg-gray-100
+          text-gray-700 rounded-xl hover:bg-gray-200 transition-all duration-300
           text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
         title="Download LOR"
       >
@@ -449,8 +449,8 @@ const GeneratedActions = ({ onResend, onDownload, previewUrl, isEmailSending }) 
       <button
         onClick={() => window.open(previewUrl, '_blank')}
         disabled={isEmailSending}
-        className="flex items-center justify-center px-4 py-2.5 bg-gray-100 
-          text-gray-700 rounded-xl hover:bg-gray-200 transition-all duration-300 
+        className="flex items-center justify-center px-4 py-2.5 bg-gray-100
+          text-gray-700 rounded-xl hover:bg-gray-200 transition-all duration-300
           text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
         title="Preview LOR"
       >
@@ -461,7 +461,7 @@ const GeneratedActions = ({ onResend, onDownload, previewUrl, isEmailSending }) 
 );
 
 const ResendConfirmation = ({ email, lastEmailSent, isEmailSending, onConfirm, onCancel, formatDate }) => (
-  <div className="absolute inset-x-0 bottom-0 mb-2 mx-2 p-4 bg-white rounded-xl 
+  <div className="absolute inset-x-0 bottom-0 mb-2 mx-2 p-4 bg-white rounded-xl
     shadow-2xl border border-blue-200 z-30 animate-slideUp">
     <div className="flex items-start gap-3 mb-3">
       <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
@@ -485,9 +485,9 @@ const ResendConfirmation = ({ email, lastEmailSent, isEmailSending, onConfirm, o
       <button
         onClick={onConfirm}
         disabled={isEmailSending}
-        className="flex-1 flex items-center justify-center gap-2 px-3 py-2 
-          bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg 
-          hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 
+        className="flex-1 flex items-center justify-center gap-2 px-3 py-2
+          bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg
+          hover:from-blue-600 hover:to-indigo-700 transition-all duration-300
           text-xs font-medium disabled:opacity-50"
       >
         {isEmailSending ? (
@@ -505,14 +505,14 @@ const ResendConfirmation = ({ email, lastEmailSent, isEmailSending, onConfirm, o
       <button
         onClick={onCancel}
         disabled={isEmailSending}
-        className="flex-1 px-3 py-2 bg-gray-100 text-gray-700 rounded-lg 
-          hover:bg-gray-200 transition-all duration-300 text-xs font-medium 
+        className="flex-1 px-3 py-2 bg-gray-100 text-gray-700 rounded-lg
+          hover:bg-gray-200 transition-all duration-300 text-xs font-medium
           disabled:opacity-50"
       >
         Cancel
       </button>
     </div>
-    <div className="absolute -top-2 right-16 w-4 h-4 bg-white border-t border-l 
+    <div className="absolute -top-2 right-16 w-4 h-4 bg-white border-t border-l
       border-blue-200 transform rotate-45" />
   </div>
 );

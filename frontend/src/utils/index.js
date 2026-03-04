@@ -1,151 +1,154 @@
+// ===========================================
+// apiClient.js
+// ===========================================
+
+import axios from "axios";
 import toast from "react-hot-toast";
 
-export const requestHandler = async(
-  api,
-  setLoading,
-  onSuccess,
-  onError
-) => {
-   let isMounted = true;
+// =======================
+// LocalStorage Utility
+// =======================
+export const isBrowser = typeof window !== "undefined";
 
-  try {
+export class LocalStorage {
+  static get(key) {
+    if (!isBrowser) return null;
+    try {
+      const value = localStorage.getItem(key);
+      if (!value || value === "undefined" || value === "null") return null;
+      return JSON.parse(value);
+    } catch (error) {
+      localStorage.removeItem(key);
+      return null;
+    }
+  }
 
-    setLoading?.(true);
-    const response= await api()
+  static set(key, value) {
+    if (!isBrowser) return;
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch (error) {
+      console.error(`Failed to set "${key}" in localStorage:`, error);
+    }
+  }
 
-    const data = response?.data ?? response ?? null
+  static remove(key) {
+    if (!isBrowser) return;
+    try {
+      localStorage.removeItem(key);
+    } catch (error) {
+      console.error(`Failed to remove "${key}" in localStorage:`, error);
+    }
+  }
 
-    if(!data) {
-      throw new Error(`No data recived from API`)
+  static clear() {
+    if (!isBrowser) return;
+    try {
+      localStorage.clear();
+    } catch (error) {
+      console.error("localStorage.clear() failed:", error);
+    }
+  }
+}
+
+// =======================
+// Axios Instance
+// =======================
+const apiClient = axios.create({
+  baseURL: import.meta.env.VITE_SERVER_URI || "http://localhost:5002/api/lor/v1",
+  withCredentials: true, // send httpOnly cookies
+  timeout: 30000,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+// =======================
+// Request Interceptor
+// =======================
+apiClient.interceptors.request.use((config) => {
+  const token = LocalStorage.get("accessToken");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+
+  // Let browser handle FormData content-type automatically
+  if (config.data instanceof FormData) {
+    delete config.headers["Content-Type"];
+  }
+
+  return config;
+});
+
+// =======================
+// Response Interceptor
+// =======================
+apiClient.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+
+    // If 401 and request not retried
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      try {
+        // Refresh token endpoint (httpOnly cookie sent automatically)
+        const refreshRes = await apiClient.post("/refresh-token");
+        const newAccessToken = refreshRes.data.accessToken;
+
+        if (!newAccessToken) throw new Error("Refresh token failed");
+
+        // Save new accessToken
+        LocalStorage.set("accessToken", newAccessToken);
+
+        // Retry original request with new token
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+        return apiClient(originalRequest);
+      } catch (refreshError) {
+        // Refresh failed → clear storage + redirect to login
+        LocalStorage.clear();
+        window.location.href = "/login";
+        return Promise.reject(refreshError);
+      }
     }
 
-    onSuccess(data)
+    return Promise.reject(error);
+  }
+);
 
-    console.log(data.message)
+// =======================
+// Request Handler Utility
+// =======================
+export const requestHandler = async (api, setLoading, onSuccess, onError) => {
+  let isMounted = true;
 
-    let successMessage = data.message || ""
+  try {
+    setLoading?.(true);
 
-    toast.success(successMessage)
+    const response = await api();
+    const data = response?.data ?? response ?? null;
 
-    console.log(successMessage);
+    if (!data) throw new Error("No data received from API");
 
+    onSuccess?.(data);
 
-
-
+    if (data.message) toast.success(data.message);
   } catch (error) {
+    const errorMessage = error?.response?.data?.message || error?.message || "Something went wrong";
+    onError?.(error?.response?.data || { message: errorMessage });
+    console.error("API error:", errorMessage);
 
+    if ([400, 401, 403].includes(error?.response?.status)) {
+      // Optional: handle forced logout
+      // LocalStorage.clear();
+      // window.location.href = "/login";
+    }
 
-    const errorMessage = error?.response?.data.message || error?.message
-    onError(error?.response?.data)
-
-    //  const { statusCode, message } = onError?.(error?.message || "Something went wrong", error);
-    console.log("error.response : ",errorMessage);
-
-
-
-     toast.error(errorMessage)
-
-
-      if (error?.response?.status === 401 || error?.response?.status === 403) {
-            LocalStorage.clear();
-            if (isBrowser) {
-                window.location.href = '/login';
-            }
-        } else if ([400, 401, 403].includes(error?.response?.data?.statusCode)) {
-            LocalStorage.clear();
-            if (isBrowser) {
-                window.location.href = '/login';
-            }
-        }
-  }  finally {
-       if (isMounted) {
-            setLoading?.(false);
-        }
+    toast.error(errorMessage);
+  } finally {
+    if (isMounted) setLoading?.(false);
   }
 };
 
-export const isBrowser = typeof window !== 'undefined';
-
-export class LocalStorage {
-    static get(key) {
-        if (!isBrowser) return null;
-
-        try {
-            const value = localStorage.getItem(key);
-            if (!value) return null;
-
-            // Handle common bad values
-            if (value === 'undefined' || value === 'null') return null;
-
-            const parsed = JSON.parse(value);
-            return parsed;
-        } catch (error) {
-            // Get the raw value again for error handling
-            const rawValue = localStorage.getItem(key);
-            console.warn(`localStorage "${key}" corrupted:`,
-                rawValue?.substring?.(0, 50) || rawValue, error);
-
-            // Graceful fallback for simple values
-            if (rawValue && typeof rawValue === 'string') {
-                if (!rawValue.startsWith('{') && !rawValue.startsWith('[')) {
-                    if (rawValue === 'true') return true;
-                    if (rawValue === 'false') return false;
-                    if (rawValue === 'null') return null;
-                    if (!isNaN(rawValue) && rawValue !== '') {
-                        return Number(rawValue);
-                    }
-                    return rawValue;
-                }
-            }
-
-            // Auto-clean corrupted data
-            localStorage.removeItem(key);
-            return null;
-        }
-    }
-
-    static set(key, value) {
-        if (!isBrowser) return;
-
-        try {
-            // Handle special cases
-            if (value === undefined ||
-                value === null ||
-                typeof value === 'function' ||
-                typeof value === 'symbol') {
-                localStorage.setItem(key, JSON.stringify(null));
-                return;
-            }
-
-            // Handle non-serializable values
-            try {
-                const serialized = JSON.stringify(value);
-                localStorage.setItem(key, serialized);
-            } catch (serializeError) {
-                console.warn(`Cannot serialize value for key "${key}":`, value);
-                // Store a string representation as fallback
-                localStorage.setItem(key, JSON.stringify(String(value)));
-            }
-        } catch (error) {
-            console.error(`Failed to set "${key}":`, error);
-        }
-    }
-
-    static remove(key) {
-        if (!isBrowser) return;
-        try {
-            localStorage.removeItem(key);
-        } catch (error) {
-            console.error(`Failed to remove "${key}":`, error);
-        }
-    }
-
-    static clear() {
-        if (!isBrowser) return;
-        try {
-            localStorage.clear();
-        } catch (error) {
-            console.error('localStorage.clear() failed:', error);
-        }
-    }
-}
+export default apiClient;

@@ -7,14 +7,14 @@ import ApiError from '../utils/ApiError.js'
 import ApiResponse from '../utils/ApiResponse.js'
 import asyncHandler from '../utils/asyncHandler.js'
 import { internsFieldsEnum } from '../utils/constant.js'
-import { calculateAverageScore, castValue, getChangeField } from '../utils/helper.js'
+import { calculateAverageScore, castValue } from '../utils/helper.js'
 
 const addBulkInterns = asyncHandler(async (req, res) => {
     const file = req.files?.bulkAddInterns[0];
     const user = req.user;
 
     if (!user.isAuthorized) {
-        throw new ApiError(404, "Unauthorized request");
+        throw new ApiError(401, "Unauthorized request");
     }
 
     if (!file) {
@@ -86,7 +86,7 @@ const addBulkInterns = asyncHandler(async (req, res) => {
         insertedInterns = await Intern.insertMany(newInternFromClient, { ordered: false });
     }
 
-    newInternFromClient.forEach(item => console.log(item));
+    // newInternFromClient.forEach(item => console.log(item));
 
     return res.status(200).json(new ApiResponse(200, {
         newInternFromClient,
@@ -193,11 +193,16 @@ const updateBulkInterns = asyncHandler(async (req, res) => {
     }, "Interns updated successfully"));
 });
 
-
 const addSignleIntern = asyncHandler(async(req,res)=>{
     const { name, gender, course , email, endDate, department, mentor, score, isActive} = req.body
 
       const allFields =  [name, gender, course , email, department, mentor]
+
+      const user = req.user;
+
+    if (!user.isAuthorized) {
+        throw new ApiError(403, "Unauthorized request");
+    }
 
       // console.log( name, gender, course , email, endDate, department, mentor, score, isActive);
 
@@ -292,7 +297,7 @@ const scoringWiseRanking = asyncHandler(async(req,res) => {
       }, "Ranking fetch"))
 })
 
-const eligibleInternsForLOR = asyncHandler(async(req,res)=>{
+const shortlistedWithNoLor = asyncHandler(async(req,res)=>{
 
         const filteredInterns = await Intern.aggregate([
               {
@@ -316,8 +321,6 @@ const eligibleInternsForLOR = asyncHandler(async(req,res)=>{
                 }
               }
             ]);
-
-
 
         // console.log(filteredInterns);
 
@@ -360,8 +363,10 @@ const internWIthNoLor = asyncHandler(async(req,res)=>{
   export {
   addBulkInterns,
   addSignleIntern,
-  eligibleInternsForLOR,
-  getAllInters, internWIthNoLor, scoringWiseRanking,
+  shortlistedWithNoLor,
+  getAllInters, 
+  internWIthNoLor, 
+  scoringWiseRanking,
   updateBulkInterns,
   updateSingleIntern
 }

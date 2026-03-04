@@ -1,14 +1,15 @@
 // pages/NotFound.jsx
 import { Link } from "react-router-dom";
+import { Athenura } from "../../public/images";
 
 const NotFound = () => {
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-fit bg-white flex flex-col items-center justify-center pt-15">
       {/* Header */}
-      <header className="border-b border-gray-200">
+      <header className="border-b border-gray-200 ">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <Link to="/" className="text-2xl font-bold text-gray-900">
-            InternManager
+            <img src={ Athenura } className="h-20" alt="" />
           </Link>
         </div>
       </header>
@@ -46,25 +47,26 @@ const NotFound = () => {
           <div className="grid grid-cols-2 gap-4">
             <Link
               to="/"
-              className="px-4 py-3 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors"
+                className="px-2 py-3 font-medium bg-gray-50 text-zinc-800 rounded-lg   border-transparent  hover:border-blue-300  transition-colors hover:bg-blue-100"
             >
               🏠 Home
             </Link>
             <Link
               to="/about"
-              className="px-4 py-3 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors"
+               className="px-2 py-3 font-medium bg-gray-50 text-zinc-800 rounded-lg   border-transparent  hover:border-blue-300  transition-colors hover:bg-blue-100"
             >
               📖 About
             </Link>
             <Link
-              to="/interns"
-              className="px-4 py-3 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors"
+              to="/about"
+               className="px-2 py-3 font-medium bg-gray-50 text-zinc-800 rounded-lg   border-transparent  hover:border-blue-300  transition-colors hover:bg-blue-100"
             >
-              👥 Interns
+              🪛
+              About
             </Link>
             <Link
               to="/contact"
-              className="px-4 py-3 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors"
+             className="px-2 py-3 font-medium bg-gray-50 text-zinc-800 rounded-lg   border-transparent  hover:border-blue-300  transition-colors hover:bg-blue-100"
             >
               📧 Contact
             </Link>
@@ -88,7 +90,7 @@ const NotFound = () => {
       {/* Footer */}
       <footer className="border-t border-gray-200 py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm text-gray-500">
-          <p>© 2024 InternManager. All rights reserved.</p>
+          © {new Date().getFullYear()} Athenura | LOR Automation Inc. All rights reserved.
         </div>
       </footer>
     </div>

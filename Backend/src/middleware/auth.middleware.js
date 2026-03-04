@@ -4,13 +4,14 @@ import ApiError from '../utils/ApiError.js'
 import asyncHandler from '../utils/asyncHandler.js'
 
 const verifyJWT = asyncHandler(async(req,_,next) => {
+
         try {
 
            const incomingToken = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer", "")
 
-              if(!incomingToken){
-                throw new ApiError(404, "Invalid token")
-              }
+            if(!incomingToken){
+              throw new ApiError(404, "Invalid token")
+            }
 
            const decodedToken =  jwt.verify(incomingToken, process.env.ACCESS_TOKEN_SECRET)
 
@@ -28,7 +29,7 @@ const verifyJWT = asyncHandler(async(req,_,next) => {
           next()
 
         } catch (error) {
-            throw new ApiError(400, error.message || "Invalid Token or Expired")
+            throw new ApiError(401,    `${error.message} verifyJwt` || "Token expired. Please login again." )
         }
 
 })

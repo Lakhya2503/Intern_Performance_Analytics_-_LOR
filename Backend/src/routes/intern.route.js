@@ -2,10 +2,10 @@ import Router from 'express';
 import {
   addBulkInterns,
   addSignleIntern,
-  eligibleInternsForLOR,
   getAllInters,
   internWIthNoLor,
   scoringWiseRanking,
+  shortlistedWithNoLor,
   updateBulkInterns,
   updateSingleIntern
 } from '../controller/interns.controller.js';
@@ -42,9 +42,11 @@ router.route("/single-intern/update/:internId").put( updateSingleIntern )
 
 router.route("/interns-ranking").get( scoringWiseRanking )
 
-router.route("/interns-lor-eligible").get( eligibleInternsForLOR )
+router.route("/interns-lor-eligible").get( shortlistedWithNoLor )
 
-router.route("/interns-with-no-lor").get( internWIthNoLor )
+router.route("/interns-with-no-lor").get( internWIthNoLor)
+
+// router.router("")
 
 router.route("/fetch/all-interns").get(getAllInters)
 

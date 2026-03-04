@@ -4,13 +4,23 @@ import ApiError from '../utils/ApiError.js'
 import ApiResponse from '../utils/ApiResponse.js'
 import asyncHandler from '../utils/asyncHandler.js'
 import uploadFiles from '../utils/cloudinary.js'
+import  jwt  from 'jsonwebtoken';
+import { authType } from '../utils/helper.js'
 
 const generateAccessRefreshToken = async(userId) => {
     const user = await User.findById(userId)
 
+    console.log("userId",userId)
+
+    console.log("user",user)
+
     const accessToken = await user.generateAccessToken()
     const refreshToken= await user.generateRefreshToken()
 
+    console.log("accessToken from generatAccessToken",accessToken)
+    console.log("refreshToken from generatAccessToken",refreshToken)
+
+    user.refreshToken = refreshToken
 
     user.save({ validateBeforeSave : false })
 
@@ -22,68 +32,71 @@ const generateAccessRefreshToken = async(userId) => {
 
 const accessRefershToken = asyncHandler(async(req,res)=>{
     const incomingTokenRefershToken = req.cookies.refreshToken || req.body.refreshToken
+    console.log("incomingTokenRefershToken",incomingTokenRefershToken)
+
+
 
     if(!incomingTokenRefershToken) {
-        throw new ApiError(400, "unAutharized request")
+      throw new ApiError(401, "unAutharized request")
     }
 
     try {
-      const decodedToken = jwt.sign(incomingTokenRefershToken , process.env.REFRESH_TOKEN_SECRET)
+      const decodedToken = jwt.verify(incomingTokenRefershToken , process.env.REFRESH_TOKEN_SECRET)
 
-        const user = await User.findById(decodedToken._id)
+      const user = await User.findById(decodedToken?._id)
+
+      // console.log("user", user)
 
         if(!user) {
-           throw new ApiError(400, "Invalid refreshToken")
+           throw new ApiError(401, "Invalid refresh token")
         }
 
 
-        if(incomingTokenRefershToken !== user.refreshToken) {
-          throw new ApiError(400, "refresh token invalide or used")
+        if(incomingTokenRefershToken !== user?.refreshToken) {
+          throw new ApiError(401, "refresh token invalide or used")
         }
 
-        const { accessToken , refreshToken : newRefreshToken } = generateAccessRefreshToken()
+        console.log(`incomingTokenRefershToken !== user.refreshToken`,incomingTokenRefershToken == user.refreshToken)
+        console.log( `incomingTokenRefershToken`,incomingTokenRefershToken)
+        console.log(`user`,user)
 
-        user.refreshToken = newRefreshToken
+         const options = {
+         httpOnly: true,
+         secure : true
+     }
 
-        return res.status(200).json(new ApiResponse(200, {
-            accessToken,
-            refreshToken : newRefreshToken
-        } , "Token Refreshed"))
+        const { accessToken , refreshToken } = await generateAccessRefreshToken(user?._id)
+
+        console.log("accessToken",accessToken)
+        console.log("newRefreshToken", refreshToken)
+
+
+        return res
+        .status(200)
+        .cookie("accessToken", accessToken, options)
+        .cookie("refreshToken", refreshToken, options)
+        .json(new ApiResponse(200,{
+          "accessToken"  : accessToken,
+          "refreshToken" : refreshToken
+        },"Token Refreshed"))
 
 
     } catch (error) {
-
-
-
+        throw new ApiError(401,  `${error.message} accessRefreshToken` || "something went's wrong")
     }
-
-
-
 
 })
 
 const registerUser = asyncHandler(async(req,res)=>{
 
-      const  { username, password, email, role } = req.body
+    const  { username, password, email, role } = req.body
 
-      const isUserExsist = await User.find(
-        { email  }
-      )
-
-      console.log("isUserExsist",isUserExsist);
-
-
-      if(!isUserExsist) {
-        throw new ApiError(400, "user already exist")
+      for(const [field, value] of Object.entries(req.body)){
+          if(!value || String(value).trim()==="") {
+                throw new ApiError(400, `The ${field} field is required`)
+          }
       }
 
-
-      const requiredFileds = [email,password,username]
-
-
-      if(requiredFileds.some(field  => String(field).trim() === "")){
-        throw new ApiError(404, "All fields are required")
-      }
 
       const existUser = await User.findOne(
         {
@@ -92,7 +105,7 @@ const registerUser = asyncHandler(async(req,res)=>{
       )
 
       if(existUser) {
-        throw new ApiError(400, "Use already exist")
+        throw new ApiError(400, "User already exists with this email address")
       }
 
       const user = await User.create({
@@ -104,58 +117,58 @@ const registerUser = asyncHandler(async(req,res)=>{
       })
 
      const registeredUser = await User.findById(user._id).select("-password -refreshToken")
-
      await Profile.create({user : user._id});
 
-     return res.status(200).json(new ApiResponse(200, registeredUser, `${user.role} Register Successfully`) )
+     return res.status(201).json(new ApiResponse(201, registeredUser, `${user.role} Successfully registered`) )
 })
 
 const loggedInUser = asyncHandler(async(req,res)=>{
       const { email, username, password } = req.body
 
-      if(!(email || username)) {
-        throw new ApiError(404, "Email or username are required")
+      if(!email && !username) {
+        throw new ApiError(400, "Email or username are required")
       }
 
+      console.log(req.body);
 
 
       const user = await User.findOne({
-          $or : [{ email } , { username }]
+          $or : [{ username } , { email }]
       })
 
+      console.log(user);
+
+
+
       if(!user){
-        throw new ApiError(400, "User not found")
+        throw new ApiError(401, "User not found")
       }
 
-
       if(!password) {
-        throw new ApiError(404, "Password  is required")
+        throw new ApiError(400, "Password  is required")
       }
 
       const isPasswordValid = await user.isPasswordCorrect(password)
 
       if(!isPasswordValid) {
-        throw new ApiError(404, "Invalid password please check out the password")
+        throw new ApiError(401, "Wrong password")
       }
 
-      const loginUser = await User.findById(user._id).select("-password -refreshToken")
-
       const {accessToken, refreshToken} = await generateAccessRefreshToken(user._id)
+
+      const loginUser = await User.findById(user._id).select("-password -refreshToken")
 
       const options = {
         httpsOnly : true,
         secure : true
       }
 
-      console.log("refreshToken" , refreshToken);
-      console.log("accessToken", accessToken);
-
 
       return res
       .status(200)
-      .cookie("refreshToken" , refreshToken, options)
       .cookie("accessToken", accessToken, options)
-      .json(new ApiResponse(200,  loginUser, `${loginUser.role} loggedIn Successfully`))
+      .cookie("refreshToken" , refreshToken, options)
+      .json(new ApiResponse(200,  loginUser, `${loginUser.role} Login success`))
 })
 
 const loggedOutUser = asyncHandler(async(req,res)=>{
@@ -169,24 +182,24 @@ const loggedOutUser = asyncHandler(async(req,res)=>{
         secure : true
       }
 
-    return res.status(200).clearCookie("accessToken",options).clearCookie("refreshToken",options).json(new ApiResponse(200, {}, "user logged out Successfully"))
+    return res.status(200).clearCookie("accessToken",options).clearCookie("refreshToken",options).json(new ApiResponse(200, {}, "Logout success"))
 })
 
 const fetchUser = asyncHandler(async(req,res)=>{
 
      const userWithProfile = await Profile.findOne({ user: req.user._id }).populate({path : "user", select : "-password -refreshToken"})
 
-    return res.status(200).json(new ApiResponse(200, userWithProfile , "user fetch Successfully"))
+    return res.status(200).json(new ApiResponse(200, userWithProfile , "User fetch"))
 })
 
 const updateProfileFileds = asyncHandler(async(req,res)=>{
 
-    console.log(req.user);
+    // console.log(req.user);
 
 
       const userWithProfile = await Profile.findOne({ user: req.user._id }).populate({path : "user", select : "-password -refreshToken"})
 
-      console.log(req.body);
+      // console.log(req.body);
 
       const update = await Profile.findByIdAndUpdate(
         userWithProfile._id,
@@ -197,18 +210,18 @@ const updateProfileFileds = asyncHandler(async(req,res)=>{
         }
       )
 
-      console.log(update);
+      // console.log(update);
 
 
 
-      return res.status(200).json(new ApiResponse(200, update, `user update Successfully`))
+      return res.status(200).json(new ApiResponse(200, update, `user update Success`))
 })
 
 const updateAvatar = asyncHandler(async(req,res)=>{
 
       const userWithProfile = await Profile.findOne({ user: req.user._id }).populate({path : "user", select : "-password -refreshToken"})
 
-      console.log("file.path", req.files?.avatar[0]?.path);
+      // console.log("file.path", req.files?.avatar[0]?.path);
 
       const file = req.files?.avatar[0]
 
@@ -232,7 +245,7 @@ const updateAvatar = asyncHandler(async(req,res)=>{
         }
       )
 
-      return res.status(200).json(new ApiResponse(200, update, "user avatar successfully"))
+      return res.status(200).json(new ApiResponse(200, update, "user avatar Success"))
 })
 
 const isAuthorizationChanged = asyncHandler(async(req,res)=>{
@@ -243,22 +256,21 @@ const isAuthorizationChanged = asyncHandler(async(req,res)=>{
 
     const { isAuthorized } = req.body
 
-    Boolean(isAuthorized)
+    const auth = authType(isAuthorized)
 
-    if(typeof isAuthorized === "undefined") {
+
+    if(auth === "undefined") {
         throw new ApiError(400, "isAuthorized is required")
     }
 
-    const parseIsAuthorized = String(isAuthorized) === "true";
-
     if(mentor.role !== "Mentor") {
-      throw new ApiError(404, "unAutharized required")
+      throw new ApiError(403, "You do not have permission to perform this action.")
     }
 
 
     const excustionTeam = await User.findByIdAndUpdate(
         excustionTeamId,
-        { isAuthorized : parseIsAuthorized },
+        { isAuthorized : auth },
         {
           new: true,
           runValidators: true,
@@ -266,7 +278,7 @@ const isAuthorizationChanged = asyncHandler(async(req,res)=>{
     ).select("-password -refreshToken");
 
     if(!excustionTeam) {
-       throw new ApiError(400, "Execution Team is not found")
+       throw new ApiError(404, "User not found")
     }
 
   return res.status(200).json(new ApiResponse(200, {} , `Authorization updated`))
@@ -277,14 +289,14 @@ const fetchAllExcutionTemMembers = asyncHandler(async(req,res)=>{
       const mentor = req.user
 
       if(!mentor.role === "Mentor") {
-          throw new ApiError(400, "unAutharized Request")
+          throw new ApiError(403, "You do not have permission to perform this action...")
       }
 
       const executionTeamMembers = await User.find(
            {role : "ExecutionTeam"}
       ).select("-password -refreshToken")
 
-      console.log(executionTeamMembers);
+      // console.log(executionTeamMembers);
 
 
       return res.status(200).json(new ApiResponse(200 , executionTeamMembers, " fetch Successfully Execution Team Members"))

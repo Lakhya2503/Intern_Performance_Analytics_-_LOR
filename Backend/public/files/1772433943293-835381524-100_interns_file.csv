@@ -1,0 +1,101 @@
+intern_id,name,email,gender,course,endDate,mentor,department,status,active,taskCompletion,taskQuality,deadlineAdherence,attendance,mentorFeedback,communication
+INT001,Vihaan Sharma,vihaan.sharma1@gmail.com,Female,Information Technology,2025-06-13,Suresh Iyer,R&D,Active,True,94,65,97,83,67,61
+INT002,Aditya Singh,aditya.singh2@gmail.com,Male,FSD,2025-06-23,Alok Jain,R&D,Active,False,74,88,97,78,65,70
+INT003,Aadhya Mehta,aadhya.mehta3@gmail.com,Female,Computer Science,2025-06-12,Neha Kapoor,Engineering,Active,True,84,66,82,97,87,98
+INT004,Ishaan Sharma,ishaan.sharma4@gmail.com,Female,MERN,2025-06-18,Alya Shek,IT,Active,False,100,99,83,88,77,64
+INT005,Vivaan Nair,vivaan.nair5@gmail.com,Male,Mechanical,2025-06-08,Alok Jain,Engineering,Active,False,77,89,100,96,88,70
+INT006,Diya Mehta,diya.mehta6@gmail.com,Male,Mechanical,2025-06-28,Alya Shek,IT,Active,True,94,75,70,84,89,77
+INT007,Ira Singh,ira.singh7@gmail.com,Female,FSD,2025-06-13,Rahul Mehta,Operations,Active,False,77,64,73,99,85,73
+INT008,Priya Jain,priya.jain8@gmail.com,Female,Computer Science,2025-06-14,Suresh Iyer,Analytics,Active,False,97,87,97,82,88,74
+INT009,Arjun Shah,arjun.shah9@gmail.com,Female,MERN,2025-06-30,Rahul Mehta,Engineering,Active,True,100,70,87,89,69,84
+INT010,Saanvi Iyer,saanvi.iyer10@gmail.com,Female,Mechanical,2025-06-23,Rahul Mehta,R&D,Active,True,94,77,81,73,83,87
+INT011,Reyansh Agarwal,reyansh.agarwal11@gmail.com,Male,Mechanical,2025-06-22,Suresh Iyer,IT,Active,True,100,79,100,86,77,69
+INT012,Diya Patel,diya.patel12@gmail.com,Male,Electrical,2025-06-21,Rahul Mehta,Engineering,Active,False,79,75,63,77,70,65
+INT013,Priya Verma,priya.verma13@gmail.com,Male,Computer Science,2025-06-27,Ankit Gupta,IT,Active,True,76,93,98,83,78,94
+INT014,Ayaan Kapoor,ayaan.kapoor14@gmail.com,Female,Civil,2025-06-27,Neha Kapoor,Business,Active,False,67,75,74,72,86,61
+INT015,Myra Shah,myra.shah15@gmail.com,Male,Information Technology,2025-06-06,Alya Shek,R&D,Active,True,74,64,62,97,86,64
+INT016,Kavya Singh,kavya.singh16@gmail.com,Female,Data Science,2025-06-12,Suresh Iyer,R&D,Active,False,75,90,86,76,71,66
+INT017,Aadhya Mehta,aadhya.mehta17@gmail.com,Female,Civil,2025-06-20,Rahul Mehta,R&D,Active,True,63,85,81,95,71,75
+INT018,Ayaan Singh,ayaan.singh18@gmail.com,Female,Computer Science,2025-06-19,Suresh Iyer,Operations,Active,False,75,64,88,95,100,66
+INT019,Vivaan Nair,vivaan.nair19@gmail.com,Male,MERN,2025-06-30,Alok Jain,Analytics,Active,False,91,90,73,97,90,63
+INT020,Reyansh Jain,reyansh.jain20@gmail.com,Male,Civil,2025-06-14,Ankit Gupta,Operations,Active,False,95,91,69,76,83,73
+INT021,Vivaan Iyer,vivaan.iyer21@gmail.com,Male,Electrical,2025-06-07,Rahul Mehta,IT,Active,False,92,93,70,71,97,65
+INT022,Reyansh Verma,reyansh.verma22@gmail.com,Male,Information Technology,2025-06-18,Alya Shek,IT,Active,True,97,98,62,89,70,86
+INT023,Myra Iyer,myra.iyer23@gmail.com,Female,Mechanical,2025-06-12,Neha Kapoor,Analytics,Active,False,85,68,79,84,85,64
+INT024,Aarav Agarwal,aarav.agarwal24@gmail.com,Male,MERN,2025-06-23,Alok Jain,IT,Active,False,68,82,64,98,80,83
+INT025,Shaurya Patel,shaurya.patel25@gmail.com,Female,Mechanical,2025-06-25,Rahul Mehta,R&D,Active,False,66,68,76,73,71,95
+INT026,Arjun Gupta,arjun.gupta26@gmail.com,Female,Information Technology,2025-06-28,Neha Kapoor,Analytics,Active,False,92,91,76,98,68,65
+INT027,Aadhya Gupta,aadhya.gupta27@gmail.com,Male,FSD,2025-06-16,Suresh Iyer,R&D,Active,False,70,88,95,92,92,95
+INT028,Aarav Verma,aarav.verma28@gmail.com,Male,Computer Science,2025-06-23,Rahul Mehta,Operations,Active,True,87,68,62,79,88,62
+INT029,Diya Singh,diya.singh29@gmail.com,Male,MERN,2025-06-17,Rohit Nair,IT,Active,True,75,70,71,98,91,61
+INT030,Reyansh Kapoor,reyansh.kapoor30@gmail.com,Female,Civil,2025-07-01,Alok Jain,Operations,Active,True,66,84,62,97,95,74
+INT031,Ayaan Agarwal,ayaan.agarwal31@gmail.com,Female,Mechanical,2025-07-01,Alok Jain,Analytics,Active,True,72,85,81,78,69,77
+INT032,Diya Nair,diya.nair32@gmail.com,Female,Electrical,2025-06-06,Alya Shek,Operations,Active,True,97,76,62,73,92,82
+INT033,Ananya Jain,ananya.jain33@gmail.com,Male,Civil,2025-06-24,Alok Jain,Operations,Active,True,87,60,93,99,99,72
+INT034,Diya Jain,diya.jain34@gmail.com,Male,Electrical,2025-06-25,Neha Kapoor,R&D,Active,True,79,92,79,91,91,80
+INT035,Saanvi Kapoor,saanvi.kapoor35@gmail.com,Female,Computer Science,2025-06-12,Rohit Nair,R&D,Active,False,71,99,96,79,90,95
+INT036,Aarav Gupta,aarav.gupta36@gmail.com,Female,Information Technology,2025-06-19,Neha Kapoor,Business,Active,False,88,73,92,85,75,65
+INT037,Shaurya Shah,shaurya.shah37@gmail.com,Female,MERN,2025-06-30,Alok Jain,R&D,Active,False,74,72,69,70,67,75
+INT038,Priya Iyer,priya.iyer38@gmail.com,Male,Data Science,2025-06-19,Alok Jain,R&D,Active,False,91,85,75,74,65,66
+INT039,Aadhya Singh,aadhya.singh39@gmail.com,Male,Data Science,2025-06-07,Alok Jain,Engineering,Active,False,68,89,93,87,85,88
+INT040,Sara Kapoor,sara.kapoor40@gmail.com,Female,Data Science,2025-06-11,Ankit Gupta,Business,Active,False,75,100,77,94,98,91
+INT041,Krishna Gupta,krishna.gupta41@gmail.com,Female,MERN,2025-06-28,Vikram Shah,Analytics,Active,False,81,80,94,72,73,69
+INT042,Krishna Jain,krishna.jain42@gmail.com,Male,Information Technology,2025-06-08,Rohit Nair,Business,Active,False,94,89,86,71,78,86
+INT043,Saanvi Iyer,saanvi.iyer43@gmail.com,Male,Civil,2025-06-21,Rahul Mehta,Operations,Active,False,84,86,94,93,99,98
+INT044,Krishna Agarwal,krishna.agarwal44@gmail.com,Male,Mechanical,2025-06-19,Ankit Gupta,Engineering,Active,False,81,85,70,96,94,68
+INT045,Sara Shah,sara.shah45@gmail.com,Male,Civil,2025-06-24,Rahul Mehta,Engineering,Active,False,68,89,71,71,81,84
+INT046,Ananya Singh,ananya.singh46@gmail.com,Female,Electrical,2025-06-16,Rohit Nair,Operations,Active,False,76,65,90,70,99,63
+INT047,Diya Singh,diya.singh47@gmail.com,Male,FSD,2025-06-30,Rahul Mehta,Analytics,Active,True,61,99,69,77,73,90
+INT048,Vihaan Iyer,vihaan.iyer48@gmail.com,Male,Data Science,2025-06-28,Vikram Shah,Operations,Active,True,98,98,67,94,75,79
+INT049,Vihaan Iyer,vihaan.iyer49@gmail.com,Male,Mechanical,2025-06-24,Rohit Nair,Business,Active,True,64,97,100,77,71,79
+INT050,Sara Verma,sara.verma50@gmail.com,Male,Electrical,2025-06-23,Rohit Nair,R&D,Active,False,64,92,81,70,91,91
+INT051,Vihaan Jain,vihaan.jain51@gmail.com,Female,Data Science,2025-06-28,Suresh Iyer,Business,Active,True,93,77,99,95,99,90
+INT052,Riya Jain,riya.jain52@gmail.com,Female,Electrical,2025-06-13,Alya Shek,Operations,Active,False,75,89,96,89,89,81
+INT053,Aarav Agarwal,aarav.agarwal53@gmail.com,Female,Computer Science,2025-06-21,Alok Jain,Operations,Active,False,81,77,98,92,82,95
+INT054,Aarav Shah,aarav.shah54@gmail.com,Male,MERN,2025-06-13,Rohit Nair,Business,Active,True,90,91,88,95,66,65
+INT055,Shaurya Singh,shaurya.singh55@gmail.com,Female,Information Technology,2025-06-15,Neha Kapoor,Business,Active,False,87,95,81,81,94,77
+INT056,Shaurya Gupta,shaurya.gupta56@gmail.com,Male,MERN,2025-06-29,Alok Jain,Operations,Active,True,94,71,72,76,95,77
+INT057,Myra Shah,myra.shah57@gmail.com,Female,MERN,2025-06-12,Vikram Shah,Analytics,Active,False,71,79,60,92,99,68
+INT058,Ishaan Sharma,ishaan.sharma58@gmail.com,Male,Mechanical,2025-06-28,Suresh Iyer,R&D,Active,False,66,60,96,79,95,90
+INT059,Riya Mehta,riya.mehta59@gmail.com,Male,FSD,2025-06-14,Ankit Gupta,Engineering,Active,True,85,91,64,88,68,69
+INT060,Arjun Iyer,arjun.iyer60@gmail.com,Female,MERN,2025-06-13,Alya Shek,IT,Active,False,98,98,99,77,98,84
+INT061,Riya Agarwal,riya.agarwal61@gmail.com,Female,Civil,2025-06-15,Rahul Mehta,IT,Active,True,73,100,73,78,70,70
+INT062,Krishna Patel,krishna.patel62@gmail.com,Male,Computer Science,2025-06-06,Rohit Nair,Business,Active,False,78,62,74,79,83,89
+INT063,Aditya Nair,aditya.nair63@gmail.com,Male,Mechanical,2025-07-01,Alok Jain,Business,Active,True,94,74,69,99,82,69
+INT064,Aditya Sharma,aditya.sharma64@gmail.com,Male,Mechanical,2025-06-25,Vikram Shah,Business,Active,True,89,79,85,100,82,92
+INT065,Ira Agarwal,ira.agarwal65@gmail.com,Female,MERN,2025-06-25,Rahul Mehta,Business,Active,False,98,76,61,72,79,96
+INT066,Myra Sharma,myra.sharma66@gmail.com,Female,FSD,2025-06-30,Suresh Iyer,Business,Active,False,77,71,97,83,96,65
+INT067,Priya Mehta,priya.mehta67@gmail.com,Female,Electrical,2025-06-16,Alya Shek,Analytics,Active,False,86,91,78,91,90,95
+INT068,Vivaan Agarwal,vivaan.agarwal68@gmail.com,Male,Electrical,2025-06-14,Neha Kapoor,Engineering,Active,False,92,60,94,84,91,63
+INT069,Ayaan Shah,ayaan.shah69@gmail.com,Female,Data Science,2025-06-26,Ankit Gupta,Engineering,Active,True,77,95,68,99,83,88
+INT070,Priya Verma,priya.verma70@gmail.com,Male,Information Technology,2025-06-28,Suresh Iyer,Operations,Active,True,95,86,65,77,72,89
+INT071,Vihaan Nair,vihaan.nair71@gmail.com,Male,Data Science,2025-06-28,Vikram Shah,IT,Active,False,86,90,90,77,94,95
+INT072,Arjun Jain,arjun.jain72@gmail.com,Male,Computer Science,2025-06-08,Vikram Shah,Business,Active,False,92,77,60,79,84,97
+INT073,Myra Nair,myra.nair73@gmail.com,Female,Computer Science,2025-06-20,Ankit Gupta,Operations,Active,False,95,94,84,84,85,72
+INT074,Krishna Iyer,krishna.iyer74@gmail.com,Female,Information Technology,2025-06-30,Rohit Nair,Engineering,Active,False,90,84,84,91,74,91
+INT075,Vivaan Patel,vivaan.patel75@gmail.com,Female,MERN,2025-06-20,Alya Shek,IT,Active,False,60,69,86,97,74,64
+INT076,Priya Gupta,priya.gupta76@gmail.com,Female,Civil,2025-06-26,Alya Shek,Operations,Active,False,80,100,91,97,99,62
+INT077,Sara Verma,sara.verma77@gmail.com,Male,Mechanical,2025-06-13,Alya Shek,Business,Active,True,100,66,88,75,84,61
+INT078,Vivaan Mehta,vivaan.mehta78@gmail.com,Male,Mechanical,2025-06-17,Neha Kapoor,Business,Active,True,75,93,86,88,76,70
+INT079,Reyansh Verma,reyansh.verma79@gmail.com,Female,Information Technology,2025-06-21,Suresh Iyer,Analytics,Active,False,100,76,89,78,65,89
+INT080,Shaurya Nair,shaurya.nair80@gmail.com,Male,MERN,2025-06-20,Neha Kapoor,IT,Active,False,100,87,76,84,84,72
+INT081,Saanvi Agarwal,saanvi.agarwal81@gmail.com,Male,Information Technology,2025-06-18,Neha Kapoor,IT,Active,False,78,61,85,78,65,96
+INT082,Vivaan Iyer,vivaan.iyer82@gmail.com,Female,Mechanical,2025-06-30,Alok Jain,IT,Active,False,74,100,72,89,81,68
+INT083,Vihaan Nair,vihaan.nair83@gmail.com,Male,Mechanical,2025-07-01,Ankit Gupta,Engineering,Active,False,68,65,78,80,91,71
+INT084,Ayaan Patel,ayaan.patel84@gmail.com,Female,Mechanical,2025-06-11,Vikram Shah,Business,Active,False,81,67,89,100,69,69
+INT085,Krishna Nair,krishna.nair85@gmail.com,Female,Electrical,2025-06-08,Rohit Nair,Engineering,Active,False,94,67,89,81,81,97
+INT086,Saanvi Nair,saanvi.nair86@gmail.com,Female,MERN,2025-06-27,Alok Jain,Business,Active,True,99,95,80,99,79,64
+INT087,Riya Kapoor,riya.kapoor87@gmail.com,Female,Civil,2025-06-09,Suresh Iyer,Engineering,Active,True,79,91,67,73,80,94
+INT088,Arjun Jain,arjun.jain88@gmail.com,Female,Electrical,2025-06-27,Rohit Nair,IT,Active,True,86,66,91,89,91,77
+INT089,Vivaan Kapoor,vivaan.kapoor89@gmail.com,Female,Information Technology,2025-06-20,Ankit Gupta,Analytics,Active,False,66,83,94,98,87,63
+INT090,Saanvi Gupta,saanvi.gupta90@gmail.com,Male,MERN,2025-06-20,Alya Shek,R&D,Active,True,100,98,61,71,86,75
+INT091,Arjun Iyer,arjun.iyer91@gmail.com,Male,MERN,2025-06-30,Alok Jain,IT,Active,True,74,81,69,95,65,77
+INT092,Arjun Patel,arjun.patel92@gmail.com,Female,Computer Science,2025-06-09,Rahul Mehta,Analytics,Active,True,82,75,97,80,66,71
+INT093,Ishaan Sharma,ishaan.sharma93@gmail.com,Male,Civil,2025-06-22,Alya Shek,R&D,Active,True,90,88,83,86,71,88
+INT094,Kavya Singh,kavya.singh94@gmail.com,Male,Mechanical,2025-06-20,Rahul Mehta,Engineering,Active,False,85,87,66,85,93,64
+INT095,Aditya Mehta,aditya.mehta95@gmail.com,Male,MERN,2025-06-10,Vikram Shah,IT,Active,False,84,98,93,79,94,92
+INT096,Sara Jain,sara.jain96@gmail.com,Male,MERN,2025-06-26,Alok Jain,Business,Active,False,74,86,81,96,94,85
+INT097,Aadhya Kapoor,aadhya.kapoor97@gmail.com,Male,Electrical,2025-06-19,Neha Kapoor,R&D,Active,False,83,69,90,72,70,65
+INT098,Aditya Jain,aditya.jain98@gmail.com,Male,Electrical,2025-07-01,Suresh Iyer,IT,Active,True,97,95,95,80,72,86
+INT099,Diya Nair,diya.nair99@gmail.com,Female,FSD,2025-06-15,Vikram Shah,Operations,Active,True,96,92,73,74,95,74
+INT100,Vihaan Mehta,vihaan.mehta100@gmail.com,Female,MERN,2025-06-30,Vikram Shah,IT,Active,True,87,95,99,89,100,61

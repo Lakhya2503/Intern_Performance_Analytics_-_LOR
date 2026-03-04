@@ -173,7 +173,7 @@ const Footer = () => {
         <div className="container mx-auto px-6 md:px-12 py-6 flex flex-col md:flex-row justify-between items-center gap-4">
 
           <p className="text-gray-500 text-xs">
-            © {new Date().getFullYear()} LOR Automation Inc. All rights reserved.
+            © {new Date().getFullYear()} Athenura | LOR Automation Inc. All rights reserved.
           </p>
 
           <div className="flex gap-6">

@@ -1,23 +1,24 @@
 import fs from "fs";
 import path from "path";
 import PDFDocument from "pdfkit";
-import { nonTechnicalDepartments, teachnicalDepartmentPara, technicalDepartments } from "../utils/constant.js";
+import { nonTeachnicalDepartmentPara, teachnicalDepartmentPara, technicalDepartments } from "../utils/constant.js";
+import ApiError from "../utils/ApiError.js";
 
 export const generateLORService = async (data) => {
   const { name, department, endDate } = data;
 
   if (!name || !department || !endDate) {
-    console.log(name);
-    console.log(department);
-    console.log(endDate);
+    // console.log(name);
+    // console.log(department);
+    // console.log(endDate);
 
-    throw new Error("Missing required fields");
+    throw new ApiError("Missing required fields");
   }
 
   // Validate date
   const parsedDate = new Date(endDate);
   if (isNaN(parsedDate)) {
-    throw new Error("Invalid endDate provided");
+    throw new ApiError("Invalid endDate provided");
   }
 
   const formattedDate = parsedDate.toLocaleDateString("en-GB", {
@@ -54,6 +55,7 @@ export const generateLORService = async (data) => {
 
         resolve({ pdfBuffer, fileName });
       } catch (error) {
+        // console.log("error : ,",error)
         reject(error);
       }
     });
@@ -70,10 +72,16 @@ export const generateLORService = async (data) => {
       "LOR_Template_With_CTA.png"
     );
 
+    
+    if(!fs.existsSync(imagePath)) {
+      throw new ApiError(404, "Template not found, Please Upload Template first")
+    }
+
+
     doc.image(imagePath, 0, 0, {
       fit: [doc.page.width, doc.page.height],
     });
-
+    
     const textX = 44;
     let textY = 225;
     const contentWidth = 480;
@@ -171,10 +179,10 @@ export const generateLORService = async (data) => {
 } else {
 
      const paragraphs = [
-      teachnicalDepartmentPara.firstPara,
-      teachnicalDepartmentPara.secondPara,
-      teachnicalDepartmentPara.thridPara,
-      teachnicalDepartmentPara.fourthPara,
+          nonTeachnicalDepartmentPara.firstPara,
+          nonTeachnicalDepartmentPara.secondPara,
+          nonTeachnicalDepartmentPara.thridPara,
+          nonTeachnicalDepartmentPara.fourthPara,
        ];
 
     for (const para of paragraphs) {
@@ -203,11 +211,6 @@ export const generateLORService = async (data) => {
 
 
 }
-
-
-
-
-
 
     doc.end();
   });

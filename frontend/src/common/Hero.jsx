@@ -25,7 +25,7 @@ const Hero = () => {
 
           <div className="flex flex-wrap gap-4">
             <Link
-              to="/signup"
+              to="/login"
               className="bg-teal-600 hover:bg-teal-700 text-white px-8 py-3.5 rounded-lg font-semibold shadow-lg hover:shadow-teal-500/30 hover:-translate-y-1 transition-all duration-300 flex items-center gap-2"
             >
               Get Started <span>&rarr;</span>

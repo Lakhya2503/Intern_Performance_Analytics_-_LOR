@@ -369,7 +369,7 @@ export default function MentorHomeDashboard() {
           <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between">
             <div>
               <h1 className="text-4xl font-bold flex items-center gap-3 mb-3">
-                Welcome back, {user?.username || 'Mentor'}!
+                Welcome back, {`${user?.username.slice(0,15)}.....` || 'Mentor'}!
                 <span className="text-3xl animate-bounce">👋</span>
               </h1>
               <p className="text-teal-100 flex items-center gap-2 text-lg">

@@ -320,7 +320,7 @@ const ExecutionProfile = () => {
           <div className="pt-20 md:pt-24 px-6 md:px-12 pb-6">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
               <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-xl shadow-sm border border-blue-100 hover:shadow-md transition-shadow">
-                <p className="text-sm text-blue-600 mb-1">Member Since</p>
+                <p className="text-sm text-blue-600 mb-1 font-medium">Member Since</p>
                 <p className="font-semibold text-gray-800 flex items-center gap-2">
                   <FaClock className="text-blue-500" />
                   {formatDate(profile?.user?.createdAt)}
@@ -328,7 +328,7 @@ const ExecutionProfile = () => {
               </div>
 
               <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-4 rounded-xl shadow-sm border border-purple-100 hover:shadow-md transition-shadow">
-                <p className="text-sm text-purple-600 mb-1">Email</p>
+                <p className="text-sm text-purple-600 mb-1 font-medium">Email</p>
                 <p className="font-semibold text-gray-800 flex items-center gap-2 truncate">
                   <FaEnvelope className="text-purple-500" />
                   {profile?.user?.email}
@@ -336,21 +336,21 @@ const ExecutionProfile = () => {
               </div>
 
               <div className="bg-gradient-to-br from-emerald-50 to-teal-50 p-4 rounded-xl shadow-sm border border-emerald-100 hover:shadow-md transition-shadow">
-                <p className="text-sm text-emerald-600 mb-1">Status</p>
-                <div className="flex items-center gap-2">
+                <p className="text-sm text-emerald-600 mb-1 font-medium">Auth Status</p>
+                <div className="flex items-center gap-2 py-1">
                   <span className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium ${
                     profile?.user?.isAuthorized
                       ? 'bg-emerald-500 text-white shadow-sm'
                       : 'bg-amber-500 text-white shadow-sm'
                   }`}>
                     <FaCheckCircle className="text-xs" />
-                    {profile?.user?.isAuthorized ? 'Active' : 'Pending'}
+                    {profile?.user?.isAuthorized ? 'Authorized' : 'unAuthorized'}
                   </span>
                 </div>
               </div>
 
               <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-4 rounded-xl shadow-sm border border-amber-100 hover:shadow-md transition-shadow">
-                <p className="text-sm text-amber-600 mb-1">User ID</p>
+                <p className="text-sm text-amber-600 mb-1 font-medium">User ID</p>
                 <p className="font-semibold text-gray-800 flex items-center gap-2 truncate">
                   <FaIdCard className="text-amber-500" />
                   {profile?._id?.slice(-6) || 'N/A'}

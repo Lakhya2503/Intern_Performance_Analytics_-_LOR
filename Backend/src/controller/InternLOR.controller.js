@@ -8,11 +8,10 @@ import asyncHandler from "../utils/asyncHandler.js"
 import { approveVerify } from "../utils/helper.js"
 import path from 'path'
 
-const lorUpload = asyncHandler((req,res)=>{
 
+const uploadLorTemplate = asyncHandler((req,res)=>{
 
-  const file = req.files.lorTemp[0].filename
-
+    const file = req.files.lorTemp[0].filename
 
   return res.status(200).json(new ApiResponse(200, {} , `${file} upload successfully`))
 })
@@ -23,9 +22,6 @@ const generateLOR = asyncHandler(async(req,res)=>{
       const status = req.body?.status
       const comment = req.body?.comment
 
-      // console.log(status);
-
-      // console.log();
 
 
     const approvestatus = approveVerify(status)
@@ -33,22 +29,31 @@ const generateLOR = asyncHandler(async(req,res)=>{
       const mentor = req.user
 
       if(!mentor.role === "Mentor") {
-          throw new ApiError(400, "unAuthorized request")
+          throw new ApiError(401, "unAuthorized request")
       }
 
      const intern = await Intern.findById(internId)
+
 
 
     if(!intern) {
       throw new ApiError(400, "Intern does not exists")
     }
 
-    // const internwithLorExist = await InternLOR.findOne({ email: intern.email });
+    const internwithLorExist = await InternLOR.findOne({ email: intern.email });
+
+    if(internwithLorExist) {
+      throw new ApiError(400, "intern has already send the LOR")
+    }
+
+    if(!approvestatus) {
+      throw new ApiError(400, "intern can't create or send pdf of url")
+    } else if (approvestatus) {
+      const { pdfBuffer, fileName } = await generateLORService(intern)
+      //  await sendLorViaEmail(intern.email, intern.name, pdfBuffer, fileName)
+    }
 
 
-    // if(internwithLorExist) {
-    //   throw new ApiError(400, "intern has already send the LOR")
-    // }
 
      const  internLOR =  await InternLOR.create({
           name : intern.name,
@@ -63,16 +68,6 @@ const generateLOR = asyncHandler(async(req,res)=>{
           }
      })
 
-    //  console.log(internLOR.approval.status);
-
-
-     if(!internLOR.approval.status) {
-      throw new ApiError(400, "intern can't create or send pdf of url")
-    } else if (internLOR.approval.status) {
-      const { pdfBuffer, fileName } = await generateLORService(internLOR)
-      //  await sendLorViaEmail(intern.email, intern.name, pdfBuffer, fileName)
-    }
-
 
     return res
     .status(200)
@@ -85,9 +80,6 @@ const uploadBulkInternsForLogGeneration = asyncHandler(async(req,res)=>{
 
     const file = req.files?.bulkInternOfLorGen[0]
 
-    console.log("req.files",req.files);
-
-
     if(!file) {
       throw new ApiError(404, "Inters file doesn't exists")
     }
@@ -96,16 +88,15 @@ const uploadBulkInternsForLogGeneration = asyncHandler(async(req,res)=>{
 
     const data = await parseFileToJson(extension, file.path)
 
-
           for (const internsLor of data) {
 
-              // console.log(internsLor);
-
-
                   const intern = await Intern.findById(internsLor.intern_id)
-
-                  // console.log(intern);
-
+                 
+                  if(intern.approval.status) {
+                       const { pdfBuffer, fileName } = await generateLORService(intern)
+                        // await sendLorViaEmail(internCreateForLor.email, internCreateForLor.name, pdfBuffer, fileName)
+                          continue;
+                      }
 
                   const internCreateForLor = await InternLOR.create({
                       name : intern.name,
@@ -119,15 +110,6 @@ const uploadBulkInternsForLogGeneration = asyncHandler(async(req,res)=>{
                         comment : internsLor.comment
                       },
                   })
-
-
-
-
-                  if(internCreateForLor.approval.status) {
-                       const { pdfBuffer, fileName } = await generateLORService(internCreateForLor)
-                        // await sendLorViaEmail(internCreateForLor.email, internCreateForLor.name, pdfBuffer, fileName)
-                  }
-
           }
 
 
@@ -153,7 +135,7 @@ const internRejectOfGenLor = asyncHandler(async(req,res)=>{
 
 
       if(!mentor.role === "Mentor") {
-          throw new ApiError(400, "unAuthorized request")
+          throw new ApiError(401, "unAuthorized request")
       }
 
      const intern = await Intern.findById(internId)
@@ -189,23 +171,17 @@ const internsWithLor = asyncHandler(async(req,res)=>{
         }
       ])
 
-
-
       return res.status(200).json(new ApiResponse(200, internsWithLorGen, "interns with LOR"))
 
 })
 
 const rejectedInternsOfLorGeneration = asyncHandler(async(req,res) =>{
 
-
-
     const internRejectedOfLor = await InternLOR.aggregate([
           {
             $match : { "approval.status" : false }
           }
       ])
-
-      // console.log(internRejectedOfLor);
 
 
       return res.status(200).json(new ApiResponse(200,internRejectedOfLor, "rejected interns of LOR Generation"))
@@ -228,7 +204,7 @@ const updateAndSendLor = asyncHandler(async(req,res)=>{
       const mentor = req.user
 
             if(!mentor.role === "Mentor") {
-                throw new ApiError(400, "unAuthorized request")
+                throw new ApiError(401, "unAuthorized request")
             }
 
        const { pdfBuffer, fileName } = await generateLORService(updateInternLor)
@@ -260,7 +236,12 @@ const resendEmailOfLor = asyncHandler(async(req,res)=>{
 
 
 export {
-  generateLOR, internRejectOfGenLor, internsWithLor,
-  lorUpload,
-  rejectedInternsOfLorGeneration, resendEmailOfLor, updateAndSendLor,uploadBulkInternsForLogGeneration
+  generateLOR, 
+  internRejectOfGenLor, 
+  internsWithLor,
+  uploadLorTemplate,
+  rejectedInternsOfLorGeneration, 
+  resendEmailOfLor, 
+  updateAndSendLor,
+  uploadBulkInternsForLogGeneration
 }

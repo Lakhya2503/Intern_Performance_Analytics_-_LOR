@@ -1,14 +1,17 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { FaGithub, FaLinkedin, FaPhoneAlt, FaTwitter } from "react-icons/fa";
 import { FaLocationDot } from "react-icons/fa6";
-import { MdEmail } from "react-icons/md";
-import { FaPhoneAlt, FaGithub, FaTwitter, FaLinkedin } from "react-icons/fa";
-import { FiSend, FiCheckCircle, FiAlertCircle } from "react-icons/fi";
+import { FiAlertCircle, FiCheckCircle, FiSend } from "react-icons/fi";
 import { IoMdClose } from "react-icons/io";
+import { MdEmail } from "react-icons/md";
+import { sendMessage } from '../api/index';
+import { requestHandler } from '../utils/index';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
+    subject: "",
     message: ""
   });
 
@@ -20,6 +23,16 @@ const Contact = () => {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Subject options with colors
+  const subjectOptions = [
+    { value: "lor", label: "LOR", color: "blue" },
+    { value: "interns", label: "Interns", color: "green" },
+    { value: "task", label: "Task", color: "yellow" },
+    { value: "dashboard controller", label: "Dashboard Controller", color: "purple" },
+    { value: "authentication", label: "Authentication", color: "indigo" },
+    { value: "other", label: "Other", color: "gray" }
+  ];
 
   // Handle input changes
   const handleChange = (e) => {
@@ -57,10 +70,16 @@ const Contact = () => {
       errors.email = "Please enter a valid email address";
     }
 
+    if (!formData.subject) {
+      errors.subject = "Please select a subject";
+    }
+
     if (!formData.message.trim()) {
       errors.message = "Message is required";
     } else if (formData.message.length < 10) {
       errors.message = "Message must be at least 10 characters";
+    } else if (formData.message.length > 500) {
+      errors.message = "Message must not exceed 500 characters";
     }
 
     return errors;
@@ -79,44 +98,54 @@ const Contact = () => {
         message: "Please fix the errors below",
         errors
       });
+
+      // Scroll to top to show error message
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
 
-    setIsSubmitting(true);
+    // Prepare payload for API
+    const payload = {
+      fullName: formData.fullName,
+      email: formData.email,
+      subject: formData.subject,
+      message: formData.message
+    };
 
-    // Simulate API call
-    try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
+    await requestHandler(
+      async () => sendMessage(payload),
+      setIsSubmitting,
+      (response) => {
+        setFormStatus({
+          submitted: true,
+          success: true,
+          message: response?.message || "Thank you! Your message has been sent successfully.",
+          errors: {}
+        });
 
-      setFormStatus({
-        submitted: true,
-        success: true,
-        message: "Thank you! Your message has been sent successfully.",
-        errors: {}
-      });
+        // Reset form after successful submission
+        setFormData({
+          fullName: "",
+          email: "",
+          subject: "",
+          message: ""
+        });
 
-      // Reset form after successful submission
-      setFormData({
-        fullName: "",
-        email: "",
-        message: ""
-      });
-
-      // Clear success message after 5 seconds
-      setTimeout(() => {
-        setFormStatus(prev => ({ ...prev, submitted: false }));
-      }, 5000);
-
-    } catch (error) {
-      setFormStatus({
-        submitted: true,
-        success: false,
-        message: "Something went wrong. Please try again later.",
-        errors: {}
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
+        // Clear success message after 5 seconds
+        setTimeout(() => {
+          setFormStatus(prev => ({ ...prev, submitted: false }));
+        }, 5000);
+      },
+      (error) => {
+        console.error('Error sending message:', error);
+        setFormStatus({
+          submitted: true,
+          success: false,
+          message: error?.response?.data?.message || "Something went wrong. Please try again later.",
+          errors: {}
+        });
+      }
+    );
   };
 
   // Clear form status
@@ -129,13 +158,27 @@ const Contact = () => {
     });
   };
 
+  // Get subject badge color
+  const getSubjectBadgeColor = (subject) => {
+    const option = subjectOptions.find(opt => opt.value === subject);
+    const colorMap = {
+      blue: 'bg-blue-100 text-blue-700 border-blue-200',
+      green: 'bg-green-100 text-green-700 border-green-200',
+      yellow: 'bg-yellow-100 text-yellow-700 border-yellow-200',
+      purple: 'bg-purple-100 text-purple-700 border-purple-200',
+      indigo: 'bg-indigo-100 text-indigo-700 border-indigo-200',
+      gray: 'bg-gray-100 text-gray-700 border-gray-200'
+    };
+    return colorMap[option?.color || 'gray'];
+  };
+
   return (
-    <section className="min-h-screen bg-gradient-to-br from-slate-50 to-teal-50/30 py-12 px-4 md:px-12 flex items-center relative overflow-hidden">
+    <section className="min-h-screen bg-gradient-to-br pt-20 from-slate-50 to-teal-50/30 py-12 px-4 md:px-12 flex items-center relative overflow-hidden">
 
       {/* Animated Background Blobs */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-teal-200/30 rounded-full blur-3xl -z-10 translate-x-1/2 -translate-y-1/2 animate-pulse" />
-      <div className="absolute bottom-0 left-0 w-64 h-64 bg-cyan-200/30 rounded-full blur-3xl -z-10 -translate-x-1/2 translate-y-1/2 animate-pulse delay-1000" />
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-teal-100/20 rounded-full blur-3xl -z-10 animate-pulse delay-700" />
+      <div className="absolute top-0 right-0 w-96 h-96 bg-blue-200/30 rounded-full blur-3xl -z-10 translate-x-1/2 -translate-y-1/2 animate-pulse" />
+      <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-200/30 rounded-full blur-3xl -z-10 -translate-x-1/2 translate-y-1/2 animate-pulse delay-1000" />
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-green-100/20 rounded-full blur-3xl -z-10 animate-pulse delay-700" />
 
       <div className="container mx-auto max-w-6xl">
         <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden grid md:grid-cols-5 border border-teal-100/50 hover:shadow-teal-500/10 transition-shadow duration-500">
@@ -244,8 +287,8 @@ const Contact = () => {
             {formStatus.submitted && formStatus.message && (
               <div className={`mb-6 p-4 rounded-xl flex items-center gap-3 ${
                 formStatus.success
-                  ? 'bg-teal-50 text-teal-700 border border-teal-200'
-                  : 'bg-amber-50 text-amber-700 border border-amber-200'
+                  ? 'bg-green-50 text-green-700 border border-green-200'
+                  : 'bg-red-50 text-red-700 border border-red-200'
               } animate-slide-down`}>
                 {formStatus.success ? (
                   <FiCheckCircle className="flex-shrink-0 text-xl" />
@@ -268,9 +311,9 @@ const Contact = () => {
                 {/* Name Field with Validation */}
                 <div className="space-y-2">
                   <label className="text-sm font-semibold text-slate-600 flex items-center justify-between">
-                    <span>Full Name <span className="text-teal-600">*</span></span>
+                    <span>Full Name <span className="text-red-500">*</span></span>
                     {formStatus.errors.fullName && (
-                      <span className="text-xs text-amber-600 font-normal">
+                      <span className="text-xs text-red-600 font-normal">
                         {formStatus.errors.fullName}
                       </span>
                     )}
@@ -283,7 +326,7 @@ const Contact = () => {
                     placeholder="John Doe"
                     className={`w-full px-4 py-3 bg-slate-50 border ${
                       formStatus.errors.fullName
-                        ? 'border-amber-300 focus:ring-amber-500'
+                        ? 'border-red-300 focus:ring-red-500'
                         : 'border-slate-200 focus:ring-teal-500'
                     } rounded-xl text-slate-900 placeholder-slate-400 focus:ring-2 focus:border-transparent transition-all outline-none hover:bg-white`}
                   />
@@ -292,9 +335,9 @@ const Contact = () => {
                 {/* Email Field with Validation */}
                 <div className="space-y-2">
                   <label className="text-sm font-semibold text-slate-600 flex items-center justify-between">
-                    <span>Email Address <span className="text-teal-600">*</span></span>
+                    <span>Email Address <span className="text-red-500">*</span></span>
                     {formStatus.errors.email && (
-                      <span className="text-xs text-amber-600 font-normal">
+                      <span className="text-xs text-red-600 font-normal">
                         {formStatus.errors.email}
                       </span>
                     )}
@@ -307,19 +350,58 @@ const Contact = () => {
                     placeholder="john@example.com"
                     className={`w-full px-4 py-3 bg-slate-50 border ${
                       formStatus.errors.email
-                        ? 'border-amber-300 focus:ring-amber-500'
+                        ? 'border-red-300 focus:ring-red-500'
                         : 'border-slate-200 focus:ring-teal-500'
                     } rounded-xl text-slate-900 placeholder-slate-400 focus:ring-2 focus:border-transparent transition-all outline-none hover:bg-white`}
                   />
                 </div>
               </div>
 
+              {/* Subject Field with Validation */}
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-slate-600 flex items-center justify-between">
+                  <span>Subject <span className="text-red-500">*</span></span>
+                  {formStatus.errors.subject && (
+                    <span className="text-xs text-red-600 font-normal">
+                      {formStatus.errors.subject}
+                    </span>
+                  )}
+                </label>
+                <select
+                  name="subject"
+                  value={formData.subject}
+                  onChange={handleChange}
+                  className={`w-full px-4 py-3 bg-slate-50 border ${
+                    formStatus.errors.subject
+                      ? 'border-red-300 focus:ring-red-500'
+                      : 'border-slate-200 focus:ring-teal-500'
+                  } rounded-xl text-slate-900 focus:ring-2 focus:border-transparent transition-all outline-none hover:bg-white`}
+                >
+                  <option value="">Select a subject</option>
+                  {subjectOptions.map(option => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+
+                {/* Subject Color Preview (shows when subject is selected) */}
+                {formData.subject && (
+                  <div className="mt-2 flex items-center gap-2">
+                    <span className="text-xs text-slate-500">Selected:</span>
+                    <span className={`px-3 py-1 text-xs font-medium rounded-full border ${getSubjectBadgeColor(formData.subject)}`}>
+                      {subjectOptions.find(opt => opt.value === formData.subject)?.label || formData.subject}
+                    </span>
+                  </div>
+                )}
+              </div>
+
               {/* Message Field with Validation */}
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-slate-600 flex items-center justify-between">
-                  <span>Message <span className="text-teal-600">*</span></span>
+                  <span>Message <span className="text-red-500">*</span></span>
                   {formStatus.errors.message && (
-                    <span className="text-xs text-amber-600 font-normal">
+                    <span className="text-xs text-red-600 font-normal">
                       {formStatus.errors.message}
                     </span>
                   )}
@@ -330,15 +412,36 @@ const Contact = () => {
                   onChange={handleChange}
                   rows="4"
                   placeholder="Tell us about your project or question..."
+                  maxLength="500"
                   className={`w-full px-4 py-3 bg-slate-50 border ${
                     formStatus.errors.message
-                      ? 'border-amber-300 focus:ring-amber-500'
+                      ? 'border-red-300 focus:ring-red-500'
                       : 'border-slate-200 focus:ring-teal-500'
                   } rounded-xl text-slate-900 placeholder-slate-400 focus:ring-2 focus:border-transparent transition-all outline-none resize-none hover:bg-white`}
                 ></textarea>
-                <p className="text-xs text-slate-400 text-right">
-                  {formData.message.length}/500 characters
-                </p>
+
+                {/* Character counter with color indicator */}
+                <div className="flex justify-between items-center">
+                  <p className={`text-xs ${
+                    formData.message.length > 450
+                      ? formData.message.length >= 500
+                        ? 'text-red-500'
+                        : 'text-yellow-600'
+                      : 'text-slate-400'
+                  }`}>
+                    {formData.message.length}/500 characters
+                  </p>
+
+                  {/* Character warning */}
+                  {formData.message.length > 450 && (
+                    <p className="text-xs text-yellow-600 flex items-center gap-1">
+                      <FiAlertCircle />
+                      {formData.message.length >= 500
+                        ? 'Maximum limit reached'
+                        : 'Approaching limit'}
+                    </p>
+                  )}
+                </div>
               </div>
 
               {/* Submit Button with Loading State */}
@@ -361,7 +464,7 @@ const Contact = () => {
               </button>
             </form>
 
-            {/* Character count indicator */}
+            {/* Privacy note */}
             <div className="mt-6 pt-6 border-t border-slate-100 text-xs text-slate-400 text-center">
               <p>We respect your privacy. Your information is safe with us.</p>
             </div>
