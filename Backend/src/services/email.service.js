@@ -240,7 +240,6 @@ export const sendLorViaEmail = async (email, name, pdfBuffer, fileName) => {
     // Send the email using Brevo API
     const response = await apiInstance.transactionalEmails.sendTransacEmail(sendSmtpEmail);
 
-    console.log(`✅ Email sent successfully to ${email} with messageId: ${response.messageId}`);
 
     return {
       success: true,

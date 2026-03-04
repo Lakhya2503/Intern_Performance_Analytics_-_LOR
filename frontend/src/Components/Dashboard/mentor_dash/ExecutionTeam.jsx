@@ -29,7 +29,6 @@ const ExecutionTeam = () => {
     await requestHandler(
       async () => {
         const response = await executionTeamMembers();
-        console.log('API Response:', response); // For debugging
         return response;
       },
       setLoading,
@@ -56,7 +55,6 @@ const ExecutionTeam = () => {
     await requestHandler(
       async () => {
         const response = await changeAuthorization(memberId, { isAuthorized: newAuthStatus });
-        console.log('Update Response:', response); // For debugging
         return response;
       },
       setUpdatingAuth,

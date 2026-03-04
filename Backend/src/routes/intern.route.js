@@ -46,7 +46,6 @@ router.route("/interns-lor-eligible").get( shortlistedWithNoLor )
 
 router.route("/interns-with-no-lor").get( internWIthNoLor)
 
-// router.router("")
 
 router.route("/fetch/all-interns").get(getAllInters)
 

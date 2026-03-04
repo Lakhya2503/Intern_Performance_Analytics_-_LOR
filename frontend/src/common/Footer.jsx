@@ -39,12 +39,6 @@ const Footer = () => {
 
           {/* Column 1: Brand */}
           <div className="space-y-4">
-            {/* <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-              <span className="w-8 h-8 bg-gradient-to-r from-teal-500 to-emerald-500 rounded-lg flex items-center justify-center text-white text-sm shadow-md">
-                <BsLightningChargeFill className="h-5 w-5" />
-              </span>
-              LOR Automation
-            </h2> */}
              <img
                       src={Athenura}
                       alt="Athenura Logo"

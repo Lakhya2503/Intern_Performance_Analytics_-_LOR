@@ -283,7 +283,7 @@ const ExecutionProfile = () => {
               {/* Name and Role */}
               <div className="mb-10">
                 <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
-                  {profile?.fullName.toUpperCase() || profile?.user?.username || "ExecutionTeam"}
+                  {profile?.fullName?.toUpperCase() || profile?.user?.username || "ExecutionTeam"}
                 </h1>
                 <div className="flex items-center gap-3 font-bold text-zinc-700">
                   <FaBriefcase className="text-sm" />

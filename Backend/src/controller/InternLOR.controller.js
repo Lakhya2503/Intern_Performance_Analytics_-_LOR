@@ -7,6 +7,7 @@ import ApiResponse from "../utils/ApiResponse.js"
 import asyncHandler from "../utils/asyncHandler.js"
 import { approveVerify } from "../utils/helper.js"
 import path from 'path'
+import {sendLorViaEmail} from '../services/email.service.js'
 
 
 const uploadLorTemplate = asyncHandler((req,res)=>{
@@ -50,7 +51,7 @@ const generateLOR = asyncHandler(async(req,res)=>{
       throw new ApiError(400, "intern can't create or send pdf of url")
     } else if (approvestatus) {
       const { pdfBuffer, fileName } = await generateLORService(intern)
-      //  await sendLorViaEmail(intern.email, intern.name, pdfBuffer, fileName)
+       await sendLorViaEmail(intern.email, intern.name, pdfBuffer, fileName)
     }
 
 
@@ -91,10 +92,10 @@ const uploadBulkInternsForLogGeneration = asyncHandler(async(req,res)=>{
           for (const internsLor of data) {
 
                   const intern = await Intern.findById(internsLor.intern_id)
-                 
+
                   if(intern.approval.status) {
                        const { pdfBuffer, fileName } = await generateLORService(intern)
-                        // await sendLorViaEmail(internCreateForLor.email, internCreateForLor.name, pdfBuffer, fileName)
+                        await sendLorViaEmail(internCreateForLor.email, internCreateForLor.name, pdfBuffer, fileName)
                           continue;
                       }
 
@@ -120,13 +121,11 @@ const internRejectOfGenLor = asyncHandler(async(req,res)=>{
 
       const { internId } = req.params
 
-      // console.log(internId);
 
 
       const status = req.body?.status
       const comment = req.body?.comment
 
-      // console.log(req.body);
 
 
     const approvestatus = approveVerify(status)
@@ -208,7 +207,7 @@ const updateAndSendLor = asyncHandler(async(req,res)=>{
             }
 
        const { pdfBuffer, fileName } = await generateLORService(updateInternLor)
-      //  await sendLorViaEmail(updateInternLor.email, updateInternLor.name, pdfBuffer, fileName)
+       await sendLorViaEmail(updateInternLor.email, updateInternLor.name, pdfBuffer, fileName)
       return res.status(200).json(new ApiResponse(200, {}, "intern has update and send lor via email"))
 })
 
@@ -224,7 +223,7 @@ const resendEmailOfLor = asyncHandler(async(req,res)=>{
 
 
       const { pdfBuffer, fileName } = await generateLORService(internExsit)
-      //  await sendLorViaEmail(internExsit.email, internExsit.name, pdfBuffer, fileName)
+       await sendLorViaEmail(internExsit.email, internExsit.name, pdfBuffer, fileName)
 
 
     return res.status(200).json(new ApiResponse(200, {},"intern have resend lor email"))
@@ -236,12 +235,12 @@ const resendEmailOfLor = asyncHandler(async(req,res)=>{
 
 
 export {
-  generateLOR, 
-  internRejectOfGenLor, 
+  generateLOR,
+  internRejectOfGenLor,
   internsWithLor,
   uploadLorTemplate,
-  rejectedInternsOfLorGeneration, 
-  resendEmailOfLor, 
+  rejectedInternsOfLorGeneration,
+  resendEmailOfLor,
   updateAndSendLor,
   uploadBulkInternsForLogGeneration
 }

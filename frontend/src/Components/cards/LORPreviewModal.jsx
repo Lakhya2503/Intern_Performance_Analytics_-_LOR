@@ -5,8 +5,6 @@ const LORPreviewModal = ({ isOpen, onClose, intern, lorFormData }) => {
   if (!isOpen || !intern) return null;
 
   const handleDownload = () => {
-    // Implement download logic here
-    console.log('Downloading LOR for:', intern.name);
   };
 
   const handlePrint = () => {

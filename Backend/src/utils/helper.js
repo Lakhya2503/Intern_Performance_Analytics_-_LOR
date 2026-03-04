@@ -30,8 +30,6 @@ export const getChangeField = (oldObj, newObj, internFieldType) => {
         const newValue = castValue(newObj[key], type);
         const oldValue = castValue(oldObj[key], type);
 
-        // console.log("newValue", newValue);
-        // console.log("oldValue", oldValue);
 
 
         if(type === "date") {

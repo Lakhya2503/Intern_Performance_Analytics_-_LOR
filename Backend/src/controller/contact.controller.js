@@ -34,9 +34,9 @@ const sendMessage = asyncHandler(async(req,res)=>{
 
 const getAllMessagesForMentor = asyncHandler(async(req,res)=> {
 
-      // if(req.user.role !== "Mentor") {
-      //   throw new ApiError(404, "unAuthorized requirest")
-      // }
+      if(req.user.role !== "Mentor") {
+        throw new ApiError(404, "unAuthorized requirest")
+      }
 
 
 
@@ -95,15 +95,11 @@ const deleteMessage = asyncHandler(async(req,res)=>{
      const { messagId } = req.params
 
 
-
         const fetchMessage = await Contact.findByIdAndDelete({
                 _id  : messagId
           })
 
-      console.log(fetchMessage);
 
-
-      // await Contact.findByIdAndDelete(messagId)
 
       return res.status(200).json(new ApiResponse(200, { fetchMessage }, "Message delete Successfully"))
 })

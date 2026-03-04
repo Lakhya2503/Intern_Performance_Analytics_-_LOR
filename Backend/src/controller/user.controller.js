@@ -10,15 +10,11 @@ import { authType } from '../utils/helper.js'
 const generateAccessRefreshToken = async(userId) => {
     const user = await User.findById(userId)
 
-    console.log("userId",userId)
 
-    console.log("user",user)
 
     const accessToken = await user.generateAccessToken()
     const refreshToken= await user.generateRefreshToken()
 
-    console.log("accessToken from generatAccessToken",accessToken)
-    console.log("refreshToken from generatAccessToken",refreshToken)
 
     user.refreshToken = refreshToken
 
@@ -32,7 +28,6 @@ const generateAccessRefreshToken = async(userId) => {
 
 const accessRefershToken = asyncHandler(async(req,res)=>{
     const incomingTokenRefershToken = req.cookies.refreshToken || req.body.refreshToken
-    console.log("incomingTokenRefershToken",incomingTokenRefershToken)
 
 
 
@@ -45,7 +40,7 @@ const accessRefershToken = asyncHandler(async(req,res)=>{
 
       const user = await User.findById(decodedToken?._id)
 
-      // console.log("user", user)
+
 
         if(!user) {
            throw new ApiError(401, "Invalid refresh token")
@@ -56,9 +51,6 @@ const accessRefershToken = asyncHandler(async(req,res)=>{
           throw new ApiError(401, "refresh token invalide or used")
         }
 
-        console.log(`incomingTokenRefershToken !== user.refreshToken`,incomingTokenRefershToken == user.refreshToken)
-        console.log( `incomingTokenRefershToken`,incomingTokenRefershToken)
-        console.log(`user`,user)
 
          const options = {
          httpOnly: true,
@@ -67,8 +59,6 @@ const accessRefershToken = asyncHandler(async(req,res)=>{
 
         const { accessToken , refreshToken } = await generateAccessRefreshToken(user?._id)
 
-        console.log("accessToken",accessToken)
-        console.log("newRefreshToken", refreshToken)
 
 
         return res
@@ -129,14 +119,13 @@ const loggedInUser = asyncHandler(async(req,res)=>{
         throw new ApiError(400, "Email or username are required")
       }
 
-      console.log(req.body);
+
 
 
       const user = await User.findOne({
           $or : [{ username } , { email }]
       })
 
-      console.log(user);
 
 
 
@@ -194,12 +183,12 @@ const fetchUser = asyncHandler(async(req,res)=>{
 
 const updateProfileFileds = asyncHandler(async(req,res)=>{
 
-    // console.log(req.user);
+
 
 
       const userWithProfile = await Profile.findOne({ user: req.user._id }).populate({path : "user", select : "-password -refreshToken"})
 
-      // console.log(req.body);
+
 
       const update = await Profile.findByIdAndUpdate(
         userWithProfile._id,
@@ -210,7 +199,7 @@ const updateProfileFileds = asyncHandler(async(req,res)=>{
         }
       )
 
-      // console.log(update);
+
 
 
 
@@ -221,13 +210,7 @@ const updateAvatar = asyncHandler(async(req,res)=>{
 
       const userWithProfile = await Profile.findOne({ user: req.user._id }).populate({path : "user", select : "-password -refreshToken"})
 
-      // console.log("file.path", req.files?.avatar[0]?.path);
-
       const file = req.files?.avatar[0]
-
-      // console.log(file);
-
-
 
         const avatarFile = await uploadFiles(file.path);
 
@@ -295,8 +278,6 @@ const fetchAllExcutionTemMembers = asyncHandler(async(req,res)=>{
       const executionTeamMembers = await User.find(
            {role : "ExecutionTeam"}
       ).select("-password -refreshToken")
-
-      // console.log(executionTeamMembers);
 
 
       return res.status(200).json(new ApiResponse(200 , executionTeamMembers, " fetch Successfully Execution Team Members"))

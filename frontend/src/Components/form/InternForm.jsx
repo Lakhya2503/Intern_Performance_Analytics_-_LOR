@@ -185,8 +185,6 @@ const InternForm = ({
         submitData._id = submitData.id;
       }
 
-      // Log the ID for debugging
-      console.log('Submitting update for intern ID:', submitData._id);
 
       // If still no ID, show error
       if (!submitData._id) {

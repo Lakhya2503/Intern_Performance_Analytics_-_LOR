@@ -8,9 +8,6 @@ export const generateLORService = async (data) => {
   const { name, department, endDate } = data;
 
   if (!name || !department || !endDate) {
-    // console.log(name);
-    // console.log(department);
-    // console.log(endDate);
 
     throw new ApiError("Missing required fields");
   }
@@ -55,7 +52,7 @@ export const generateLORService = async (data) => {
 
         resolve({ pdfBuffer, fileName });
       } catch (error) {
-        // console.log("error : ,",error)
+
         reject(error);
       }
     });
@@ -72,7 +69,7 @@ export const generateLORService = async (data) => {
       "LOR_Template_With_CTA.png"
     );
 
-    
+
     if(!fs.existsSync(imagePath)) {
       throw new ApiError(404, "Template not found, Please Upload Template first")
     }
@@ -81,7 +78,7 @@ export const generateLORService = async (data) => {
     doc.image(imagePath, 0, 0, {
       fit: [doc.page.width, doc.page.height],
     });
-    
+
     const textX = 44;
     let textY = 225;
     const contentWidth = 480;

@@ -42,7 +42,7 @@ export class LocalStorage {
   }
 
   static clear() {
-    if (!isBrowser) return;
+    if (!isBrowser) return; 
     try {
       localStorage.clear();
     } catch (error) {

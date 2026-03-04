@@ -85,7 +85,7 @@ function AppContent() {
         reverseOrder={false}
         gutter={8}
         toastOptions={{
-          duration: 2500,
+          duration: 700,
 
           // Success toast styling
           success: {

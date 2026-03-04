@@ -33,7 +33,7 @@ export const AuthProvider = ({ children }) => {
   // =========================
 
   const [user, setUser] = useState(() => LocalStorage.get("user") || null);
-  const [role, setRole] = useState(() => LocalStorage.get("user")?.role || "Mentor");
+  const [role, setRole] = useState(() => LocalStorage.get("user")?.role || "");
   const [loading, setLoading] = useState(false);
   const [isInitializing, setIsInitializing] = useState(true);
 

@@ -86,7 +86,7 @@ const addBulkInterns = asyncHandler(async (req, res) => {
         insertedInterns = await Intern.insertMany(newInternFromClient, { ordered: false });
     }
 
-    // newInternFromClient.forEach(item => console.log(item));
+    newInternFromClient.forEach(item => console.log(item));
 
     return res.status(200).json(new ApiResponse(200, {
         newInternFromClient,
@@ -139,14 +139,12 @@ const updateBulkInterns = asyncHandler(async (req, res) => {
             const value = uploadIntern[key];
 
             if (scoreFields.includes(key)) {
-                // Cast score-related fields to number
                 const castedValue = Number(value);
                 if (!isNaN(castedValue)) changes[key] = castedValue;
                 else skippedRows.push({ email, field: key, reason: "Invalid value" });
             } else if (mainFields.includes(key)) {
-                changes[key] = value; // main fields go directly
+                changes[key] = value;
             } else {
-                // Only truly "other" fields go into otherData
                 otherData[key] = value;
             }
         });
@@ -204,7 +202,6 @@ const addSignleIntern = asyncHandler(async(req,res)=>{
         throw new ApiError(403, "Unauthorized request");
     }
 
-      // console.log( name, gender, course , email, endDate, department, mentor, score, isActive);
 
 
 
@@ -322,7 +319,6 @@ const shortlistedWithNoLor = asyncHandler(async(req,res)=>{
               }
             ]);
 
-        // console.log(filteredInterns);
 
     return res.status(200).json(new ApiResponse(200, filteredInterns, "Eligible interns for LOR Generation"))
 
@@ -352,7 +348,7 @@ const internWIthNoLor = asyncHandler(async(req,res)=>{
                         }
                       ]);
 
-          // console.log(filteredInterns);
+
 
             return res.status(200).json(new ApiResponse(200, filteredInterns, "interns with no lor"))
 })
@@ -364,8 +360,8 @@ const internWIthNoLor = asyncHandler(async(req,res)=>{
   addBulkInterns,
   addSignleIntern,
   shortlistedWithNoLor,
-  getAllInters, 
-  internWIthNoLor, 
+  getAllInters,
+  internWIthNoLor,
   scoringWiseRanking,
   updateBulkInterns,
   updateSingleIntern

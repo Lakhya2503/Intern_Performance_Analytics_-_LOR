@@ -147,7 +147,6 @@ const Analytics = () => {
 
   // Handle edit intern
   const handleEditIntern = (intern) => {
-    console.log('Edit intern:', intern);
     // Add your edit logic here - this could open a modal or navigate to edit page
     // For example: navigate(`/interns/edit/${intern._id}`);
   };
