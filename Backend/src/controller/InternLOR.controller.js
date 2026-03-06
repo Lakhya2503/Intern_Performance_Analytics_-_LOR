@@ -93,11 +93,7 @@ const uploadBulkInternsForLogGeneration = asyncHandler(async(req,res)=>{
 
                   const intern = await Intern.findById(internsLor.intern_id)
 
-                  if(intern.approval.status) {
-                       const { pdfBuffer, fileName } = await generateLORService(intern)
-                        await sendLorViaEmail(internCreateForLor.email, internCreateForLor.name, pdfBuffer, fileName)
-                          continue;
-                      }
+                 
 
                   const internCreateForLor = await InternLOR.create({
                       name : intern.name,
@@ -111,6 +107,12 @@ const uploadBulkInternsForLogGeneration = asyncHandler(async(req,res)=>{
                         comment : internsLor.comment
                       },
                   })
+
+                   if(internCreateForLor.approval.status) {
+                       const { pdfBuffer, fileName } = await generateLORService(intern)
+                        await sendLorViaEmail(internCreateForLor.email, internCreateForLor.name, pdfBuffer, fileName)
+                          continue;
+                      }
           }
 
 
@@ -230,6 +232,44 @@ const resendEmailOfLor = asyncHandler(async(req,res)=>{
 
 })
 
+const shortListedInternsSelectAndGenLor = asyncHandler(async(req,res)=>{
+
+    const { selectedIntersId } = req.body
+
+      if(req.user.role !== "Mentor") {
+        throw new ApiError(200, "unAuthroized request")
+      }
+
+      for (const selectedIntern of selectedIntersId) {
+
+                  const intern = await Intern.findById(selectedIntern._id)
+
+                  console.log(intern)
+
+                  const internCreateForLor = await InternLOR.create({
+                      name : intern.name,
+                      email : intern.email,
+                      department : intern.department,
+                      endDate : intern.endDate,
+                      startDate : intern.startDate,
+                      approval  : {
+                        approvedBy : req.user,
+                        status : true,
+                        comment : ""
+                      },
+                  })
+
+                   if(internCreateForLor.approval.status) {
+                       const { pdfBuffer, fileName } = await generateLORService(intern)
+                        // await sendLorViaEmail(internCreateForLor.email, internCreateForLor.name, pdfBuffer, fileName)
+                          continue;
+                      }
+          }
+
+
+  return res.status(200).json(new ApiResponse(200, {}, "selected interns are generated successfully"))
+})
+
 
 
 
@@ -242,5 +282,6 @@ export {
   rejectedInternsOfLorGeneration,
   resendEmailOfLor,
   updateAndSendLor,
-  uploadBulkInternsForLogGeneration
+  uploadBulkInternsForLogGeneration,
+  shortListedInternsSelectAndGenLor
 }

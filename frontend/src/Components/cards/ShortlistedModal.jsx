@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
   FaTimesCircle,
@@ -14,8 +14,14 @@ import {
   FaChevronRight,
   FaGraduationCap,
   FaAward,
-  FaChartLine
+  FaChartLine,
+  FaCheckSquare,
+  FaSquare,
+  FaCheckCircle,
+  FaCloudUploadAlt,
+  FaTrash
 } from 'react-icons/fa';
+import { toast } from 'react-hot-toast';
 import { formatDate } from '../../utils/lorUtils';
 import LoadingSpinner from '../cards/LoadingSpinner';
 
@@ -25,24 +31,30 @@ const ShortlistedModal = ({
   interns,
   loading,
   onGenerateLOR,
-  onRefresh
+  onBulkGenerateLOR,
+  onRefresh,
+  accentColor = "teal"
 }) => {
+  // All hooks must be called at the top level, before any conditional returns
   const [search, setSearch] = useState('');
   const [departmentFilter, setDepartmentFilter] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [hoveredCard, setHoveredCard] = useState(null);
+  const [selectedInterns, setSelectedInterns] = useState([]);
+  const [selectAll, setSelectAll] = useState(false);
+  const [bulkGenerating, setBulkGenerating] = useState(false);
   const itemsPerPage = 10;
-
-  if (!isOpen) return null;
 
   // Get unique departments
   const departments = useMemo(() => {
+    if (!interns || interns.length === 0) return [];
     const depts = new Set(interns.map(i => i.department).filter(Boolean));
     return Array.from(depts);
   }, [interns]);
 
   // Filter interns
   const filteredInterns = useMemo(() => {
+    if (!interns || interns.length === 0) return [];
     return interns.filter(intern => {
       const searchTerm = search.toLowerCase();
       const matchesSearch = !search ||
@@ -63,6 +75,40 @@ const ShortlistedModal = ({
     return filteredInterns.slice(start, start + itemsPerPage);
   }, [filteredInterns, currentPage]);
 
+  // Check if all interns on current page are selected
+  const areAllSelectedOnPage = useMemo(() => {
+    if (paginatedInterns.length === 0) return false;
+    return paginatedInterns.every(intern =>
+      selectedInterns.some(selected => selected._id === intern._id)
+    );
+  }, [paginatedInterns, selectedInterns]);
+
+  // Update selectAll state when page selection changes
+  useEffect(() => {
+    setSelectAll(areAllSelectedOnPage);
+  }, [areAllSelectedOnPage]);
+
+  // Calculate stats
+  const stats = useMemo(() => {
+    if (filteredInterns.length === 0) {
+      return {
+        total: 0,
+        avgScore: 0,
+        departments: 0,
+        selected: selectedInterns.length
+      };
+    }
+    return {
+      total: filteredInterns.length,
+      avgScore: filteredInterns.reduce((acc, curr) => acc + (curr.score || 0), 0) / filteredInterns.length || 0,
+      departments: departments.length,
+      selected: selectedInterns.length
+    };
+  }, [filteredInterns, departments, selectedInterns]);
+
+  // Early return after all hooks
+  if (!isOpen) return null;
+
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
@@ -73,20 +119,96 @@ const ShortlistedModal = ({
     setCurrentPage(1);
   };
 
-  // Calculate stats
-  const stats = useMemo(() => {
-    return {
-      total: filteredInterns.length,
-      avgScore: filteredInterns.reduce((acc, curr) => acc + (curr.score || 0), 0) / filteredInterns.length || 0,
-      departments: departments.length
+  // Toggle selection of a single intern
+  const toggleInternSelection = (intern) => {
+    setSelectedInterns(prev => {
+      const isSelected = prev.some(selected => selected._id === intern._id);
+      if (isSelected) {
+        return prev.filter(selected => selected._id !== intern._id);
+      } else {
+        return [...prev, intern];
+      }
+    });
+  };
+
+  // Toggle selection of all interns on current page
+  const toggleSelectAll = () => {
+    if (areAllSelectedOnPage) {
+      // Deselect all interns on current page
+      setSelectedInterns(prev =>
+        prev.filter(selected =>
+          !paginatedInterns.some(intern => intern._id === selected._id)
+        )
+      );
+    } else {
+      // Select all interns on current page
+      const newSelections = paginatedInterns.filter(intern =>
+        !selectedInterns.some(selected => selected._id === intern._id)
+      );
+      setSelectedInterns(prev => [...prev, ...newSelections]);
+    }
+  };
+
+  // Select all interns across all pages
+  const handleSelectAllAcrossPages = () => {
+    if (selectedInterns.length === filteredInterns.length) {
+      // If all are selected, deselect all
+      setSelectedInterns([]);
+    } else {
+      // Select all filtered interns
+      setSelectedInterns(filteredInterns);
+    }
+  };
+
+  // Clear all selections
+  const clearSelections = () => {
+    setSelectedInterns([]);
+  };
+
+  // Handle bulk generation
+  const handleBulkGenerate = async () => {
+    if (selectedInterns.length === 0) {
+      toast.error('Please select at least one intern');
+      return;
+    }
+
+    setBulkGenerating(true);
+
+    try {
+      await onBulkGenerateLOR(selectedInterns);
+      setSelectedInterns([]);
+    } catch (error) {
+      console.error('Bulk generation error:', error);
+    } finally {
+      setBulkGenerating(false);
+    }
+  };
+
+  // Get color classes based on accentColor
+  const getColorClasses = () => {
+    const colors = {
+      teal: {
+        gradient: 'from-teal-500 via-teal-600 to-teal-700',
+        light: 'teal-100',
+        medium: 'teal-500',
+        dark: 'teal-700',
+        hover: 'teal-600',
+        text: 'teal-600',
+        bg: 'teal-50',
+        border: 'teal-200',
+        ring: 'teal-200'
+      }
     };
-  }, [filteredInterns, departments]);
+    return colors[accentColor] || colors.teal;
+  };
+
+  const colorClasses = getColorClasses();
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn">
       <div className="bg-white rounded-2xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden transform transition-all scale-100 animate-slideIn">
-        {/* Header - Teal Gradient with Pattern */}
-        <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gradient-to-r from-teal-500 via-teal-600 to-teal-700 relative overflow-hidden">
+        {/* Header - Dynamic Gradient with Pattern */}
+        <div className={`p-6 border-b border-gray-100 flex justify-between items-center bg-gradient-to-r ${colorClasses.gradient} relative overflow-hidden`}>
           {/* Decorative Pattern */}
           <div className="absolute inset-0 opacity-10">
             <div className="absolute -right-10 -top-10 w-40 h-40 bg-white rounded-full"></div>
@@ -111,12 +233,52 @@ const ShortlistedModal = ({
           </button>
         </div>
 
+        {/* Selection Stats Bar */}
+        {selectedInterns.length > 0 && (
+          <div className="bg-teal-500 px-6 py-3 border-b border-teal-600">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4 text-white">
+                <FaCheckCircle className="w-5 h-5" />
+                <span className="font-medium">
+                  {selectedInterns.length} intern{selectedInterns.length !== 1 ? 's' : ''} selected
+                </span>
+                <button
+                  onClick={clearSelections}
+                  className="px-3 py-1 bg-white/20 hover:bg-white/30 rounded-lg text-sm transition-all flex items-center gap-2"
+                >
+                  <FaTrash className="w-3 h-3" />
+                  Clear all
+                </button>
+              </div>
+
+              {/* Bulk Generate Button */}
+              <button
+                onClick={handleBulkGenerate}
+                disabled={bulkGenerating}
+                className="px-6 py-2 bg-white text-teal-600 rounded-lg hover:bg-teal-50 transition-all text-sm font-medium flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {bulkGenerating ? (
+                  <>
+                    <LoadingSpinner size="sm" color="teal" />
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <FaCloudUploadAlt className="w-4 h-4" />
+                    Generate LORs for Selected ({selectedInterns.length})
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Stats Bar */}
         {filteredInterns.length > 0 && (
-          <div className="bg-gradient-to-r from-teal-50 to-teal-100/50 px-6 py-3 border-b border-teal-200">
+          <div className={`bg-gradient-to-r from-teal-100 to-teal-50 px-6 py-3 border-b border-teal-200`}>
             <div className="flex items-center gap-6 text-sm">
               <div className="flex items-center gap-2">
-                <div className="p-1.5 bg-teal-200 rounded-lg">
+                <div className="p-1.5 bg-teal-500 rounded-lg">
                   <FaUser className="w-3 h-3 text-teal-700" />
                 </div>
                 <span className="text-teal-700">
@@ -124,7 +286,7 @@ const ShortlistedModal = ({
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="p-1.5 bg-teal-200 rounded-lg">
+                <div className="p-1.5 bg-teal-500 rounded-lg">
                   <FaAward className="w-3 h-3 text-teal-700" />
                 </div>
                 <span className="text-teal-700">
@@ -132,7 +294,7 @@ const ShortlistedModal = ({
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="p-1.5 bg-teal-200 rounded-lg">
+                <div className="p-1.5 bg-teal-500 rounded-lg">
                   <FaBuilding className="w-3 h-3 text-teal-700" />
                 </div>
                 <span className="text-teal-700">
@@ -156,7 +318,7 @@ const ShortlistedModal = ({
                   setSearch(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-200 focus:border-teal-500 outline-none transition-all shadow-sm hover:border-teal-300"
+                className={`w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-200 focus:border-teal-500 outline-none transition-all shadow-sm hover:border-teal-500`}
               />
             </div>
 
@@ -167,7 +329,7 @@ const ShortlistedModal = ({
                   setDepartmentFilter(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-200 focus:border-teal-500 outline-none transition-all shadow-sm hover:border-teal-300 bg-white min-w-[200px]"
+                className={`px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-200 focus:border-teal-500 outline-none transition-all shadow-sm hover:border-teal-500 bg-white min-w-[200px]`}
               >
                 <option value="">All Departments</option>
                 {departments.map(dept => (
@@ -176,10 +338,30 @@ const ShortlistedModal = ({
               </select>
             )}
 
+            {/* Select All Across Pages Button */}
+            {filteredInterns.length > 0 && (
+              <button
+                onClick={handleSelectAllAcrossPages}
+                className={`px-6 py-3 text-teal-600 hover:bg-teal-50 rounded-xl transition-all text-sm font-medium flex items-center gap-2 border border-teal-200 hover:border-teal-500`}
+              >
+                {selectedInterns.length === filteredInterns.length ? (
+                  <>
+                    <FaCheckSquare className="w-4 h-4" />
+                    Deselect All ({filteredInterns.length})
+                  </>
+                ) : (
+                  <>
+                    <FaSquare className="w-4 h-4" />
+                    Select All ({filteredInterns.length})
+                  </>
+                )}
+              </button>
+            )}
+
             {(search || departmentFilter) && (
               <button
                 onClick={clearFilters}
-                className="px-6 py-3 text-teal-600 hover:bg-teal-50 rounded-xl transition-all text-sm font-medium flex items-center gap-2 border border-teal-200 hover:border-teal-300"
+                className={`px-6 py-3 text-teal-600 hover:bg-teal-50 rounded-xl transition-all text-sm font-medium flex items-center gap-2 border border-teal-200 hover:border-teal-500`}
               >
                 <FaFilter className="w-4 h-4" />
                 Clear Filters
@@ -189,31 +371,72 @@ const ShortlistedModal = ({
         </div>
 
         {/* Content */}
-        <div className="p-6 overflow-y-auto max-h-[calc(90vh-280px)] bg-gradient-to-b from-white to-gray-50/50">
+        <div className="p-6 overflow-y-auto max-h-[calc(90vh-350px)] bg-gradient-to-b from-white to-gray-50/50">
           {loading ? (
             <div className="py-16">
               <LoadingSpinner message="Loading shortlisted students..." />
             </div>
           ) : filteredInterns.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {paginatedInterns.map((intern, index) => (
+              {/* Select All on Current Page - Shown as a card */}
+              <div className="col-span-1 md:col-span-2">
+                <div className="bg-teal-50 border-2 border-teal-200 rounded-xl p-4 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={toggleSelectAll}
+                      className="flex items-center gap-2 text-teal-700 font-medium hover:text-teal-600 transition-colors"
+                    >
+                      {selectAll ? (
+                        <FaCheckSquare className="w-5 h-5 text-teal-600" />
+                      ) : (
+                        <FaSquare className="w-5 h-5 text-teal-600" />
+                      )}
+                      <span>Select All on This Page</span>
+                    </button>
+                    <span className="text-sm text-gray-500">
+                      ({paginatedInterns.length} interns)
+                    </span>
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    {paginatedInterns.filter(intern =>
+                      selectedInterns.some(selected => selected._id === intern._id)
+                    ).length} selected
+                  </div>
+                </div>
+              </div>
+
+              {paginatedInterns.map((intern) => (
                 <div
                   key={intern.id}
                   onMouseEnter={() => setHoveredCard(intern.id)}
                   onMouseLeave={() => setHoveredCard(null)}
                   className={`bg-white border-2 rounded-xl p-5 transition-all duration-300 ${
                     hoveredCard === intern.id
-                      ? 'border-teal-400 shadow-xl transform scale-[1.02]'
-                      : 'border-teal-100 shadow-md hover:shadow-lg'
+                      ? 'border-teal-500 shadow-xl transform scale-[1.02]'
+                      : selectedInterns.some(selected => selected._id === intern._id)
+                      ? 'border-teal-500 bg-teal-50'
+                      : 'border-teal-200 shadow-md hover:shadow-lg'
                   }`}
                 >
                   <div className="flex flex-col gap-4">
                     <div className="flex items-start justify-between">
                       <div className="flex items-center gap-3">
+                        {/* Selection Checkbox */}
+                        <button
+                          onClick={() => toggleInternSelection(intern)}
+                          className="focus:outline-none"
+                        >
+                          {selectedInterns.some(selected => selected._id === intern._id) ? (
+                            <FaCheckSquare className="w-6 h-6 text-teal-600" />
+                          ) : (
+                            <FaSquare className="w-6 h-6 text-teal-600 opacity-50 hover:opacity-100" />
+                          )}
+                        </button>
+
                         <div className={`w-14 h-14 rounded-xl flex items-center justify-center transition-all duration-300 ${
                           hoveredCard === intern.id
-                            ? 'bg-teal-500 text-white'
-                            : 'bg-teal-100 text-teal-600'
+                            ? 'bg-teal-600 text-white'
+                            : 'bg-teal-50 text-teal-600'
                         }`}>
                           <FaUser className="w-7 h-7" />
                         </div>
@@ -275,7 +498,6 @@ const ShortlistedModal = ({
                       <button
                         onClick={() => {
                           onGenerateLOR(intern);
-                          onClose();
                         }}
                         className="px-5 py-2.5 bg-gradient-to-r from-teal-600 to-teal-700 text-white rounded-xl hover:from-teal-700 hover:to-teal-800 transition-all duration-300 text-sm font-medium flex items-center gap-2 shadow-md hover:shadow-xl transform hover:scale-105"
                       >
@@ -389,7 +611,9 @@ ShortlistedModal.propTypes = {
   interns: PropTypes.array.isRequired,
   loading: PropTypes.bool.isRequired,
   onGenerateLOR: PropTypes.func.isRequired,
-  onRefresh: PropTypes.func.isRequired
+  onBulkGenerateLOR: PropTypes.func.isRequired,
+  onRefresh: PropTypes.func.isRequired,
+  accentColor: PropTypes.string
 };
 
 export default ShortlistedModal;

@@ -15,6 +15,7 @@ import {
   internsWithLor,
   rejectedInternForLor,
   rejectToGenLor,
+  shortListedInternsSelectAndGenLor,
   updateAndSendLor,
   uploadLorTemplate,
 } from '../../../api';
@@ -370,6 +371,38 @@ const InternsLorRequest = () => {
       },
       (err) => {
         toast.error('Failed to generate LOR: ' + err.message);
+      }
+    );
+
+    setLoading(prev => ({ ...prev, action: false }));
+  };
+
+  // ==================== HANDLE BULK GENERATE LOR ====================
+  const handleBulkGenerateLOR = async (selectedInterns) => {
+    if (!selectedInterns || selectedInterns.length === 0) {
+      toast.error('No interns selected');
+      return;
+    }
+
+    setLoading(prev => ({ ...prev, action: true }));
+
+    const payload = {
+      selectedIntersId: selectedInterns.map(intern => ({
+        _id: intern._id
+      }))
+    };
+
+    await requestHandler(
+      () => shortListedInternsSelectAndGenLor(payload),
+      null,
+      (res) => {
+        toast.success(`✅ Successfully generated LORs for ${selectedInterns.length} interns`);
+        setShowShortlistedModal(false);
+        fetchAllData();
+      },
+      (err) => {
+        console.error('Bulk generation error:', err);
+        toast.error(err.message || 'Failed to generate LORs for selected interns');
       }
     );
 
@@ -963,6 +996,7 @@ const InternsLorRequest = () => {
         interns={eligibleInterns}
         loading={loading.eligible}
         onGenerateLOR={handleGenerateLOR}
+        onBulkGenerateLOR={handleBulkGenerateLOR}
         onRefresh={fetchEligibleInterns}
         accentColor="teal"
       />

@@ -10,7 +10,7 @@ import {
   updateSingleIntern
 } from '../controller/interns.controller.js';
 import verifyJWT from '../middleware/auth.middleware.js';
-import { uploadFIle } from '../middleware/multer.middleware.js';
+import { uploadFile } from '../middleware/multer.middleware.js';
 
 
 const router = Router()
@@ -19,7 +19,7 @@ router.use(verifyJWT)
 
 
 router.route('/bulk-upload/add').post(
-    uploadFIle.fields(
+    uploadFile.fields(
         [{
              name : "bulkAddInterns",
               maxCount : 1
@@ -28,7 +28,7 @@ router.route('/bulk-upload/add').post(
 )
 
 router.route('/bulk-upload/update').post(
-    uploadFIle.fields(
+    uploadFile.fields(
         [{
              name : "bulkUpdateInterns",
               maxCount : 1

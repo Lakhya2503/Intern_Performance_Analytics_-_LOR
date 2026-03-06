@@ -1,52 +1,47 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
-  FaSearch,
-  FaEye,
-  FaStar,
-  FaEnvelope,
+  FaAward,
+  FaBriefcase,
   FaCalendarAlt,
-  FaGraduationCap,
   FaChartLine,
-  FaUserGraduate,
   FaCheckCircle,
-  FaTimesCircle,
-  FaClock,
-  FaUserPlus,
-  FaThLarge,
-  FaList,
   FaChevronLeft,
   FaChevronRight,
-  FaSort,
-  FaSortUp,
-  FaSortDown,
-  FaSpinner,
+  FaClock,
   FaCloudUploadAlt,
-  FaTrophy,
   FaEdit,
+  FaEnvelope,
+  FaEye,
   FaFileExcel,
-  FaTimes,
-  FaUserTie,
-  FaScroll,
-  FaDownload,
+  FaGraduationCap,
   FaIdCard,
-  FaUser,
-  FaBriefcase,
-  FaChartBar,
+  FaList,
   FaPercentage,
+  FaRibbon,
+  FaSearch,
+  FaSort,
+  FaSortDown,
+  FaSortUp,
+  FaSpinner,
+  FaStar,
   FaTasks,
-  FaMedal,
-  FaAward,
-  FaRibbon
+  FaThLarge,
+  FaTimes,
+  FaTimesCircle,
+  FaTrophy,
+  FaUser,
+  FaUserGraduate,
+  FaUserPlus,
+  FaUserTie
 } from 'react-icons/fa';
-import { MdOutlineEmail } from 'react-icons/md';
 import {
-  getAllInterns,
   addBulkUploadIntern,
-  updateBulkUploadIntern,
   addSingleIntern,
-  updateSingleIntern,
+  eligibleInternsForLOR,
+  getAllInterns,
   scoreRankingInterns,
-  eligibleInternsForLOR
+  updateBulkUploadIntern,
+  updateSingleIntern
 } from '../../../api';
 import { requestHandler } from '../../../utils';
 import InternCard from '../../cards/InternCard';
@@ -908,12 +903,11 @@ function Interns() {
                             <span className="text-gray-600">{intern.course || '-'}</span>
                           </td>
                           <td className="py-3 px-4">
-                            {averageScore ? (
+                            {intern?.score ? (
                               <div className="flex items-center gap-2">
-                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold ${getScoreBgColor(averageScore)} ${getScoreColor(averageScore)} shadow-lg`}>
-                                  {averageScore}%
+                                <div className={`w-10 h-10 px-3  py-2 text-center  rounded-xl flex items-center justify-center font-bold ${intern?.score} shadow-lg`}>
+                                 {Math.round(intern?.score)} %
                                 </div>
-                                {getPerformanceBadge(averageScore)}
                               </div>
                             ) : (
                               <span className="text-gray-400 text-xs bg-gray-100 px-2 py-1 rounded-lg">No data</span>
@@ -941,13 +935,7 @@ function Interns() {
                               >
                                 <FaEdit className="w-4 h-4 text-teal-600" />
                               </button>
-                              <button
-                                onClick={() => handleEmailIntern(intern.email)}
-                                className="p-2 hover:bg-gradient-to-r hover:from-teal-100 hover:to-cyan-100 rounded-lg transition-all transform hover:scale-110"
-                                title="Send Email"
-                              >
-                                <FaEnvelope className="w-4 h-4 text-teal-600" />
-                              </button>
+
                             </div>
                           </td>
                         </tr>
@@ -1325,10 +1313,7 @@ function Interns() {
                   <div className="w-10 h-10 bg-gradient-to-r from-teal-200 to-cyan-200 rounded-lg flex items-center justify-center">
                     <FaEnvelope className="w-4 h-4 text-teal-700" />
                   </div>
-                  <div className="truncate">
-                    <p className="text-xs text-gray-500">Email</p>
-                    <p className="text-sm font-semibold text-gray-800 truncate">{selectedIntern.email}</p>
-                  </div>
+
                 </div>
                 <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-teal-50 to-cyan-50 rounded-xl border border-teal-200 hover:shadow-lg transition-all transform hover:scale-105">
                   <div className="w-10 h-10 bg-gradient-to-r from-teal-200 to-cyan-200 rounded-lg flex items-center justify-center">
@@ -1466,13 +1451,7 @@ function Interns() {
                   <FaEdit className="w-4 h-4" />
                   Edit Intern
                 </button>
-                <button
-                  onClick={() => handleEmailIntern(selectedIntern.email)}
-                  className="flex-1 px-4 py-3 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-xl hover:from-teal-700 hover:to-cyan-700 text-sm font-semibold flex items-center justify-center gap-2 transition-all shadow-lg shadow-teal-600/30 transform hover:scale-105"
-                >
-                  <FaEnvelope className="w-4 h-4" />
-                  Send Email
-                </button>
+
               </div>
             </div>
           </div>

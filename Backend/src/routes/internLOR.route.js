@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { generateLOR, internRejectOfGenLor, internsWithLor, rejectedInternsOfLorGeneration, resendEmailOfLor, updateAndSendLor, uploadBulkInternsForLogGeneration, uploadLorTemplate } from '../controller/InternLOR.controller.js';
+import { generateLOR,internRejectOfGenLor, internsWithLor, rejectedInternsOfLorGeneration, resendEmailOfLor, shortListedInternsSelectAndGenLor, updateAndSendLor, uploadBulkInternsForLogGeneration, uploadLorTemplate } from '../controller/InternLOR.controller.js';
 import verifyJWT from "../middleware/auth.middleware.js";
-import { uploadLorTemp } from "../middleware/multer.middleware.js";
+import { uploadFile, uploadLorTemp } from "../middleware/multer.middleware.js";
 
 const router = Router()
 
@@ -26,13 +26,17 @@ router.route("/resend/lor-email/:internId").post(resendEmailOfLor)
 
 router.route("/reject/intern/lor-gen/:internId").post(internRejectOfGenLor)
 
+
+router.route("/select/gen/lor").post(shortListedInternsSelectAndGenLor)
+
 router
-    .route("/bulk-upload/interns/lor-gen").post(uploadLorTemp.fields(
+    .route("/bulk-upload/interns/lor-gen").post(uploadFile.fields(
     [{
         name : "bulkInternOfLorGen",
         maxCount : 1
     }]
 ),uploadBulkInternsForLogGeneration)
+
 
 
 export default router

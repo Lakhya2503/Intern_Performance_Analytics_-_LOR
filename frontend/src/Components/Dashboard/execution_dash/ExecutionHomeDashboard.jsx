@@ -458,7 +458,7 @@ export default function ExecutionHomeDashboard() {
                 <FaTrophy className="w-5 h-5 text-amber-600" />
                 <span className="font-semibold text-white">Bronze: {rankingCounts.bronze}</span>
               </div>
-              
+
             </div>
           </div>
         </div>
@@ -901,142 +901,7 @@ export default function ExecutionHomeDashboard() {
           </div>
         </div>
 
-        {/* Enhanced Intern Detail Modal */}
-        {selectedIntern && (
-          <div
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn"
-            onClick={() => setSelectedIntern(null)}
-          >
-            <div
-              className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-slideUp"
-              onClick={e => e.stopPropagation()}
-            >
-              {/* Modal Header with gradient */}
-              <div className="relative bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600 p-8 sticky top-0">
-                {/* Decorative patterns */}
-                <div className="absolute inset-0 opacity-10"
-                     style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '40px 40px' }}>
-                </div>
 
-                <div className="relative flex items-start justify-between">
-                  <div className="flex items-center gap-6">
-                    <div className="relative">
-                      <img
-                        src={selectedIntern.avatar}
-                        alt={selectedIntern.name}
-                        className="w-24 h-24 rounded-2xl border-4 border-white shadow-2xl"
-                      />
-                      <span className={`absolute -bottom-2 -right-2 w-5 h-5 rounded-full border-4 border-white ${getStatusColor(selectedIntern.status)}`}></span>
-                    </div>
-                    <div className="text-white">
-                      <h2 className="text-3xl font-bold mb-2">{selectedIntern.name}</h2>
-                      <p className="text-teal-100 flex items-center gap-2">
-                        <MdOutlineSchool className="w-4 h-4" />
-                        {selectedIntern.department} • {selectedIntern.project}
-                      </p>
-                      <div className="flex gap-2 mt-3">
-                        <a href={selectedIntern.github} target="_blank" rel="noopener noreferrer" className="p-2 bg-white/20 rounded-lg hover:bg-white/30 transition-all hover:scale-110">
-                          <FaGithub className="w-4 h-4 text-white" />
-                        </a>
-                        <a href={selectedIntern.linkedin} target="_blank" rel="noopener noreferrer" className="p-2 bg-white/20 rounded-lg hover:bg-white/30 transition-all hover:scale-110">
-                          <FaLinkedin className="w-4 h-4 text-white" />
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => setSelectedIntern(null)}
-                    className="p-3 bg-white/20 rounded-xl hover:bg-white/30 transition-all hover:scale-110"
-                  >
-                    <FaTimes className="w-5 h-5 text-white" />
-                  </button>
-                </div>
-              </div>
-
-              {/* Modal Body */}
-              <div className="p-8 space-y-8">
-                {/* Contact Info */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-teal-50 to-cyan-50 rounded-xl border border-teal-100">
-                    <FaEnvelope className="w-5 h-5 text-teal-600" />
-                    <span className="text-sm text-gray-700 truncate">{selectedIntern.email}</span>
-                  </div>
-                  <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-100">
-                    <FaPhone className="w-5 h-5 text-purple-600" />
-                    <span className="text-sm text-gray-700">{selectedIntern.phone || '+1 234 567 890'}</span>
-                  </div>
-                </div>
-
-                {/* Skills */}
-                <div>
-                  <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
-                    <FaStar className="w-4 h-4 text-yellow-500" />
-                    Skills & Expertise
-                  </h4>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedIntern.skills?.map((skill, idx) => (
-                      <span
-                        key={idx}
-                        className="px-4 py-2 bg-gradient-to-r from-teal-50 to-cyan-50 text-teal-700 rounded-xl text-sm font-medium border border-teal-200 hover:from-teal-100 hover:to-cyan-100 transition-all hover:scale-105 cursor-default"
-                      >
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Progress Stats */}
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="text-center p-5 bg-gradient-to-br from-teal-50 to-cyan-50 rounded-xl border border-teal-100">
-                    <p className="text-3xl font-bold text-teal-600">{selectedIntern.progress}%</p>
-                    <p className="text-xs text-gray-600 mt-1">Overall Progress</p>
-                    <div className="w-full bg-white rounded-full h-2 mt-3">
-                      <div
-                        className="bg-gradient-to-r from-teal-600 to-cyan-600 h-2 rounded-full transition-all duration-500"
-                        style={{ width: `${selectedIntern.progress}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                  <div className="text-center p-5 bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl border border-amber-100">
-                    <p className="text-3xl font-bold text-amber-600">
-                      {Math.floor(selectedIntern.score / 20) || 4}
-                      <span className="text-lg text-amber-400">.5</span>
-                    </p>
-                    <p className="text-xs text-gray-600 mt-1">Performance</p>
-                    <div className="flex justify-center gap-1 mt-2">
-                      {[1,2,3,4,5].map(star => (
-                        <FaStar key={star} className={`w-4 h-4 ${star <= 4 ? 'text-yellow-500' : 'text-gray-300'}`} />
-                      ))}
-                    </div>
-                  </div>
-                  <div className="text-center p-5 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
-                    <p className="text-3xl font-bold text-blue-600">{selectedIntern.tasksCompleted}</p>
-                    <p className="text-xs text-gray-600 mt-1">Tasks Done</p>
-                    <p className="text-xs text-gray-500 mt-2">of {selectedIntern.totalTasks} total</p>
-                  </div>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex gap-3 pt-4">
-                  <button
-                    onClick={() => handleUpdateIntern(selectedIntern)}
-                    className="flex-1 px-4 py-3 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-xl hover:from-teal-700 hover:to-cyan-700 transition-all font-medium shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
-                  >
-                    <FaEdit className="w-4 h-4" />
-                    Update Profile
-                  </button>
-                  <button
-                    onClick={() => handleGenerateLOR(selectedIntern)}
-                    className="flex-1 px-4 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all font-medium shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
-                  >
-                    <FaFileAlt className="w-4 h-4" />
-                    Generate LOR
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Add animation styles */}

@@ -301,7 +301,7 @@ const shortlistedWithNoLor = asyncHandler(async(req,res)=>{
                 $match: {
                   isCompliantIssue: false,
                   isDisciplineIssue: false,
-                  score: { $gte: 75, $lt: 85 }
+                  score: { $gte: 75, $lt: 100 }
                 }
               },
               {
@@ -358,11 +358,8 @@ const internWIthNoLor = asyncHandler(async(req,res)=>{
 
   export {
   addBulkInterns,
-  addSignleIntern,
-  shortlistedWithNoLor,
-  getAllInters,
+  addSignleIntern, getAllInters,
   internWIthNoLor,
-  scoringWiseRanking,
-  updateBulkInterns,
+  scoringWiseRanking, shortlistedWithNoLor, updateBulkInterns,
   updateSingleIntern
 }

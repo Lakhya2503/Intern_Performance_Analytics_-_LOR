@@ -1,96 +1,95 @@
-  import fs from 'fs'
-import multer from 'multer'
-import path from 'path'
-import ApiError from '../utils/ApiError.js'
+import fs from "fs";
+import multer from "multer";
+import path from "path";
+import ApiError from "../utils/ApiError.js";
 
-const publicDir = path.join(process.cwd(), "public")
-const imageDir = path.join(publicDir, "images")
-const fileDir = path.join(publicDir, "files")
+// ---------- Directories ----------
+const publicDir = path.join(process.cwd(), "public");
+const imageDir = path.join(publicDir, "images");
+const fileDir = path.join(publicDir, "files");
 const lorTempDir = path.join(publicDir, "lorTemplate");
 
-    [publicDir, imageDir, fileDir, lorTempDir].forEach((dir) => {
-      if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true })
-      }
-    })
+// Create directories if not exist
+[publicDir, imageDir, fileDir, lorTempDir].forEach((dir) => {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+});
 
+// ---------- File Storage ----------
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, fileDir);
+  },
 
-  const fileStorege = multer.diskStorage({
-    destination  : function(req,file,cb){
-      cb(null, fileDir)
-    },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    const cleanName = file.originalname.replace(/\s+/g, "_");
 
-    filename : function (req,file,cb) {
-        const uniqueSuffix = Date.now()+ "-" + Math.round(Math.random() * 1e9)
+    cb(null, `${uniqueSuffix}-${cleanName}`);
+  },
+});
 
-        const cleanName = file.originalname.replace(/\s+/g, "_");
+// ---------- Image Storage ----------
+const imageStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, imageDir);
+  },
 
-        cb(null, `${uniqueSuffix}-${cleanName}`)
-    }
-  })
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    const cleanName = file.originalname.replace(/\s+/g, "_");
 
+    cb(null, `${uniqueSuffix}-${cleanName}`);
+  },
+});
 
-  const imageStorage = multer.diskStorage({
-    destination  : function(req,file,cb){
-      cb(null, imageDir)
-    },
+// ---------- LOR Template Storage ----------
+const lorTempStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, lorTempDir);
+  },
 
-    filename : function (req,file,cb) {
-        const uniqueSuffix = Date.now()+ "-" + Math.round(Math.random() * 1e9)
+  filename: (req, file, cb) => {
+    const cleanName = file.originalname.replace(/\s+/g, "_");
+    cb(null, cleanName);
+  },
+});
 
-        const cleanName = file.originalname.replace(/\s+/g, "_");
+// ---------- File Filter ----------
+const fileFilter = (req, file, cb) => {
+  const allowedTypes = [
+    "text/csv",
+    "application/vnd.ms-excel",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  ];
 
-        cb(null, `${uniqueSuffix}-${cleanName}`)
-    }
-  })
+  if (allowedTypes.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(new Error("Only CSV and Excel files are allowed"), false);
+  }
+};
 
-  const lorTempStorege = multer.diskStorage({
-    destination : function(req,file,cb){
-      cb(null, lorTempDir)
-    },
+// ---------- Upload Middlewares ----------
+export const uploadFile = multer({
+  storage: fileStorage,
+  fileFilter,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB
+  },
+});
 
-      filename : function (req,file,cb) {
+export const uploadImage = multer({
+  storage: imageStorage,
+  limits: {
+    fileSize: 2 * 1024 * 1024, // 2MB
+  },
+});
 
-        const cleanName = file.originalname.replace(/\s+/g, "_");
-
-          cb(null,  cleanName)
-      }
-
-  })
-
-
-  const fileFilter = (req,file,cb) =>{
-      const allowedType = [
-        "text/csv",
-        "application/vnd.ms-excel",
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      ]
-
-      if(allowedType.includes(file.mimetype)) {
-        cb(null, true)
-      } else {
-        cb(new ApiError(401, "Only CSV and Excel files are allowed"),false)
-      }
-  };
-
-  export const uploadFIle = multer({
-      storage : fileStorege,
-      fileFilter,
-      limits : {
-        fileSize : 5 * 1024 * 1024
-      }
-  })
-
-  export const uploadImage = multer({
-      storage : imageStorage,
-      limits : {
-        fileSize : 2 * 1024 * 1024
-      }
-  })
-
-  export const uploadLorTemp = multer({
-    storage : lorTempStorege,
-    limits : {
-       fileSize : 6 * 1024 * 1024
-    }
-  })
+export const uploadLorTemp = multer({
+  storage: lorTempStorage,
+  limits: {
+    fileSize: 6 * 1024 * 1024, // 6MB
+  },
+});

@@ -211,6 +211,9 @@ apiClient.interceptors.response.use(
     return apiClient.post(`/lor/bulk-upload/interns/lor-gen`, bulkInternOfLorGen)
   }
 
+export const shortListedInternsSelectAndGenLor = (payload) => {
+    return apiClient.post(`/lor/select/gen/lor`, payload)
+}
 
 
 //  ============================================================

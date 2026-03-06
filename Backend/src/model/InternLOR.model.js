@@ -32,7 +32,7 @@ const InterLORSchema = new Schema(
           },
           comment : {
             type : String,
-            default : ""
+            default : true
           }
       },
   }
