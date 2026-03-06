@@ -175,15 +175,15 @@ const MentorProfile = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-teal-50 via-cyan-50 to-emerald-50">
         <div className="text-center">
           <div className="relative">
-            <div className="w-20 h-20 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-4"></div>
+            <div className="w-20 h-20 border-4 border-teal-200 border-t-teal-600 rounded-full animate-spin mx-auto mb-4"></div>
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-10 h-10 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full animate-pulse"></div>
+              <div className="w-10 h-10 bg-gradient-to-r from-teal-600 to-cyan-600 rounded-full animate-pulse"></div>
             </div>
           </div>
-          <p className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent font-medium mt-4">Loading your profile...</p>
+          <p className="bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent font-medium mt-4">Loading your profile...</p>
         </div>
       </div>
     );
@@ -191,15 +191,15 @@ const MentorProfile = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
-        <div className="text-center bg-white/80 backdrop-blur-sm p-10 rounded-2xl shadow-xl border border-indigo-100">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-teal-50 via-cyan-50 to-emerald-50">
+        <div className="text-center bg-white/80 backdrop-blur-sm p-10 rounded-2xl shadow-xl border border-teal-100">
           <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <FaExclamationCircle className="text-4xl text-red-600" />
           </div>
           <p className="text-red-600 font-medium text-lg mb-4">{error}</p>
           <button
             onClick={fetchCurrentUser}
-            className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+            className="px-6 py-3 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-xl hover:from-teal-700 hover:to-cyan-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
           >
             Try Again
           </button>
@@ -209,13 +209,13 @@ const MentorProfile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-cyan-50 to-emerald-50 p-4 md:p-8">
       {/* Success Message */}
       {successMessage && (
         <div className="fixed top-4 right-4 z-50 animate-slideIn">
-          <div className="bg-white border-l-4 border-indigo-500 text-indigo-700 p-4 rounded-xl shadow-2xl flex items-center gap-3">
-            <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
-              <FaCheckCircle className="text-indigo-600" />
+          <div className="bg-white border-l-4 border-teal-500 text-teal-700 p-4 rounded-xl shadow-2xl flex items-center gap-3">
+            <div className="w-8 h-8 bg-teal-100 rounded-full flex items-center justify-center">
+              <FaCheckCircle className="text-teal-600" />
             </div>
             <span className="font-medium">{successMessage}</span>
           </div>
@@ -225,9 +225,9 @@ const MentorProfile = () => {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto">
         {/* Profile Header Card */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden mb-8 border border-indigo-100">
+        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden mb-8 border border-teal-100">
           {/* Cover Photo with Gradient */}
-          <div className="h-56 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 relative">
+          <div className="h-56 bg-gradient-to-r from-teal-600 via-cyan-600 to-emerald-600 relative">
             {/* Pattern Overlay */}
             <div className="absolute inset-0 opacity-10">
               <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
@@ -244,7 +244,7 @@ const MentorProfile = () => {
             <div className="absolute -bottom-16 left-8 md:left-12 flex items-end gap-6">
               {/* Avatar with Rings */}
               <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 rounded-2xl blur-lg opacity-50 group-hover:opacity-75 transition-opacity"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-teal-400 via-cyan-400 to-emerald-400 rounded-2xl blur-lg opacity-50 group-hover:opacity-75 transition-opacity"></div>
                 <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-2xl border-4 border-white shadow-2xl overflow-hidden bg-white transform transition-transform group-hover:scale-105">
                   {getAvatarUrl() ? (
                     <img
@@ -253,11 +253,11 @@ const MentorProfile = () => {
                       className="w-full h-full object-cover"
                       onError={(e) => {
                         e.target.onerror = null;
-                        e.target.src = `https://ui-avatars.com/api/?name=${profile?.fullName}&background=6366f1&color=fff&size=160&bold=true`;
+                        e.target.src = `https://ui-avatars.com/api/?name=${profile?.fullName}&background=14b8a6&color=fff&size=160&bold=true`;
                       }}
                     />
                   ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center">
+                    <div className="w-full h-full bg-gradient-to-br from-teal-600 to-cyan-600 flex items-center justify-center">
                       <span className="text-5xl font-bold text-white">
                         {profile?.fullName?.charAt(0) || profile?.username?.charAt(0) ||'M'}
                       </span>
@@ -302,7 +302,7 @@ const MentorProfile = () => {
                 <button
                   onClick={handleAvatarUpload}
                   disabled={uploadingAvatar}
-                  className="px-6 py-3 bg-white/90 backdrop-blur-sm text-indigo-700 rounded-xl font-medium hover:bg-white transition-all duration-300 flex items-center gap-2 shadow-xl hover:shadow-2xl transform hover:-translate-y-0.5"
+                  className="px-6 py-3 bg-white/90 backdrop-blur-sm text-teal-700 rounded-xl font-medium hover:bg-white transition-all duration-300 flex items-center gap-2 shadow-xl hover:shadow-2xl transform hover:-translate-y-0.5"
                 >
                   {uploadingAvatar ? (
                     <>
@@ -323,18 +323,18 @@ const MentorProfile = () => {
           {/* Stats Bar */}
           <div className="pt-20 md:pt-24 px-6 md:px-12 pb-6">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
-              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-xl shadow-sm border border-blue-100 hover:shadow-md transition-shadow">
-                <p className="text-sm text-blue-600 mb-1">Member Since</p>
+              <div className="bg-gradient-to-br from-teal-50 to-cyan-50 p-4 rounded-xl shadow-sm border border-teal-100 hover:shadow-md transition-shadow">
+                <p className="text-sm text-teal-600 mb-1">Member Since</p>
                 <p className="font-semibold text-gray-800 flex items-center gap-2">
-                  <FaClock className="text-blue-500" />
+                  <FaClock className="text-teal-500" />
                   {formatDate(profile?.user?.createdAt)}
                 </p>
               </div>
 
-              <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-4 rounded-xl shadow-sm border border-purple-100 hover:shadow-md transition-shadow">
-                <p className="text-sm text-purple-600 mb-1">Email</p>
+              <div className="bg-gradient-to-br from-cyan-50 to-sky-50 p-4 rounded-xl shadow-sm border border-cyan-100 hover:shadow-md transition-shadow">
+                <p className="text-sm text-cyan-600 mb-1">Email</p>
                 <p className="font-semibold text-gray-800 flex items-center gap-2 truncate">
-                  <FaEnvelope className="text-purple-500" />
+                  <FaEnvelope className="text-cyan-500" />
                   {profile?.user?.email}
                 </p>
               </div>
@@ -353,10 +353,10 @@ const MentorProfile = () => {
                 </div>
               </div>
 
-              <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-4 rounded-xl shadow-sm border border-amber-100 hover:shadow-md transition-shadow">
-                <p className="text-sm text-amber-600 mb-1">User ID</p>
+              <div className="bg-gradient-to-br from-sky-50 to-teal-50 p-4 rounded-xl shadow-sm border border-sky-100 hover:shadow-md transition-shadow">
+                <p className="text-sm text-sky-600 mb-1">User ID</p>
                 <p className="font-semibold text-gray-800 flex items-center gap-2 truncate">
-                  <FaIdCard className="text-amber-500" />
+                  <FaIdCard className="text-sky-500" />
                   {profile?._id?.slice(-6) || 'N/A'}
                 </p>
               </div>
@@ -365,16 +365,16 @@ const MentorProfile = () => {
         </div>
 
         {/* Profile Content */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-6 md:p-8 border border-indigo-100">
+        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl p-6 md:p-8 border border-teal-100">
           <div className="animate-fadeIn">
             <div className="flex items-center justify-between mb-8">
-              <h2 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+              <h2 className="text-3xl font-bold bg-gradient-to-r from-teal-600 via-cyan-600 to-emerald-600 bg-clip-text text-transparent">
                 Profile Information
               </h2>
               {!isEditing && (
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                  className="px-6 py-3 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-xl hover:from-teal-700 hover:to-cyan-700 transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                 >
                   <FaEdit />
                   Edit Profile
@@ -394,7 +394,7 @@ const MentorProfile = () => {
                     name="fullName"
                     value={editForm.fullName}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all"
                     placeholder="Enter your full name"
                   />
                 </div>
@@ -408,7 +408,7 @@ const MentorProfile = () => {
                     value={editForm.bio}
                     onChange={handleInputChange}
                     rows="4"
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all"
                     placeholder="Tell us about yourself, your experience, and your mentoring philosophy..."
                   />
                 </div>
@@ -417,7 +417,7 @@ const MentorProfile = () => {
                   <button
                     onClick={handleProfileUpdate}
                     disabled={updatingProfile}
-                    className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-6 py-3 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-xl hover:from-teal-700 hover:to-cyan-700 transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {updatingProfile ? (
                       <>
@@ -445,21 +445,21 @@ const MentorProfile = () => {
               <div className="space-y-8">
                 {/* Basic Info */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-6 rounded-2xl border border-indigo-100">
-                    <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center mb-3">
-                      <FaUser className="text-indigo-600" />
+                  <div className="bg-gradient-to-br from-teal-50 via-cyan-50 to-emerald-50 p-6 rounded-2xl border border-teal-100">
+                    <div className="w-10 h-10 bg-teal-100 rounded-xl flex items-center justify-center mb-3">
+                      <FaUser className="text-teal-600" />
                     </div>
-                    <p className="text-sm text-indigo-600 mb-1">Full Name</p>
+                    <p className="text-sm text-teal-600 mb-1">Full Name</p>
                     <p className="text-lg font-semibold text-gray-800">
                       {profile?.fullName || 'Not provided'}
                     </p>
                   </div>
 
-                  <div className="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-6 rounded-2xl border border-indigo-100">
-                    <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center mb-3">
-                      <FaEnvelope className="text-indigo-600" />
+                  <div className="bg-gradient-to-br from-teal-50 via-cyan-50 to-emerald-50 p-6 rounded-2xl border border-teal-100">
+                    <div className="w-10 h-10 bg-teal-100 rounded-xl flex items-center justify-center mb-3">
+                      <FaEnvelope className="text-teal-600" />
                     </div>
-                    <p className="text-sm text-indigo-600 mb-1">Email</p>
+                    <p className="text-sm text-teal-600 mb-1">Email</p>
                     <p className="text-lg font-semibold text-gray-800">
                       {profile?.user?.email || 'Not provided'}
                     </p>
@@ -467,7 +467,7 @@ const MentorProfile = () => {
                 </div>
 
                 {/* Bio */}
-                <div className="bg-gradient-to-br from-gray-50 to-indigo-50 p-6 rounded-2xl border border-indigo-100">
+                <div className="bg-gradient-to-br from-gray-50 to-teal-50 p-6 rounded-2xl border border-teal-100">
                   <h3 className="text-lg font-semibold text-gray-800 mb-3">About Me</h3>
                   <p className="text-gray-700 leading-relaxed">
                     {profile?.bio || 'No bio provided yet.'}
@@ -476,26 +476,26 @@ const MentorProfile = () => {
 
                 {/* Additional Info - Read Only */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="bg-white p-6 rounded-2xl border border-indigo-100 shadow-sm">
+                  <div className="bg-white p-6 rounded-2xl border border-teal-100 shadow-sm">
                     <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                      <FaGraduationCap className="text-indigo-600" />
+                      <FaGraduationCap className="text-teal-600" />
                       Account Information
                     </h3>
                     <div className="space-y-4">
                       <div>
-                        <p className="text-sm text-indigo-600">Username</p>
+                        <p className="text-sm text-teal-600">Username</p>
                         <p className="font-medium text-gray-800">
                           {profile?.user?.username || 'Not specified'}
                         </p>
                       </div>
                       <div>
-                        <p className="text-sm text-indigo-600">User ID</p>
+                        <p className="text-sm text-teal-600">User ID</p>
                         <p className="font-medium text-gray-800">
                           {profile?._id || 'Not specified'}
                         </p>
                       </div>
                       <div>
-                        <p className="text-sm text-indigo-600">Role</p>
+                        <p className="text-sm text-teal-600">Role</p>
                         <p className="font-medium text-gray-800">
                           {profile?.user?.role}
                         </p>
@@ -503,15 +503,15 @@ const MentorProfile = () => {
                     </div>
                   </div>
 
-                  <div className="bg-white p-6 rounded-2xl border border-indigo-100 shadow-sm">
+                  <div className="bg-white p-6 rounded-2xl border border-teal-100 shadow-sm">
                     <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                      <FaLink className="text-indigo-600" />
+                      <FaLink className="text-teal-600" />
                       Contact Information
                     </h3>
                     <div className="space-y-4">
                       {profile?.user?.email && (
-                        <div className="flex items-center gap-3 text-gray-700 p-3 bg-gradient-to-r from-gray-50 to-indigo-50 rounded-xl border border-indigo-100">
-                          <FaEnvelope className="text-indigo-500" />
+                        <div className="flex items-center gap-3 text-gray-700 p-3 bg-gradient-to-r from-gray-50 to-teal-50 rounded-xl border border-teal-100">
+                          <FaEnvelope className="text-teal-500" />
                           <span className="truncate">{profile.user.email}</span>
                         </div>
                       )}
@@ -523,26 +523,26 @@ const MentorProfile = () => {
                 </div>
 
                 {/* Account Details */}
-                <div className="border-t border-indigo-100 pt-6">
+                <div className="border-t border-teal-100 pt-6">
                   <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                    <FaIdCard className="text-indigo-600" />
+                    <FaIdCard className="text-teal-600" />
                     Account Details
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="bg-gradient-to-br from-gray-50 to-indigo-50 p-4 rounded-xl border border-indigo-100">
-                      <p className="text-sm text-indigo-600 mb-1">Account Created</p>
+                    <div className="bg-gradient-to-br from-gray-50 to-teal-50 p-4 rounded-xl border border-teal-100">
+                      <p className="text-sm text-teal-600 mb-1">Account Created</p>
                       <p className="font-medium text-gray-800">
                         {formatDate(profile?.user?.createdAt)}
                       </p>
                     </div>
-                    <div className="bg-gradient-to-br from-gray-50 to-indigo-50 p-4 rounded-xl border border-indigo-100">
-                      <p className="text-sm text-indigo-600 mb-1">Last Updated</p>
+                    <div className="bg-gradient-to-br from-gray-50 to-teal-50 p-4 rounded-xl border border-teal-100">
+                      <p className="text-sm text-teal-600 mb-1">Last Updated</p>
                       <p className="font-medium text-gray-800">
                         {formatDate(profile?.updatedAt)}
                       </p>
                     </div>
-                    <div className="bg-gradient-to-br from-gray-50 to-indigo-50 p-4 rounded-xl border border-indigo-100">
-                      <p className="text-sm text-indigo-600 mb-1">Account Status</p>
+                    <div className="bg-gradient-to-br from-gray-50 to-teal-50 p-4 rounded-xl border border-teal-100">
+                      <p className="text-sm text-teal-600 mb-1">Account Status</p>
                       <p className="font-medium text-gray-800">
                         {profile?.user?.isAuthorized ? 'Active' : 'Pending'}
                       </p>

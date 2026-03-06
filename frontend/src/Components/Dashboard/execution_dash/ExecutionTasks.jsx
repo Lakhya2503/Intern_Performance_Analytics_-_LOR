@@ -98,19 +98,19 @@ function ExecutionTasks() {
   // Get color based on average score
   const getScoreColor = (score) => {
     if (!score) return 'text-gray-400';
-    if (score >= 85) return 'text-emerald-600';
-    if (score >= 70) return 'text-blue-600';
-    if (score >= 50) return 'text-amber-600';
-    return 'text-rose-600';
+    if (score >= 85) return 'text-teal-600';
+    if (score >= 70) return 'text-cyan-600';
+    if (score >= 50) return 'text-emerald-600';
+    return 'text-amber-600';
   };
 
   // Get gradient based on average score
   const getScoreGradient = (score) => {
     if (!score) return 'from-gray-400 to-gray-500';
-    if (score >= 85) return 'from-emerald-400 to-emerald-600';
-    if (score >= 70) return 'from-blue-400 to-blue-600';
-    if (score >= 50) return 'from-amber-400 to-amber-600';
-    return 'from-rose-400 to-rose-600';
+    if (score >= 85) return 'from-teal-400 to-teal-600';
+    if (score >= 70) return 'from-cyan-400 to-cyan-600';
+    if (score >= 50) return 'from-emerald-400 to-emerald-600';
+    return 'from-amber-400 to-amber-600';
   };
 
   // ============= DATA FETCHING FUNCTIONS =============
@@ -307,16 +307,16 @@ function ExecutionTasks() {
   const getSortIcon = (key) => {
     if (sortConfig.key !== key) return <FaSort className="w-3 h-3 text-gray-400" />;
     return sortConfig.direction === 'asc' ?
-      <FaSortUp className="w-3 h-3 text-indigo-600" /> :
-      <FaSortDown className="w-3 h-3 text-indigo-600" />;
+      <FaSortUp className="w-3 h-3 text-teal-600" /> :
+      <FaSortDown className="w-3 h-3 text-teal-600" />;
   };
 
   const getStatusBadge = (status) => {
     const statusConfig = {
       'Approve': {
-        bg: 'bg-emerald-50',
-        text: 'text-emerald-700',
-        border: 'border-emerald-200',
+        bg: 'bg-teal-50',
+        text: 'text-teal-700',
+        border: 'border-teal-200',
         icon: FaCheckCircle,
         label: 'Approved'
       },
@@ -351,28 +351,28 @@ function ExecutionTasks() {
 
     if (averageScore >= 85) {
       return (
-        <span className="inline-flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-full text-xs font-medium shadow-sm">
+        <span className="inline-flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-teal-500 to-teal-600 text-white rounded-full text-xs font-medium shadow-sm">
           <FaStar className="w-3 h-3" />
           Excellent
         </span>
       );
     } else if (averageScore >= 70) {
       return (
-        <span className="inline-flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full text-xs font-medium shadow-sm">
+        <span className="inline-flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-cyan-500 to-cyan-600 text-white rounded-full text-xs font-medium shadow-sm">
           <FaChartLine className="w-3 h-3" />
           Good
         </span>
       );
     } else if (averageScore >= 50) {
       return (
-        <span className="inline-flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-full text-xs font-medium shadow-sm">
+        <span className="inline-flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-full text-xs font-medium shadow-sm">
           <FaChartLine className="w-3 h-3" />
           Average
         </span>
       );
     } else {
       return (
-        <span className="inline-flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-rose-500 to-rose-600 text-white rounded-full text-xs font-medium shadow-sm">
+        <span className="inline-flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-full text-xs font-medium shadow-sm">
           <FaChartLine className="w-3 h-3" />
           Needs Work
         </span>
@@ -386,9 +386,9 @@ function ExecutionTasks() {
       <div className="flex items-center justify-center h-96">
         <div className="text-center">
           <div className="relative">
-            <div className="w-20 h-20 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-4"></div>
+            <div className="w-20 h-20 border-4 border-teal-200 border-t-teal-600 rounded-full animate-spin mx-auto mb-4"></div>
             <div className="absolute inset-0 flex items-center justify-center">
-              <FaUserGraduate className="w-8 h-8 text-indigo-600 animate-pulse" />
+              <FaUserGraduate className="w-8 h-8 text-teal-600 animate-pulse" />
             </div>
           </div>
           <p className="text-gray-600 font-medium">Loading interns...</p>
@@ -409,7 +409,7 @@ function ExecutionTasks() {
           <p className="text-sm text-gray-500 mb-6">{error}</p>
           <button
             onClick={refreshData}
-            className="px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-lg hover:from-indigo-700 hover:to-indigo-800 text-sm font-medium shadow-lg shadow-indigo-200 transition-all duration-200"
+            className="px-6 py-2.5 bg-gradient-to-r from-teal-600 to-teal-700 text-white rounded-lg hover:from-teal-700 hover:to-teal-800 text-sm font-medium shadow-lg shadow-teal-200 transition-all duration-200"
           >
             Try Again
           </button>
@@ -421,7 +421,7 @@ function ExecutionTasks() {
   return (
     <div className="space-y-6">
       {/* ============= HEADER SECTION ============= */}
-      <div className="bg-gradient-to-br from-indigo-600 via-indigo-700 to-purple-700 rounded-2xl shadow-xl p-6 relative overflow-hidden">
+      <div className="bg-gradient-to-br from-teal-600 via-teal-700 to-cyan-700 rounded-2xl shadow-xl p-6 relative overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute -right-10 -top-10 w-40 h-40 bg-white rounded-full"></div>
@@ -435,7 +435,7 @@ function ExecutionTasks() {
                 <FaTasks className="w-6 h-6" />
                 Task Management
               </h1>
-              <p className="text-indigo-100 mt-1 text-sm">Manage and track all your tasks</p>
+              <p className="text-teal-100 mt-1 text-sm">Manage and track all your tasks</p>
             </div>
             <div className="flex gap-2 mt-4 md:mt-0 flex-wrap">
               <button
@@ -460,7 +460,7 @@ function ExecutionTasks() {
               </button>
               <button
                 onClick={handleAddIntern}
-                className="flex items-center gap-2 px-4 py-2 bg-white text-indigo-700 rounded-xl hover:bg-indigo-50 text-sm font-medium transition-all duration-200 shadow-lg shadow-indigo-300/30"
+                className="flex items-center gap-2 px-4 py-2 bg-white text-teal-700 rounded-xl hover:bg-teal-50 text-sm font-medium transition-all duration-200 shadow-lg shadow-teal-300/30"
               >
                 <FaUserPlus className="w-4 h-4" />
                 Add Intern
@@ -484,7 +484,7 @@ function ExecutionTasks() {
                   setSearchTerm(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-gray-50 hover:bg-white transition-all duration-200"
+                className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-gray-50 hover:bg-white transition-all duration-200"
               />
             </div>
             <select
@@ -493,7 +493,7 @@ function ExecutionTasks() {
                 setSelectedDepartment(e.target.value);
                 setCurrentPage(1);
               }}
-              className="px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-gray-50 hover:bg-white transition-all duration-200 min-w-[140px]"
+              className="px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-gray-50 hover:bg-white transition-all duration-200 min-w-[140px]"
             >
               {departments.map(dept => (
                 <option key={dept} value={dept}>{dept}</option>
@@ -505,7 +505,7 @@ function ExecutionTasks() {
                 setSelectedStatus(e.target.value);
                 setCurrentPage(1);
               }}
-              className="px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-gray-50 hover:bg-white transition-all duration-200 min-w-[120px]"
+              className="px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-gray-50 hover:bg-white transition-all duration-200 min-w-[120px]"
             >
               {statuses.map(status => (
                 <option key={status} value={status}>{status}</option>
@@ -517,7 +517,7 @@ function ExecutionTasks() {
               onClick={() => setViewMode('grid')}
               className={`p-2 rounded-lg transition-all duration-200 ${
                 viewMode === 'grid'
-                  ? 'bg-white text-indigo-600 shadow-md'
+                  ? 'bg-white text-teal-600 shadow-md'
                   : 'text-gray-600 hover:bg-gray-200'
               }`}
               title="Grid View"
@@ -528,7 +528,7 @@ function ExecutionTasks() {
               onClick={() => setViewMode('list')}
               className={`p-2 rounded-lg transition-all duration-200 ${
                 viewMode === 'list'
-                  ? 'bg-white text-indigo-600 shadow-md'
+                  ? 'bg-white text-teal-600 shadow-md'
                   : 'text-gray-600 hover:bg-gray-200'
               }`}
               title="List View"
@@ -543,28 +543,28 @@ function ExecutionTasks() {
           <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-100">
             <span className="text-xs text-gray-500">Active Filters:</span>
             {searchTerm && (
-              <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-indigo-50 text-indigo-700 rounded-lg text-xs font-medium">
+              <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-teal-50 text-teal-700 rounded-lg text-xs font-medium">
                 <FaSearch className="w-3 h-3" />
                 {searchTerm}
-                <button onClick={() => setSearchTerm('')} className="hover:text-indigo-900 ml-1">
+                <button onClick={() => setSearchTerm('')} className="hover:text-teal-900 ml-1">
                   <FaTimes className="w-3 h-3" />
                 </button>
               </span>
             )}
             {selectedDepartment !== 'All' && (
-              <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-indigo-50 text-indigo-700 rounded-lg text-xs font-medium">
+              <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-teal-50 text-teal-700 rounded-lg text-xs font-medium">
                 <FaBriefcase className="w-3 h-3" />
                 {selectedDepartment}
-                <button onClick={() => setSelectedDepartment('All')} className="hover:text-indigo-900 ml-1">
+                <button onClick={() => setSelectedDepartment('All')} className="hover:text-teal-900 ml-1">
                   <FaTimes className="w-3 h-3" />
                 </button>
               </span>
             )}
             {selectedStatus !== 'All' && (
-              <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-indigo-50 text-indigo-700 rounded-lg text-xs font-medium">
+              <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-teal-50 text-teal-700 rounded-lg text-xs font-medium">
                 <FaClock className="w-3 h-3" />
                 {selectedStatus}
-                <button onClick={() => setSelectedStatus('All')} className="hover:text-indigo-900 ml-1">
+                <button onClick={() => setSelectedStatus('All')} className="hover:text-teal-900 ml-1">
                   <FaTimes className="w-3 h-3" />
                 </button>
               </span>
@@ -576,8 +576,8 @@ function ExecutionTasks() {
       {/* ============= CONTENT SECTION ============= */}
       {filteredInterns.length === 0 ? (
         <div className="bg-white rounded-2xl shadow-lg p-16 text-center border border-gray-100">
-          <div className="w-24 h-24 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <FaUserGraduate className="w-10 h-10 text-indigo-400" />
+          <div className="w-24 h-24 bg-gradient-to-br from-teal-100 to-cyan-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <FaUserGraduate className="w-10 h-10 text-teal-400" />
           </div>
           <h3 className="text-xl font-semibold text-gray-700 mb-2">No interns found</h3>
           <p className="text-sm text-gray-500 mb-6 max-w-md mx-auto">
@@ -587,7 +587,7 @@ function ExecutionTasks() {
           </p>
           <button
             onClick={handleAddIntern}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-xl hover:from-indigo-700 hover:to-indigo-800 text-sm font-medium shadow-lg shadow-indigo-200 transition-all duration-200"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-teal-600 to-teal-700 text-white rounded-xl hover:from-teal-700 hover:to-teal-800 text-sm font-medium shadow-lg shadow-teal-200 transition-all duration-200"
           >
             <FaUserPlus className="w-4 h-4" />
             Add Your First Intern
@@ -621,7 +621,7 @@ function ExecutionTasks() {
                       <th className="py-4 px-4 text-left">
                         <button
                           onClick={() => handleSort('_id')}
-                          className="flex items-center gap-1 font-semibold text-gray-700 hover:text-indigo-600 transition-colors"
+                          className="flex items-center gap-1 font-semibold text-gray-700 hover:text-teal-600 transition-colors"
                         >
                           <FaIdCard className="w-3 h-3" />
                           ID {getSortIcon('_id')}
@@ -630,7 +630,7 @@ function ExecutionTasks() {
                       <th className="py-4 px-4 text-left">
                         <button
                           onClick={() => handleSort('name')}
-                          className="flex items-center gap-1 font-semibold text-gray-700 hover:text-indigo-600 transition-colors"
+                          className="flex items-center gap-1 font-semibold text-gray-700 hover:text-teal-600 transition-colors"
                         >
                           <FaUser className="w-3 h-3" />
                           Name {getSortIcon('name')}
@@ -639,7 +639,7 @@ function ExecutionTasks() {
                       <th className="py-4 px-4 text-left">
                         <button
                           onClick={() => handleSort('department')}
-                          className="flex items-center gap-1 font-semibold text-gray-700 hover:text-indigo-600 transition-colors"
+                          className="flex items-center gap-1 font-semibold text-gray-700 hover:text-teal-600 transition-colors"
                         >
                           <FaBriefcase className="w-3 h-3" />
                           Department {getSortIcon('department')}
@@ -651,7 +651,7 @@ function ExecutionTasks() {
                       <th className="py-4 px-4 text-left">
                         <button
                           onClick={() => handleSort('averageScore')}
-                          className="flex items-center gap-1 font-semibold text-gray-700 hover:text-indigo-600 transition-colors"
+                          className="flex items-center gap-1 font-semibold text-gray-700 hover:text-teal-600 transition-colors"
                         >
                           <FaPercentage className="w-3 h-3" />
                           Performance {getSortIcon('averageScore')}
@@ -673,7 +673,7 @@ function ExecutionTasks() {
                       const averageScore = calculateAverageScore(intern);
 
                       return (
-                        <tr key={intern._id || intern.id} className={`border-t border-gray-100 hover:bg-gradient-to-r hover:from-indigo-50/50 hover:to-purple-50/50 transition-all duration-200 ${
+                        <tr key={intern._id || intern.id} className={`border-t border-gray-100 hover:bg-gradient-to-r hover:from-teal-50/50 hover:to-cyan-50/50 transition-all duration-200 ${
                           index % 2 === 0 ? 'bg-white' : 'bg-gray-50/30'
                         }`}>
                           <td className="py-4 px-4">
@@ -693,7 +693,7 @@ function ExecutionTasks() {
                             </div>
                           </td>
                           <td className="py-4 px-4">
-                            <span className="px-3 py-1.5 bg-gradient-to-r from-indigo-50 to-indigo-100 text-indigo-700 rounded-xl text-xs font-medium border border-indigo-200">
+                            <span className="px-3 py-1.5 bg-gradient-to-r from-teal-50 to-cyan-100 text-teal-700 rounded-xl text-xs font-medium border border-teal-200">
                               {intern.department || 'N/A'}
                             </span>
                           </td>
@@ -722,14 +722,14 @@ function ExecutionTasks() {
                             <div className="flex items-center gap-2">
                               <button
                                 onClick={() => handleViewIntern(intern)}
-                                className="p-2 hover:bg-indigo-100 rounded-lg transition-all duration-200 text-indigo-600 hover:text-indigo-700 group"
+                                className="p-2 hover:bg-teal-100 rounded-lg transition-all duration-200 text-teal-600 hover:text-teal-700 group"
                                 title="View Details"
                               >
                                 <FaEye className="w-4 h-4 group-hover:scale-110 transition-transform" />
                               </button>
                               <button
                                 onClick={() => handleEditIntern(intern)}
-                                className="p-2 hover:bg-purple-100 rounded-lg transition-all duration-200 text-purple-600 hover:text-purple-700 group"
+                                className="p-2 hover:bg-cyan-100 rounded-lg transition-all duration-200 text-cyan-600 hover:text-cyan-700 group"
                                 title="Edit Intern"
                               >
                                 <FaEdit className="w-4 h-4 group-hover:scale-110 transition-transform" />
@@ -750,9 +750,9 @@ function ExecutionTasks() {
             <div className="bg-white rounded-2xl shadow-lg p-4 border border-gray-100">
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                 <p className="text-sm text-gray-600 bg-gray-50 px-3 py-1.5 rounded-lg">
-                  Showing <span className="font-semibold text-indigo-600">{((currentPage - 1) * itemsPerPage) + 1}</span> to{' '}
-                  <span className="font-semibold text-indigo-600">{Math.min(currentPage * itemsPerPage, filteredInterns.length)}</span> of{' '}
-                  <span className="font-semibold text-indigo-600">{filteredInterns.length}</span> interns
+                  Showing <span className="font-semibold text-teal-600">{((currentPage - 1) * itemsPerPage) + 1}</span> to{' '}
+                  <span className="font-semibold text-teal-600">{Math.min(currentPage * itemsPerPage, filteredInterns.length)}</span> of{' '}
+                  <span className="font-semibold text-teal-600">{filteredInterns.length}</span> interns
                 </p>
                 <div className="flex items-center gap-1">
                   <button
@@ -761,7 +761,7 @@ function ExecutionTasks() {
                     className={`p-2 rounded-xl transition-all duration-200 ${
                       currentPage === 1
                         ? 'text-gray-300 cursor-not-allowed'
-                        : 'hover:bg-indigo-100 text-indigo-600 hover:scale-110'
+                        : 'hover:bg-teal-100 text-teal-600 hover:scale-110'
                     }`}
                   >
                     <FaChevronLeft className="w-4 h-4" />
@@ -772,8 +772,8 @@ function ExecutionTasks() {
                       onClick={() => setCurrentPage(i + 1)}
                       className={`w-9 h-9 rounded-xl text-sm font-medium transition-all duration-200 ${
                         currentPage === i + 1
-                          ? 'bg-gradient-to-r from-indigo-600 to-indigo-700 text-white shadow-lg shadow-indigo-200 scale-110'
-                          : 'hover:bg-indigo-50 text-gray-600 hover:text-indigo-600'
+                          ? 'bg-gradient-to-r from-teal-600 to-teal-700 text-white shadow-lg shadow-teal-200 scale-110'
+                          : 'hover:bg-teal-50 text-gray-600 hover:text-teal-600'
                       }`}
                     >
                       {i + 1}
@@ -785,7 +785,7 @@ function ExecutionTasks() {
                     className={`p-2 rounded-xl transition-all duration-200 ${
                       currentPage === totalPages
                         ? 'text-gray-300 cursor-not-allowed'
-                        : 'hover:bg-indigo-100 text-indigo-600 hover:scale-110'
+                        : 'hover:bg-teal-100 text-teal-600 hover:scale-110'
                     }`}
                   >
                     <FaChevronRight className="w-4 h-4" />
@@ -814,7 +814,7 @@ function ExecutionTasks() {
       {showBulkUploadModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
           <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full transform transition-all duration-300 scale-100">
-            <div className="bg-gradient-to-r from-indigo-600 to-indigo-700 p-5 rounded-t-2xl">
+            <div className="bg-gradient-to-r from-teal-600 to-teal-700 p-5 rounded-t-2xl">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-white/20 rounded-xl">
@@ -837,8 +837,8 @@ function ExecutionTasks() {
             </div>
 
             <div className="p-6">
-              <div className="mb-6 p-4 bg-indigo-50 rounded-xl border border-indigo-100">
-                <p className="text-sm text-indigo-700">
+              <div className="mb-6 p-4 bg-teal-50 rounded-xl border border-teal-100">
+                <p className="text-sm text-teal-700">
                   {bulkUploadType === 'add'
                     ? 'Upload an Excel or CSV file with intern details including all 6 performance metrics'
                     : 'Upload an Excel or CSV file with intern IDs and the fields you want to update'}
@@ -846,10 +846,10 @@ function ExecutionTasks() {
               </div>
 
               <div className={`border-2 border-dashed rounded-xl p-8 text-center transition-all duration-200 ${
-                bulkFile ? 'border-indigo-300 bg-indigo-50' : 'border-gray-300 hover:border-indigo-400 hover:bg-gray-50'
+                bulkFile ? 'border-teal-300 bg-teal-50' : 'border-gray-300 hover:border-teal-400 hover:bg-gray-50'
               }`}>
                 <FaFileExcel className={`w-12 h-12 mx-auto mb-3 transition-colors ${
-                  bulkFile ? 'text-indigo-600' : 'text-gray-400'
+                  bulkFile ? 'text-teal-600' : 'text-gray-400'
                 }`} />
                 <p className="text-sm font-medium text-gray-700 mb-2">
                   {bulkFile ? 'File selected' : 'Upload Excel or CSV file'}
@@ -865,7 +865,7 @@ function ExecutionTasks() {
                   htmlFor="bulkFile"
                   className={`inline-block px-5 py-2.5 rounded-xl text-sm font-medium cursor-pointer transition-all duration-200 ${
                     bulkFile
-                      ? 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg shadow-indigo-200'
+                      ? 'bg-teal-600 text-white hover:bg-teal-700 shadow-lg shadow-teal-200'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >
@@ -887,7 +887,7 @@ function ExecutionTasks() {
                 <button
                   onClick={handleBulkUpload}
                   disabled={!bulkFile || bulkLoading}
-                  className="flex-1 px-4 py-3 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-xl hover:from-indigo-700 hover:to-indigo-800 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg shadow-indigo-200"
+                  className="flex-1 px-4 py-3 bg-gradient-to-r from-teal-600 to-teal-700 text-white rounded-xl hover:from-teal-700 hover:to-teal-800 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg shadow-teal-200"
                 >
                   {bulkLoading ? (
                     <span className="flex items-center justify-center gap-2">
@@ -943,15 +943,15 @@ function ExecutionTasks() {
             <div className="p-6 overflow-y-auto max-h-[calc(90vh-100px)]">
               {/* Contact Info */}
               <div className="grid grid-cols-2 gap-3 mb-4">
-                <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-indigo-50 to-indigo-100 rounded-xl">
-                  <FaEnvelope className="w-4 h-4 text-indigo-600" />
+                <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-teal-50 to-cyan-100 rounded-xl">
+                  <FaEnvelope className="w-4 h-4 text-teal-600" />
                   <div className="truncate">
                     <p className="text-xs text-gray-500">Email</p>
                     <p className="text-sm font-medium text-gray-900 truncate">{selectedIntern.email}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-purple-50 to-purple-100 rounded-xl">
-                  <FaCalendarAlt className="w-4 h-4 text-purple-600" />
+                <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-emerald-50 to-teal-100 rounded-xl">
+                  <FaCalendarAlt className="w-4 h-4 text-emerald-600" />
                   <div>
                     <p className="text-xs text-gray-500">End Date</p>
                     <p className="text-sm font-medium text-gray-900">
@@ -964,17 +964,17 @@ function ExecutionTasks() {
               {/* Quick Stats */}
               <div className="grid grid-cols-3 gap-3 mb-4">
                 <div className="text-center p-3 bg-gradient-to-b from-gray-50 to-gray-100 rounded-xl">
-                  <FaStar className="w-4 h-4 text-indigo-600 mx-auto mb-1" />
-                  <p className="text-lg font-bold text-indigo-600">{Math.round(selectedIntern.score) || 0}%</p>
+                  <FaStar className="w-4 h-4 text-teal-600 mx-auto mb-1" />
+                  <p className="text-lg font-bold text-teal-600">{Math.round(selectedIntern.score) || 0}%</p>
                   <p className="text-xs text-gray-500">Overall</p>
                 </div>
                 <div className="text-center p-3 bg-gradient-to-b from-gray-50 to-gray-100 rounded-xl">
-                  <MdOutlineSchool className="w-4 h-4 text-indigo-600 mx-auto mb-1" />
+                  <MdOutlineSchool className="w-4 h-4 text-teal-600 mx-auto mb-1" />
                   <p className="text-sm font-medium text-gray-900 truncate">{selectedIntern.course || '-'}</p>
                   <p className="text-xs text-gray-500">Course</p>
                 </div>
                 <div className="text-center p-3 bg-gradient-to-b from-gray-50 to-gray-100 rounded-xl">
-                  <FaUserTie className="w-4 h-4 text-indigo-600 mx-auto mb-1" />
+                  <FaUserTie className="w-4 h-4 text-teal-600 mx-auto mb-1" />
                   <p className="text-sm font-medium text-gray-900 truncate">{selectedIntern.mentor || '-'}</p>
                   <p className="text-xs text-gray-500">Mentor</p>
                 </div>
@@ -983,7 +983,7 @@ function ExecutionTasks() {
               {/* Performance Metrics */}
               <div className="bg-gradient-to-b from-gray-50 to-gray-100 rounded-xl p-4 mb-4">
                 <h4 className="text-sm font-semibold text-gray-700 mb-4 flex items-center gap-2">
-                  <FaTasks className="w-4 h-4 text-indigo-600" />
+                  <FaTasks className="w-4 h-4 text-teal-600" />
                   6 Performance Metrics
                 </h4>
                 <div className="grid grid-cols-2 gap-4">
@@ -1004,10 +1004,10 @@ function ExecutionTasks() {
                         <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
                           <div
                             className={`h-full rounded-full bg-gradient-to-r ${
-                              (metric.value || 0) >= 85 ? 'from-emerald-500 to-emerald-600' :
-                              (metric.value || 0) >= 70 ? 'from-blue-500 to-blue-600' :
-                              (metric.value || 0) >= 50 ? 'from-amber-500 to-amber-600' :
-                              'from-rose-500 to-rose-600'
+                              (metric.value || 0) >= 85 ? 'from-teal-500 to-teal-600' :
+                              (metric.value || 0) >= 70 ? 'from-cyan-500 to-cyan-600' :
+                              (metric.value || 0) >= 50 ? 'from-emerald-500 to-emerald-600' :
+                              'from-amber-500 to-amber-600'
                             }`}
                             style={{ width: `${metric.value || 0}%` }}
                           />
@@ -1057,14 +1057,14 @@ function ExecutionTasks() {
                     setShowDetailModal(false);
                     handleEditIntern(selectedIntern);
                   }}
-                  className="flex-1 px-4 py-3 border-2 border-indigo-200 text-indigo-700 rounded-xl hover:bg-indigo-50 text-sm font-medium flex items-center justify-center gap-2 transition-all duration-200"
+                  className="flex-1 px-4 py-3 border-2 border-teal-200 text-teal-700 rounded-xl hover:bg-teal-50 text-sm font-medium flex items-center justify-center gap-2 transition-all duration-200"
                 >
                   <FaEdit className="w-4 h-4" />
                   Edit Intern
                 </button>
                 <button
                   onClick={() => handleEmailIntern(selectedIntern.email)}
-                  className="flex-1 px-4 py-3 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-xl hover:from-indigo-700 hover:to-indigo-800 text-sm font-medium flex items-center justify-center gap-2 transition-all duration-200 shadow-lg shadow-indigo-200"
+                  className="flex-1 px-4 py-3 bg-gradient-to-r from-teal-600 to-teal-700 text-white rounded-xl hover:from-teal-700 hover:to-teal-800 text-sm font-medium flex items-center justify-center gap-2 transition-all duration-200 shadow-lg shadow-teal-200"
                 >
                   <FaEnvelope className="w-4 h-4" />
                   Send Email

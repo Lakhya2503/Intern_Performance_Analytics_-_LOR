@@ -323,12 +323,7 @@ const Login = () => {
                     </label>
                   </div>
 
-                  <Link
-                    to="/forgot-password"
-                    className="text-sm font-semibold text-teal-600 hover:text-teal-700 transition-colors"
-                  >
-                    Forgot Password?
-                  </Link>
+
                 </div>
 
                 {/* Login Button */}

@@ -11,7 +11,10 @@ import {
   FaStar,
   FaFilter,
   FaChevronLeft,
-  FaChevronRight
+  FaChevronRight,
+  FaGraduationCap,
+  FaAward,
+  FaChartLine
 } from 'react-icons/fa';
 import { formatDate } from '../../utils/lorUtils';
 import LoadingSpinner from '../cards/LoadingSpinner';
@@ -27,6 +30,7 @@ const ShortlistedModal = ({
   const [search, setSearch] = useState('');
   const [departmentFilter, setDepartmentFilter] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [hoveredCard, setHoveredCard] = useState(null);
   const itemsPerPage = 10;
 
   if (!isOpen) return null;
@@ -69,31 +73,81 @@ const ShortlistedModal = ({
     setCurrentPage(1);
   };
 
+  // Calculate stats
+  const stats = useMemo(() => {
+    return {
+      total: filteredInterns.length,
+      avgScore: filteredInterns.reduce((acc, curr) => acc + (curr.score || 0), 0) / filteredInterns.length || 0,
+      departments: departments.length
+    };
+  }, [filteredInterns, departments]);
+
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fadeIn">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden">
-        {/* Header */}
-        <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gradient-to-r from-purple-500 to-purple-600">
-          <h2 className="text-xl font-bold text-white flex items-center gap-2">
-            <FaStar className="w-5 h-5" />
-            Shortlisted Students for LOR
-            <span className="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-sm">
+      <div className="bg-white rounded-2xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden transform transition-all scale-100 animate-slideIn">
+        {/* Header - Teal Gradient with Pattern */}
+        <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gradient-to-r from-teal-500 via-teal-600 to-teal-700 relative overflow-hidden">
+          {/* Decorative Pattern */}
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute -right-10 -top-10 w-40 h-40 bg-white rounded-full"></div>
+            <div className="absolute -left-10 -bottom-10 w-40 h-40 bg-white rounded-full"></div>
+            <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-60 h-60 border-4 border-white rounded-full opacity-20"></div>
+          </div>
+
+          <h2 className="text-xl font-bold text-white flex items-center gap-3 relative z-10">
+            <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
+              <FaStar className="w-5 h-5" />
+            </div>
+            <span>Shortlisted Students for LOR</span>
+            <span className="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-normal">
               {filteredInterns.length}
             </span>
           </h2>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-lg hover:bg-white/20 flex items-center justify-center transition-colors"
+            className="w-10 h-10 rounded-lg hover:bg-white/20 flex items-center justify-center transition-all duration-200 hover:rotate-90 relative z-10"
           >
             <FaTimesCircle className="w-5 h-5 text-white" />
           </button>
         </div>
 
+        {/* Stats Bar */}
+        {filteredInterns.length > 0 && (
+          <div className="bg-gradient-to-r from-teal-50 to-teal-100/50 px-6 py-3 border-b border-teal-200">
+            <div className="flex items-center gap-6 text-sm">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 bg-teal-200 rounded-lg">
+                  <FaUser className="w-3 h-3 text-teal-700" />
+                </div>
+                <span className="text-teal-700">
+                  <span className="font-semibold">{stats.total}</span> Students
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 bg-teal-200 rounded-lg">
+                  <FaAward className="w-3 h-3 text-teal-700" />
+                </div>
+                <span className="text-teal-700">
+                  Avg Score: <span className="font-semibold">{stats.avgScore.toFixed(1)}%</span>
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 bg-teal-200 rounded-lg">
+                  <FaBuilding className="w-3 h-3 text-teal-700" />
+                </div>
+                <span className="text-teal-700">
+                  <span className="font-semibold">{stats.departments}</span> Departments
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Filters */}
         <div className="p-4 bg-gray-50 border-b border-gray-200">
           <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1 relative">
-              <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <div className="flex-1 relative group">
+              <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-teal-500 transition-colors" />
               <input
                 type="text"
                 placeholder="Search by name, email, or course..."
@@ -102,7 +156,7 @@ const ShortlistedModal = ({
                   setSearch(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-200 focus:border-purple-500 outline-none"
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-200 focus:border-teal-500 outline-none transition-all shadow-sm hover:border-teal-300"
               />
             </div>
 
@@ -113,7 +167,7 @@ const ShortlistedModal = ({
                   setDepartmentFilter(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-200 focus:border-purple-500 outline-none"
+                className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-200 focus:border-teal-500 outline-none transition-all shadow-sm hover:border-teal-300 bg-white min-w-[200px]"
               >
                 <option value="">All Departments</option>
                 {departments.map(dept => (
@@ -125,8 +179,9 @@ const ShortlistedModal = ({
             {(search || departmentFilter) && (
               <button
                 onClick={clearFilters}
-                className="px-4 py-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors text-sm font-medium"
+                className="px-6 py-3 text-teal-600 hover:bg-teal-50 rounded-xl transition-all text-sm font-medium flex items-center gap-2 border border-teal-200 hover:border-teal-300"
               >
+                <FaFilter className="w-4 h-4" />
                 Clear Filters
               </button>
             )}
@@ -134,77 +189,97 @@ const ShortlistedModal = ({
         </div>
 
         {/* Content */}
-        <div className="p-6 overflow-y-auto max-h-[calc(90vh-200px)]">
+        <div className="p-6 overflow-y-auto max-h-[calc(90vh-280px)] bg-gradient-to-b from-white to-gray-50/50">
           {loading ? (
-            <div className="py-12">
+            <div className="py-16">
               <LoadingSpinner message="Loading shortlisted students..." />
             </div>
           ) : filteredInterns.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {paginatedInterns.map((intern) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {paginatedInterns.map((intern, index) => (
                 <div
                   key={intern.id}
-                  className="bg-white border border-purple-100 rounded-xl p-5 hover:shadow-md transition-all hover:border-purple-200"
+                  onMouseEnter={() => setHoveredCard(intern.id)}
+                  onMouseLeave={() => setHoveredCard(null)}
+                  className={`bg-white border-2 rounded-xl p-5 transition-all duration-300 ${
+                    hoveredCard === intern.id
+                      ? 'border-teal-400 shadow-xl transform scale-[1.02]'
+                      : 'border-teal-100 shadow-md hover:shadow-lg'
+                  }`}
                 >
                   <div className="flex flex-col gap-4">
                     <div className="flex items-start justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
-                          <FaUser className="w-6 h-6 text-purple-600" />
+                        <div className={`w-14 h-14 rounded-xl flex items-center justify-center transition-all duration-300 ${
+                          hoveredCard === intern.id
+                            ? 'bg-teal-500 text-white'
+                            : 'bg-teal-100 text-teal-600'
+                        }`}>
+                          <FaUser className="w-7 h-7" />
                         </div>
                         <div>
-                          <h3 className="font-semibold text-gray-800">{intern.name}</h3>
-                          <p className="text-xs text-gray-500">ID: {intern.id}</p>
+                          <h3 className="font-bold text-gray-800">{intern.name}</h3>
+                          <p className="text-xs text-gray-500 font-mono">ID: {intern.id}</p>
                         </div>
                       </div>
-                      <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">
-                        Score: {typeof intern.score === 'number' ? intern.score.toFixed(1) : intern.score}%
-                      </span>
+                      <div className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-300 ${
+                        intern.score >= 90
+                          ? 'bg-green-100 text-green-700 border border-green-200'
+                          : intern.score >= 75
+                          ? 'bg-teal-100 text-teal-700 border border-teal-200'
+                          : 'bg-yellow-100 text-yellow-700 border border-yellow-200'
+                      }`}>
+                        <span className="flex items-center gap-1">
+                          <FaChartLine className="w-3 h-3" />
+                          Score: {typeof intern.score === 'number' ? intern.score.toFixed(1) : intern.score}%
+                        </span>
+                      </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div className="grid grid-cols-2 gap-4 text-sm bg-gray-50/50 p-3 rounded-xl">
                       <div className="flex items-center gap-2 text-gray-600">
                         <FaEnvelope className="w-3 h-3 text-gray-400" />
-                        <span className="truncate">{intern.email}</span>
+                        <span className="truncate text-xs">{intern.email}</span>
                       </div>
 
                       {intern.department && (
                         <div className="flex items-center gap-2 text-gray-600">
                           <FaBuilding className="w-3 h-3 text-gray-400" />
-                          <span>{intern.department}</span>
+                          <span className="text-xs">{intern.department}</span>
                         </div>
                       )}
 
                       {intern.course && (
                         <div className="flex items-center gap-2 text-gray-600">
-                          <FaStar className="w-3 h-3 text-gray-400" />
-                          <span>{intern.course}</span>
+                          <FaGraduationCap className="w-3 h-3 text-gray-400" />
+                          <span className="text-xs truncate">{intern.course}</span>
                         </div>
                       )}
 
                       {intern.endDate && (
                         <div className="flex items-center gap-2 text-gray-600">
                           <FaCalendarAlt className="w-3 h-3 text-gray-400" />
-                          <span>Ends: {formatDate(intern.endDate)}</span>
+                          <span className="text-xs">Ends: {formatDate(intern.endDate)}</span>
                         </div>
                       )}
                     </div>
 
                     {intern.mentor && (
-                      <div className="text-xs text-gray-500">
-                        Mentor: {intern.mentor}
+                      <div className="text-xs text-gray-500 flex items-center gap-2 bg-teal-50 p-2 rounded-lg">
+                        <span className="font-medium text-teal-700">Mentor:</span>
+                        <span>{intern.mentor}</span>
                       </div>
                     )}
 
-                    <div className="flex justify-end mt-2">
+                    <div className="flex justify-end mt-2 pt-2 border-t border-teal-100">
                       <button
                         onClick={() => {
                           onGenerateLOR(intern);
                           onClose();
                         }}
-                        className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm font-medium flex items-center gap-2"
+                        className="px-5 py-2.5 bg-gradient-to-r from-teal-600 to-teal-700 text-white rounded-xl hover:from-teal-700 hover:to-teal-800 transition-all duration-300 text-sm font-medium flex items-center gap-2 shadow-md hover:shadow-xl transform hover:scale-105"
                       >
-                        <FaRocket className="w-3 h-3" />
+                        <FaRocket className="w-4 h-4" />
                         Generate LOR
                       </button>
                     </div>
@@ -213,54 +288,88 @@ const ShortlistedModal = ({
               ))}
             </div>
           ) : (
-            <div className="text-center py-16">
-              <div className="w-24 h-24 mx-auto mb-4 bg-purple-100 rounded-2xl flex items-center justify-center">
-                <FaStar className="w-10 h-10 text-purple-400" />
+            <div className="text-center py-20">
+              <div className="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-teal-100 to-teal-50 rounded-3xl flex items-center justify-center shadow-inner">
+                <FaStar className="w-14 h-14 text-teal-400" />
               </div>
-              <p className="text-gray-600 font-medium text-lg">No shortlisted students found</p>
-              <p className="text-sm text-gray-400 mt-2">
+              <p className="text-gray-700 font-bold text-xl mb-2">No shortlisted students found</p>
+              <p className="text-sm text-gray-400 max-w-md mx-auto">
                 {search || departmentFilter
-                  ? 'No students match your search criteria'
-                  : 'All eligible students have been processed'}
+                  ? 'No students match your search criteria. Try adjusting your filters.'
+                  : 'All eligible students have been processed. Check back later for new shortlisted candidates.'}
               </p>
+              {(search || departmentFilter) && (
+                <button
+                  onClick={clearFilters}
+                  className="mt-6 px-6 py-3 bg-teal-600 text-white rounded-xl hover:bg-teal-700 transition-all text-sm font-medium shadow-md hover:shadow-lg"
+                >
+                  Clear Filters
+                </button>
+              )}
             </div>
           )}
         </div>
 
         {/* Pagination */}
         {filteredInterns.length > 0 && (
-          <div className="p-4 border-t border-gray-200 bg-gray-50">
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-gray-600 mb-2">
-                Showing {((currentPage - 1) * itemsPerPage) + 1} to{' '}
-                {Math.min(currentPage * itemsPerPage, filteredInterns.length)} of{' '}
-                {filteredInterns.length} students
+          <div className="p-4 border-t border-gray-200 bg-white">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <p className="text-sm text-gray-600">
+                Showing <span className="font-semibold text-teal-600">{((currentPage - 1) * itemsPerPage) + 1}</span> to{' '}
+                <span className="font-semibold text-teal-600">{Math.min(currentPage * itemsPerPage, filteredInterns.length)}</span> of{' '}
+                <span className="font-semibold text-teal-600">{filteredInterns.length}</span> students
               </p>
 
-              <div className="flex items-center gap-2 mb-3">
+              <div className="flex items-center gap-3">
                 <button
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1}
-                  className={`p-2 rounded-lg transition-all ${
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
                     currentPage === 1
-                      ? 'text-gray-300 cursor-not-allowed'
-                      : 'hover:bg-purple-100 text-purple-600'
+                      ? 'text-gray-300 cursor-not-allowed bg-gray-50'
+                      : 'text-teal-600 hover:bg-teal-50 hover:text-teal-700 bg-gray-50'
                   }`}
                 >
                   <FaChevronLeft className="w-4 h-4" />
                 </button>
 
-                <span className="text-sm text-gray-600 ">
-                  Page {currentPage} of {totalPages}
-                </span>
+                {/* Page Numbers */}
+                <div className="flex items-center gap-2">
+                  {[...Array(Math.min(5, totalPages))].map((_, i) => {
+                    let pageNum;
+                    if (totalPages <= 5) {
+                      pageNum = i + 1;
+                    } else if (currentPage <= 3) {
+                      pageNum = i + 1;
+                    } else if (currentPage >= totalPages - 2) {
+                      pageNum = totalPages - 4 + i;
+                    } else {
+                      pageNum = currentPage - 2 + i;
+                    }
+
+                    return (
+                      <button
+                        key={i}
+                        onClick={() => handlePageChange(pageNum)}
+                        className={`w-10 h-10 rounded-xl text-sm font-medium transition-all ${
+                          currentPage === pageNum
+                            ? 'bg-teal-600 text-white shadow-md'
+                            : 'text-gray-600 hover:bg-teal-50'
+                        }`}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  })}
+                </div>
 
                 <button
                   onClick={() => handlePageChange(currentPage + 1)}
                   disabled={currentPage === totalPages}
-                  className={`p-2 rounded-lg transition-all ${
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
                     currentPage === totalPages
-                      ? 'text-gray-300 cursor-not-allowed'
-                      : 'hover:bg-purple-100 text-purple-600'
+                      ? 'text-gray-300 cursor-not-allowed bg-gray-50'
+                      : 'text-teal-600 hover:bg-teal-50 hover:text-teal-700 bg-gray-50'
                   }`}
                 >
                   <FaChevronRight className="w-4 h-4" />

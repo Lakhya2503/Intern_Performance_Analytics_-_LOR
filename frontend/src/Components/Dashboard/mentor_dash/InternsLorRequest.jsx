@@ -634,14 +634,14 @@ const InternsLorRequest = () => {
 
   return (
     <div className="space-y-6 p-6 bg-gray-50 min-h-screen">
-      {/* Header with Stats */}
-      <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-2xl shadow-xl p-6 text-white">
+      {/* Header with Stats - Teal Gradient */}
+      <div className="bg-gradient-to-r from-teal-600 via-teal-500 to-emerald-500 rounded-2xl shadow-xl p-6 text-white">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between">
           <div>
             <h1 className="text-3xl font-bold flex items-center gap-3">
               Letter of Recommendation Management (LOR)
             </h1>
-            <p className="text-indigo-100 mt-2 flex items-center gap-2">
+            <p className="text-teal-100 mt-2 flex items-center gap-2">
               <FaRocket className="w-4 h-4" />
               Manage Generated, Pending, and Rejected LOR requests
             </p>
@@ -666,14 +666,14 @@ const InternsLorRequest = () => {
           <div className="mt-4 p-4 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <FaCheckCircle className="w-5 h-5 text-green-300" />
+                <FaCheckCircle className="w-5 h-5 text-teal-300" />
                 <span className="text-white font-medium">Upload completed!</span>
                 <div className="flex gap-3">
                   <span className="text-sm text-white/80">
                     Processed: <span className="font-bold text-white">{bulkUploadResult.totalCount || 0}</span>
                   </span>
                   <span className="text-sm text-white/80">
-                    Success: <span className="font-bold text-green-300">{bulkUploadResult.successCount || 0}</span>
+                    Success: <span className="font-bold text-teal-300">{bulkUploadResult.successCount || 0}</span>
                   </span>
                   {bulkUploadResult.errors?.length > 0 && (
                     <span className="text-sm text-white/80">
@@ -705,16 +705,16 @@ const InternsLorRequest = () => {
           </div>
         )}
 
-        {/* Stats Cards */}
+        {/* Stats Cards - Teal Theme */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-          <StatsCard title="Total Interns" value={stats.total} icon={FaUserGraduate} color="indigo" bgColor="white/10" />
-          <StatsCard title="Generated" value={stats.generated} icon={FaCheckCircle} color="green" bgColor="white/10" />
-          <StatsCard title="Pending" value={stats.pending} icon={FaClock} color="yellow" bgColor="white/10" />
-          <StatsCard title="Rejected" value={stats.rejected} icon={FaTimesCircle} color="red" bgColor="white/10" />
+          <StatsCard title="Total Interns" value={stats.total} icon={FaUserGraduate} color="teal" bgColor="white/10" />
+          <StatsCard title="Generated" value={stats.generated} icon={FaCheckCircle} color="emerald" bgColor="white/10" />
+          <StatsCard title="Pending" value={stats.pending} icon={FaClock} color="amber" bgColor="white/10" />
+          <StatsCard title="Rejected" value={stats.rejected} icon={FaTimesCircle} color="rose" bgColor="white/10" />
         </div>
       </div>
 
-      {/* Filters */}
+      {/* Filters - Teal Focus Ring */}
       <SearchFilter
         searchValue={filters.search}
         onSearchChange={handleSearch}
@@ -722,6 +722,7 @@ const InternsLorRequest = () => {
         activeFilter={filters.status}
         onFilterChange={handleStatusFilter}
         placeholder="Search by name, username, email, department, or domain..."
+        focusColor="teal"
       />
 
       {/* Additional Filters */}
@@ -730,7 +731,7 @@ const InternsLorRequest = () => {
           <select
             value={filters.department}
             onChange={handleDepartmentFilter}
-            className="px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500 outline-none"
+            className="px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-teal-200 focus:border-teal-500 outline-none"
           >
             <option value="">All Departments</option>
             {departments.map(dept => (
@@ -743,7 +744,7 @@ const InternsLorRequest = () => {
           <select
             value={filters.domain}
             onChange={handleDomainFilter}
-            className="px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500 outline-none"
+            className="px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-teal-200 focus:border-teal-500 outline-none"
           >
             <option value="">All Domains</option>
             {domains.map(domain => (
@@ -752,33 +753,33 @@ const InternsLorRequest = () => {
           </select>
         )}
 
-        {/* Active Filters Indicator */}
+        {/* Active Filters Indicator - Teal Theme */}
         {(filters.search || filters.status !== 'all' || filters.department || filters.domain) && (
           <div className="flex items-center gap-2 text-sm">
             <span className="text-gray-500">Active filters:</span>
             {filters.search && (
-              <span className="px-2 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs">
+              <span className="px-2 py-1 bg-teal-100 text-teal-700 rounded-full text-xs">
                 Search: {filters.search}
               </span>
             )}
             {filters.status !== 'all' && (
-              <span className="px-2 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs">
+              <span className="px-2 py-1 bg-teal-100 text-teal-700 rounded-full text-xs">
                 Status: {STATUS_OPTIONS.find(s => s.value === filters.status)?.label}
               </span>
             )}
             {filters.department && (
-              <span className="px-2 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs">
+              <span className="px-2 py-1 bg-teal-100 text-teal-700 rounded-full text-xs">
                 Dept: {filters.department}
               </span>
             )}
             {filters.domain && (
-              <span className="px-2 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs">
+              <span className="px-2 py-1 bg-teal-100 text-teal-700 rounded-full text-xs">
                 Domain: {filters.domain}
               </span>
             )}
             <button
               onClick={clearFilters}
-              className="text-indigo-600 hover:text-indigo-700 text-xs font-medium ml-2"
+              className="text-teal-600 hover:text-teal-700 text-xs font-medium ml-2"
             >
               Clear all
             </button>
@@ -811,6 +812,7 @@ const InternsLorRequest = () => {
                   hoveredItem={hoveredItem}
                   setHoveredItem={setHoveredItem}
                   isSending={sendingEmailFor === intern._id}
+                  accentColor="teal"
                 />
               ))}
             </div>
@@ -823,13 +825,14 @@ const InternsLorRequest = () => {
               onGenerateRejected={handleGenerateRejectedClick}
               sendingEmailFor={sendingEmailFor}
               setHoveredItem={setHoveredItem}
+              accentColor="teal"
             />
           )}
         </>
       ) : (
         <div className="bg-white rounded-2xl shadow-lg p-12 text-center">
-          <div className="w-24 h-24 mx-auto mb-4 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-2xl flex items-center justify-center">
-            <FaRocket className="w-10 h-10 text-indigo-400" />
+          <div className="w-24 h-24 mx-auto mb-4 bg-gradient-to-br from-teal-100 to-emerald-100 rounded-2xl flex items-center justify-center">
+            <FaRocket className="w-10 h-10 text-teal-400" />
           </div>
           <h3 className="text-lg font-semibold text-gray-700 mb-2">No interns found</h3>
           <p className="text-gray-500 max-w-md mx-auto">
@@ -840,7 +843,7 @@ const InternsLorRequest = () => {
           {(filters.search || filters.status !== 'all' || filters.department || filters.domain) && (
             <button
               onClick={clearFilters}
-              className="mt-4 px-6 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors font-medium"
+              className="mt-4 px-6 py-2 bg-teal-600 text-white rounded-xl hover:bg-teal-700 transition-colors font-medium"
             >
               Clear all filters
             </button>
@@ -856,10 +859,11 @@ const InternsLorRequest = () => {
           onPageChange={handlePageChange}
           totalItems={filteredInterns.length}
           itemsPerPage={pagination.itemsPerPage}
+          accentColor="teal"
         />
       )}
 
-      {/* Modals */}
+      {/* Modals - All with Teal accents */}
       <ConfirmationModal
         isOpen={showRejectionConfirm}
         onClose={() => {
@@ -872,6 +876,7 @@ const InternsLorRequest = () => {
         itemName={rejectingIntern?.name}
         type="danger"
         confirmText="Confirm Rejection"
+        accentColor="teal"
       />
 
       <ConfirmationModal
@@ -886,6 +891,7 @@ const InternsLorRequest = () => {
         itemName={resendIntern?.name}
         type="info"
         confirmText="Confirm Resend"
+        accentColor="teal"
       />
 
       <ConfirmationModal
@@ -900,6 +906,7 @@ const InternsLorRequest = () => {
         itemName={generateRejectedIntern?.name}
         type="restore"
         confirmText="Confirm & Generate"
+        accentColor="teal"
       />
 
       <RejectionModal
@@ -913,6 +920,7 @@ const InternsLorRequest = () => {
         setRejectionData={setRejectionData}
         onSubmit={handleSubmitRejection}
         loading={loading.action}
+        accentColor="teal"
       />
 
       <TemplateUploadModal
@@ -920,6 +928,7 @@ const InternsLorRequest = () => {
         onClose={() => setModals(prev => ({ ...prev, template: false }))}
         onUpload={handleTemplateUpload}
         uploading={loading.template}
+        accentColor="teal"
       />
 
       {modals.generate && selectedIntern && (
@@ -934,6 +943,7 @@ const InternsLorRequest = () => {
           setLorFormData={setFormData}
           onSubmit={handleGenerateAndSend}
           actionLoading={loading.action}
+          accentColor="teal"
         />
       )}
 
@@ -944,6 +954,7 @@ const InternsLorRequest = () => {
         loading={loading.rejected}
         onGenerateLOR={handleGenerateRejectedClick}
         onRefresh={fetchRejectedInterns}
+        accentColor="teal"
       />
 
       <ShortlistedModal
@@ -953,6 +964,7 @@ const InternsLorRequest = () => {
         loading={loading.eligible}
         onGenerateLOR={handleGenerateLOR}
         onRefresh={fetchEligibleInterns}
+        accentColor="teal"
       />
 
       {/* CSS animations */}

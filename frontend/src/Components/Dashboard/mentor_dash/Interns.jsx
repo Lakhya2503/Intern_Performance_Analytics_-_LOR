@@ -118,17 +118,17 @@ function Interns() {
   // Get color based on average score
   const getScoreColor = (score) => {
     if (!score) return 'text-gray-400';
-    if (score >= 85) return 'text-emerald-600';
-    if (score >= 70) return 'text-blue-600';
-    if (score >= 50) return 'text-amber-600';
+    if (score >= 85) return 'text-teal-600';
+    if (score >= 70) return 'text-cyan-600';
+    if (score >= 50) return 'text-emerald-600';
     return 'text-rose-600';
   };
 
   const getScoreBgColor = (score) => {
     if (!score) return 'bg-gray-100';
-    if (score >= 85) return 'bg-emerald-100';
-    if (score >= 70) return 'bg-blue-100';
-    if (score >= 50) return 'bg-amber-100';
+    if (score >= 85) return 'bg-teal-100';
+    if (score >= 70) return 'bg-cyan-100';
+    if (score >= 50) return 'bg-emerald-100';
     return 'bg-rose-100';
   };
 
@@ -417,18 +417,18 @@ function Interns() {
   const getSortIcon = (key) => {
     if (sortConfig.key !== key) return <FaSort className="w-3 h-3 text-gray-400" />;
     return sortConfig.direction === 'asc' ?
-      <FaSortUp className="w-3 h-3 text-indigo-600" /> :
-      <FaSortDown className="w-3 h-3 text-indigo-600" />;
+      <FaSortUp className="w-3 h-3 text-teal-600" /> :
+      <FaSortDown className="w-3 h-3 text-teal-600" />;
   };
 
   const getStatusBadge = (status) => {
     const statusConfig = {
       'Approve': {
-        bg: 'bg-gradient-to-r from-emerald-500 to-teal-500',
+        bg: 'bg-gradient-to-r from-teal-500 to-cyan-500',
         text: 'text-white',
         icon: FaCheckCircle,
         label: 'Approved',
-        shadow: 'shadow-lg shadow-emerald-500/30'
+        shadow: 'shadow-lg shadow-teal-500/30'
       },
       'Rejected': {
         bg: 'bg-gradient-to-r from-rose-500 to-pink-500',
@@ -461,21 +461,21 @@ function Interns() {
 
     if (averageScore >= 85) {
       return (
-        <span className="inline-flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-emerald-500 via-emerald-500 to-teal-500 text-white rounded-full text-xs font-medium shadow-lg shadow-emerald-500/30">
+        <span className="inline-flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-teal-500 via-teal-500 to-cyan-500 text-white rounded-full text-xs font-medium shadow-lg shadow-teal-500/30">
           <FaStar className="w-3 h-3" />
           Excellent
         </span>
       );
     } else if (averageScore >= 70) {
       return (
-        <span className="inline-flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-blue-500 via-blue-500 to-indigo-500 text-white rounded-full text-xs font-medium shadow-lg shadow-blue-500/30">
+        <span className="inline-flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-cyan-500 via-cyan-500 to-sky-500 text-white rounded-full text-xs font-medium shadow-lg shadow-cyan-500/30">
           <FaChartLine className="w-3 h-3" />
           Good
         </span>
       );
     } else if (averageScore >= 50) {
       return (
-        <span className="inline-flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-amber-500 via-amber-500 to-orange-500 text-white rounded-full text-xs font-medium shadow-lg shadow-amber-500/30">
+        <span className="inline-flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-emerald-500 via-emerald-500 to-green-500 text-white rounded-full text-xs font-medium shadow-lg shadow-emerald-500/30">
           <FaChartLine className="w-3 h-3" />
           Average
         </span>
@@ -496,12 +496,12 @@ function Interns() {
       <div className="flex items-center justify-center h-96">
         <div className="text-center">
           <div className="relative">
-            <div className="w-20 h-20 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-4"></div>
+            <div className="w-20 h-20 border-4 border-teal-200 border-t-teal-600 rounded-full animate-spin mx-auto mb-4"></div>
             <div className="absolute inset-0 flex items-center justify-center">
-              <FaUserGraduate className="w-8 h-8 text-indigo-600 animate-pulse" />
+              <FaUserGraduate className="w-8 h-8 text-teal-600 animate-pulse" />
             </div>
           </div>
-          <p className="text-gray-600 font-medium bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Loading interns...</p>
+          <p className="text-gray-600 font-medium bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent">Loading interns...</p>
           <p className="text-sm text-gray-400 mt-1">Please wait while we fetch the data</p>
         </div>
       </div>
@@ -519,7 +519,7 @@ function Interns() {
           <p className="text-sm text-gray-500 mb-4">{error}</p>
           <button
             onClick={refreshData}
-            className="px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-lg hover:from-indigo-700 hover:to-indigo-800 text-sm font-medium shadow-lg shadow-indigo-600/30 transition-all transform hover:scale-105"
+            className="px-6 py-2.5 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-lg hover:from-teal-700 hover:to-cyan-700 text-sm font-medium shadow-lg shadow-teal-600/30 transition-all transform hover:scale-105"
           >
             Try Again
           </button>
@@ -531,162 +531,161 @@ function Interns() {
   return (
     <div className="space-y-6">
       {/* ============= HEADER SECTION ============= */}
-      {/* ============= HEADER SECTION ============= */}
-<div className="bg-gradient-to-br from-indigo-600 via-indigo-600 to-purple-700 rounded-2xl shadow-xl p-6 relative overflow-hidden">
-  {/* Decorative elements */}
-  <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-32 translate-x-32"></div>
-  <div className="absolute bottom-0 left-0 w-48 h-48 bg-black/10 rounded-full translate-y-24 -translate-x-24"></div>
-  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 rounded-full blur-3xl"></div>
+      <div className="bg-gradient-to-br from-teal-600 via-teal-600 to-cyan-700 rounded-2xl shadow-xl p-6 relative overflow-hidden">
+        {/* Decorative elements */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-32 translate-x-32"></div>
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-black/10 rounded-full translate-y-24 -translate-x-24"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-teal-500/20 to-cyan-500/20 rounded-full blur-3xl"></div>
 
-  <div className="relative z-10">
-    <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-      <div>
-        <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-          <FaUserGraduate className="w-8 h-8" />
-          Interns Management
-        </h1>
-        <p className="text-indigo-100 mt-2 text-sm flex items-center gap-2">
-          <span className="inline-block w-1 h-1 bg-indigo-300 rounded-full"></span>
-          Manage and monitor all your interns in one place
-        </p>
-      </div>
-      <div className="flex gap-2 mt-4 md:mt-0 flex-wrap">
-        <button
-          onClick={() => setShowRankingModal(true)}
-          className="flex items-center gap-2 px-4 py-2.5 bg-white/10 text-white rounded-xl hover:bg-white/20 text-sm transition-all backdrop-blur-sm border border-white/20 shadow-lg transform hover:scale-105"
-        >
-          <FaTrophy className="w-4 h-4" />
-          Rankings
-          <span className="px-2 py-0.5 bg-white/20 rounded-full text-xs">
-            {rankingStats.total}
-          </span>
-        </button>
-        <button
-          onClick={() => {
-            setBulkUploadType('add');
-            setShowBulkUploadModal(true);
-          }}
-          className="flex items-center gap-2 px-4 py-2.5 bg-white/10 text-white rounded-xl hover:bg-white/20 text-sm transition-all backdrop-blur-sm border border-white/20 shadow-lg transform hover:scale-105"
-        >
-          <FaCloudUploadAlt className="w-4 h-4" />
-          Bulk Upload
-        </button>
-        <button
-          onClick={handleAddIntern}
-          className="flex items-center gap-2 px-4 py-2.5 bg-white text-indigo-600 rounded-xl hover:bg-indigo-50 text-sm font-medium transition-all shadow-lg shadow-indigo-600/30 transform hover:scale-105"
-        >
-          <FaUserPlus className="w-4 h-4" />
-          Add Intern
-        </button>
-      </div>
-    </div>
-
-    {/* Medal Holders - Gold, Silver, Bronze */}
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
-      {/* Gold Holder */}
-      <div className="bg-gradient-to-br from-amber-400 to-amber-500 rounded-xl p-5 shadow-xl transform hover:scale-105 transition-all duration-300 relative overflow-hidden group">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 rounded-full -translate-y-16 translate-x-16 group-hover:translate-y-0 group-hover:translate-x-0 transition-transform duration-500"></div>
         <div className="relative z-10">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-white/30 backdrop-blur-sm rounded-xl flex items-center justify-center">
-                <FaTrophy className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <p className="text-white/90 text-sm">Gold Tier</p>
-                <p className="text-3xl font-bold text-white">{rankingData.gold.length}</p>
-              </div>
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-white flex items-center gap-3">
+                <FaUserGraduate className="w-8 h-8" />
+                Interns Management
+              </h1>
+              <p className="text-teal-100 mt-2 text-sm flex items-center gap-2">
+                <span className="inline-block w-1 h-1 bg-teal-300 rounded-full"></span>
+                Manage and monitor all your interns in one place
+              </p>
             </div>
-            <div className="bg-white/30 backdrop-blur-sm px-3 py-1 rounded-full">
-              <span className="text-white text-xs font-medium">Top Performers</span>
+            <div className="flex gap-2 mt-4 md:mt-0 flex-wrap">
+              <button
+                onClick={() => setShowRankingModal(true)}
+                className="flex items-center gap-2 px-4 py-2.5 bg-white/10 text-white rounded-xl hover:bg-white/20 text-sm transition-all backdrop-blur-sm border border-white/20 shadow-lg transform hover:scale-105"
+              >
+                <FaTrophy className="w-4 h-4" />
+                Rankings
+                <span className="px-2 py-0.5 bg-white/20 rounded-full text-xs">
+                  {rankingStats.total}
+                </span>
+              </button>
+              <button
+                onClick={() => {
+                  setBulkUploadType('add');
+                  setShowBulkUploadModal(true);
+                }}
+                className="flex items-center gap-2 px-4 py-2.5 bg-white/10 text-white rounded-xl hover:bg-white/20 text-sm transition-all backdrop-blur-sm border border-white/20 shadow-lg transform hover:scale-105"
+              >
+                <FaCloudUploadAlt className="w-4 h-4" />
+                Bulk Upload
+              </button>
+              <button
+                onClick={handleAddIntern}
+                className="flex items-center gap-2 px-4 py-2.5 bg-white text-teal-600 rounded-xl hover:bg-teal-50 text-sm font-medium transition-all shadow-lg shadow-teal-600/30 transform hover:scale-105"
+              >
+                <FaUserPlus className="w-4 h-4" />
+                Add Intern
+              </button>
             </div>
           </div>
-          <div className="flex items-center justify-between text-white/80 text-xs">
-            <span>Score ≥ 85%</span>
-            <span className="flex items-center gap-1">
-              <FaStar className="w-3 h-3" />
-              Elite
-            </span>
-          </div>
-          <div className="mt-3 h-1.5 bg-white/30 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-white rounded-full"
-              style={{ width: `${rankingData.gold.length > 0 ? (rankingData.gold.length / stats.total) * 100 : 0}%` }}
-            ></div>
+
+          {/* Medal Holders - Gold, Silver, Bronze */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
+            {/* Gold Holder */}
+            <div className="bg-gradient-to-br from-amber-400 to-amber-500 rounded-xl p-5 shadow-xl transform hover:scale-105 transition-all duration-300 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 rounded-full -translate-y-16 translate-x-16 group-hover:translate-y-0 group-hover:translate-x-0 transition-transform duration-500"></div>
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-white/30 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                      <FaTrophy className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <p className="text-white/90 text-sm">Gold Tier</p>
+                      <p className="text-3xl font-bold text-white">{rankingData.gold.length}</p>
+                    </div>
+                  </div>
+                  <div className="bg-white/30 backdrop-blur-sm px-3 py-1 rounded-full">
+                    <span className="text-white text-xs font-medium">Top Performers</span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between text-white/80 text-xs">
+                  <span>Score ≥ 85%</span>
+                  <span className="flex items-center gap-1">
+                    <FaStar className="w-3 h-3" />
+                    Elite
+                  </span>
+                </div>
+                <div className="mt-3 h-1.5 bg-white/30 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-white rounded-full"
+                    style={{ width: `${rankingData.gold.length > 0 ? (rankingData.gold.length / stats.total) * 100 : 0}%` }}
+                  ></div>
+                </div>
+              </div>
+            </div>
+
+            {/* Silver Holder */}
+            <div className="bg-gradient-to-br from-gray-400 to-gray-500 rounded-xl p-5 shadow-xl transform hover:scale-105 transition-all duration-300 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 rounded-full -translate-y-16 translate-x-16 group-hover:translate-y-0 group-hover:translate-x-0 transition-transform duration-500"></div>
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-white/30 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                      <FaAward className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <p className="text-white/90 text-sm">Silver Tier</p>
+                      <p className="text-3xl font-bold text-white">{rankingData.silver.length}</p>
+                    </div>
+                  </div>
+                  <div className="bg-white/30 backdrop-blur-sm px-3 py-1 rounded-full">
+                    <span className="text-white text-xs font-medium">Strong Performers</span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between text-white/80 text-xs">
+                  <span>Score 70-84%</span>
+                  <span className="flex items-center gap-1">
+                    <FaChartLine className="w-3 h-3" />
+                    Advanced
+                  </span>
+                </div>
+                <div className="mt-3 h-1.5 bg-white/30 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-white rounded-full"
+                    style={{ width: `${rankingData.silver.length > 0 ? (rankingData.silver.length / stats.total) * 100 : 0}%` }}
+                  ></div>
+                </div>
+              </div>
+            </div>
+
+            {/* Bronze Holder */}
+            <div className="bg-gradient-to-br from-amber-700 to-amber-800 rounded-xl p-5 shadow-xl transform hover:scale-105 transition-all duration-300 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 rounded-full -translate-y-16 translate-x-16 group-hover:translate-y-0 group-hover:translate-x-0 transition-transform duration-500"></div>
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-white/30 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                      <FaRibbon className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <p className="text-white/90 text-sm">Bronze Tier</p>
+                      <p className="text-3xl font-bold text-white">{rankingData.bronze.length}</p>
+                    </div>
+                  </div>
+                  <div className="bg-white/30 backdrop-blur-sm px-3 py-1 rounded-full">
+                    <span className="text-white text-xs font-medium">Rising Stars</span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between text-white/80 text-xs">
+                  <span>Score 50-69%</span>
+                  <span className="flex items-center gap-1">
+                    <FaChartLine className="w-3 h-3" />
+                    Developing
+                  </span>
+                </div>
+                <div className="mt-3 h-1.5 bg-white/30 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-white rounded-full"
+                    style={{ width: `${rankingData.bronze.length > 0 ? (rankingData.bronze.length / stats.total) * 100 : 0}%` }}
+                  ></div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-
-      {/* Silver Holder */}
-      <div className="bg-gradient-to-br from-gray-400 to-gray-500 rounded-xl p-5 shadow-xl transform hover:scale-105 transition-all duration-300 relative overflow-hidden group">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 rounded-full -translate-y-16 translate-x-16 group-hover:translate-y-0 group-hover:translate-x-0 transition-transform duration-500"></div>
-        <div className="relative z-10">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-white/30 backdrop-blur-sm rounded-xl flex items-center justify-center">
-                <FaAward className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <p className="text-white/90 text-sm">Silver Tier</p>
-                <p className="text-3xl font-bold text-white">{rankingData.silver.length}</p>
-              </div>
-            </div>
-            <div className="bg-white/30 backdrop-blur-sm px-3 py-1 rounded-full">
-              <span className="text-white text-xs font-medium">Strong Performers</span>
-            </div>
-          </div>
-          <div className="flex items-center justify-between text-white/80 text-xs">
-            <span>Score 70-84%</span>
-            <span className="flex items-center gap-1">
-              <FaChartLine className="w-3 h-3" />
-              Advanced
-            </span>
-          </div>
-          <div className="mt-3 h-1.5 bg-white/30 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-white rounded-full"
-              style={{ width: `${rankingData.silver.length > 0 ? (rankingData.silver.length / stats.total) * 100 : 0}%` }}
-            ></div>
-          </div>
-        </div>
-      </div>
-
-      {/* Bronze Holder */}
-      <div className="bg-gradient-to-br from-amber-700 to-amber-800 rounded-xl p-5 shadow-xl transform hover:scale-105 transition-all duration-300 relative overflow-hidden group">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 rounded-full -translate-y-16 translate-x-16 group-hover:translate-y-0 group-hover:translate-x-0 transition-transform duration-500"></div>
-        <div className="relative z-10">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-white/30 backdrop-blur-sm rounded-xl flex items-center justify-center">
-                <FaRibbon className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <p className="text-white/90 text-sm">Bronze Tier</p>
-                <p className="text-3xl font-bold text-white">{rankingData.bronze.length}</p>
-              </div>
-            </div>
-            <div className="bg-white/30 backdrop-blur-sm px-3 py-1 rounded-full">
-              <span className="text-white text-xs font-medium">Rising Stars</span>
-            </div>
-          </div>
-          <div className="flex items-center justify-between text-white/80 text-xs">
-            <span>Score 50-69%</span>
-            <span className="flex items-center gap-1">
-              <FaChartLine className="w-3 h-3" />
-              Developing
-            </span>
-          </div>
-          <div className="mt-3 h-1.5 bg-white/30 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-white rounded-full"
-              style={{ width: `${rankingData.bronze.length > 0 ? (rankingData.bronze.length / stats.total) * 100 : 0}%` }}
-            ></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 
       {/* ============= FILTERS SECTION ============= */}
       <div className="bg-white rounded-xl shadow-lg p-5 border border-gray-100">
@@ -702,7 +701,7 @@ function Interns() {
                   setSearchTerm(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 transition-all"
+                className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 transition-all"
               />
             </div>
             <select
@@ -711,7 +710,7 @@ function Interns() {
                 setSelectedDepartment(e.target.value);
                 setCurrentPage(1);
               }}
-              className="px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 bg-white min-w-[140px] transition-all"
+              className="px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 bg-white min-w-[140px] transition-all"
             >
               {departments.map(dept => (
                 <option key={dept} value={dept}>{dept}</option>
@@ -723,7 +722,7 @@ function Interns() {
                 setSelectedStatus(e.target.value);
                 setCurrentPage(1);
               }}
-              className="px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 bg-white min-w-[120px] transition-all"
+              className="px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 bg-white min-w-[120px] transition-all"
             >
               {statuses.map(status => (
                 <option key={status} value={status}>{status}</option>
@@ -735,7 +734,7 @@ function Interns() {
               onClick={() => setViewMode('grid')}
               className={`p-2.5 rounded-lg transition-all transform ${
                 viewMode === 'grid'
-                  ? 'bg-gradient-to-r from-indigo-600 to-indigo-700 text-white shadow-lg shadow-indigo-600/30 scale-110'
+                  ? 'bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-lg shadow-teal-600/30 scale-110'
                   : 'hover:bg-white/50 text-gray-600 hover:scale-105'
               }`}
               title="Grid View"
@@ -746,7 +745,7 @@ function Interns() {
               onClick={() => setViewMode('list')}
               className={`p-2.5 rounded-lg transition-all transform ${
                 viewMode === 'list'
-                  ? 'bg-gradient-to-r from-indigo-600 to-indigo-700 text-white shadow-lg shadow-indigo-600/30 scale-110'
+                  ? 'bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-lg shadow-teal-600/30 scale-110'
                   : 'hover:bg-white/50 text-gray-600 hover:scale-105'
               }`}
               title="List View"
@@ -761,27 +760,27 @@ function Interns() {
           <div className="flex items-center gap-2 mt-4 pt-4 border-t border-gray-100">
             <span className="text-xs text-gray-400">Active Filters:</span>
             {searchTerm && (
-              <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-700 rounded-lg text-xs font-medium border border-indigo-200">
+              <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-gradient-to-r from-teal-50 to-cyan-50 text-teal-700 rounded-lg text-xs font-medium border border-teal-200">
                 <FaSearch className="w-3 h-3" />
                 Search: {searchTerm}
-                <button onClick={() => setSearchTerm('')} className="hover:text-indigo-900 ml-1">
+                <button onClick={() => setSearchTerm('')} className="hover:text-teal-900 ml-1">
                   <FaTimes className="w-3 h-3" />
                 </button>
               </span>
             )}
             {selectedDepartment !== 'All' && (
-              <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-700 rounded-lg text-xs font-medium border border-indigo-200">
+              <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-gradient-to-r from-teal-50 to-cyan-50 text-teal-700 rounded-lg text-xs font-medium border border-teal-200">
                 <FaBriefcase className="w-3 h-3" />
                 Dept: {selectedDepartment}
-                <button onClick={() => setSelectedDepartment('All')} className="hover:text-indigo-900 ml-1">
+                <button onClick={() => setSelectedDepartment('All')} className="hover:text-teal-900 ml-1">
                   <FaTimes className="w-3 h-3" />
                 </button>
               </span>
             )}
             {selectedStatus !== 'All' && (
-              <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-700 rounded-lg text-xs font-medium border border-indigo-200">
+              <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-gradient-to-r from-teal-50 to-cyan-50 text-teal-700 rounded-lg text-xs font-medium border border-teal-200">
                 Status: {selectedStatus}
-                <button onClick={() => setSelectedStatus('All')} className="hover:text-indigo-900 ml-1">
+                <button onClick={() => setSelectedStatus('All')} className="hover:text-teal-900 ml-1">
                   <FaTimes className="w-3 h-3" />
                 </button>
               </span>
@@ -793,10 +792,10 @@ function Interns() {
       {/* ============= CONTENT SECTION ============= */}
       {filteredInterns.length === 0 ? (
         <div className="bg-white rounded-xl shadow-lg p-16 text-center border border-gray-100">
-          <div className="w-24 h-24 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <FaUserGraduate className="w-12 h-12 text-indigo-600" />
+          <div className="w-24 h-24 bg-gradient-to-br from-teal-100 to-cyan-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <FaUserGraduate className="w-12 h-12 text-teal-600" />
           </div>
-          <h3 className="text-xl font-semibold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">No interns found</h3>
+          <h3 className="text-xl font-semibold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent mb-2">No interns found</h3>
           <p className="text-gray-500 mb-6 max-w-md mx-auto">
             {searchTerm || selectedDepartment !== 'All' || selectedStatus !== 'All'
               ? 'Try adjusting your search or filters to find what you\'re looking for'
@@ -804,7 +803,7 @@ function Interns() {
           </p>
           <button
             onClick={handleAddIntern}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-xl hover:from-indigo-700 hover:to-indigo-800 text-sm font-medium shadow-lg shadow-indigo-600/30 transition-all transform hover:scale-105"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-xl hover:from-teal-700 hover:to-cyan-700 text-sm font-medium shadow-lg shadow-teal-600/30 transition-all transform hover:scale-105"
           >
             <FaUserPlus className="w-4 h-4" />
             Add Your First Intern
@@ -834,11 +833,11 @@ function Interns() {
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="bg-gradient-to-r from-indigo-600 via-indigo-600 to-purple-700">
+                    <tr className="bg-gradient-to-r from-teal-600 via-teal-600 to-cyan-700">
                       <th className="py-4 px-4 text-left">
                         <button
                           onClick={() => handleSort('_id')}
-                          className="flex items-center gap-1 font-medium text-white hover:text-indigo-100"
+                          className="flex items-center gap-1 font-medium text-white hover:text-teal-100"
                         >
                           <FaIdCard className="w-3 h-3" />
                           ID {getSortIcon('_id')}
@@ -847,7 +846,7 @@ function Interns() {
                       <th className="py-4 px-4 text-left">
                         <button
                           onClick={() => handleSort('name')}
-                          className="flex items-center gap-1 font-medium text-white hover:text-indigo-100"
+                          className="flex items-center gap-1 font-medium text-white hover:text-teal-100"
                         >
                           <FaUser className="w-3 h-3" />
                           Name {getSortIcon('name')}
@@ -856,7 +855,7 @@ function Interns() {
                       <th className="py-4 px-4 text-left">
                         <button
                           onClick={() => handleSort('department')}
-                          className="flex items-center gap-1 font-medium text-white hover:text-indigo-100"
+                          className="flex items-center gap-1 font-medium text-white hover:text-teal-100"
                         >
                           <FaBriefcase className="w-3 h-3" />
                           Department {getSortIcon('department')}
@@ -866,7 +865,7 @@ function Interns() {
                       <th className="py-4 px-4 text-left">
                         <button
                           onClick={() => handleSort('averageScore')}
-                          className="flex items-center gap-1 font-medium text-white hover:text-indigo-100"
+                          className="flex items-center gap-1 font-medium text-white hover:text-teal-100"
                         >
                           <FaPercentage className="w-3 h-3" />
                           Performance {getSortIcon('averageScore')}
@@ -880,18 +879,18 @@ function Interns() {
                   <tbody>
                     {paginatedInterns.map((intern, index) => {
                       const averageScore = calculateAverageScore(intern);
-                      const rowBg = index % 2 === 0 ? 'bg-white' : 'bg-gradient-to-r from-gray-50 to-indigo-50/30';
+                      const rowBg = index % 2 === 0 ? 'bg-white' : 'bg-gradient-to-r from-gray-50 to-teal-50/30';
 
                       return (
-                        <tr key={intern._id || intern.id} className={`${rowBg} hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 transition-all group`}>
+                        <tr key={intern._id || intern.id} className={`${rowBg} hover:bg-gradient-to-r hover:from-teal-50 hover:to-cyan-50 transition-all group`}>
                           <td className="py-3 px-4">
-                            <span className="font-mono text-xs bg-gradient-to-r from-gray-100 to-indigo-100 px-2 py-1 rounded-lg text-indigo-700">
+                            <span className="font-mono text-xs bg-gradient-to-r from-gray-100 to-teal-100 px-2 py-1 rounded-lg text-teal-700">
                               {(intern._id || intern.id || 'N/A').slice(-8)}
                             </span>
                           </td>
                           <td className="py-3 px-4">
                             <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center text-white text-sm font-medium shadow-lg shadow-indigo-500/30">
+                              <div className="w-10 h-10 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-xl flex items-center justify-center text-white text-sm font-medium shadow-lg shadow-teal-500/30">
                                 {intern.name?.charAt(0) || '?'}
                               </div>
                               <div>
@@ -901,7 +900,7 @@ function Interns() {
                             </div>
                           </td>
                           <td className="py-3 px-4">
-                            <span className="px-3 py-1.5 bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-700 rounded-lg text-xs font-medium border border-indigo-200">
+                            <span className="px-3 py-1.5 bg-gradient-to-r from-teal-100 to-cyan-100 text-teal-700 rounded-lg text-xs font-medium border border-teal-200">
                               {intern.department || 'N/A'}
                             </span>
                           </td>
@@ -930,24 +929,24 @@ function Interns() {
                             <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all">
                               <button
                                 onClick={() => handleViewIntern(intern)}
-                                className="p-2 hover:bg-gradient-to-r hover:from-indigo-100 hover:to-purple-100 rounded-lg transition-all transform hover:scale-110"
+                                className="p-2 hover:bg-gradient-to-r hover:from-teal-100 hover:to-cyan-100 rounded-lg transition-all transform hover:scale-110"
                                 title="View Details"
                               >
-                                <FaEye className="w-4 h-4 text-indigo-600" />
+                                <FaEye className="w-4 h-4 text-teal-600" />
                               </button>
                               <button
                                 onClick={() => handleEditIntern(intern)}
-                                className="p-2 hover:bg-gradient-to-r hover:from-indigo-100 hover:to-purple-100 rounded-lg transition-all transform hover:scale-110"
+                                className="p-2 hover:bg-gradient-to-r hover:from-teal-100 hover:to-cyan-100 rounded-lg transition-all transform hover:scale-110"
                                 title="Edit Intern"
                               >
-                                <FaEdit className="w-4 h-4 text-indigo-600" />
+                                <FaEdit className="w-4 h-4 text-teal-600" />
                               </button>
                               <button
                                 onClick={() => handleEmailIntern(intern.email)}
-                                className="p-2 hover:bg-gradient-to-r hover:from-indigo-100 hover:to-purple-100 rounded-lg transition-all transform hover:scale-110"
+                                className="p-2 hover:bg-gradient-to-r hover:from-teal-100 hover:to-cyan-100 rounded-lg transition-all transform hover:scale-110"
                                 title="Send Email"
                               >
-                                <FaEnvelope className="w-4 h-4 text-indigo-600" />
+                                <FaEnvelope className="w-4 h-4 text-teal-600" />
                               </button>
                             </div>
                           </td>
@@ -965,9 +964,9 @@ function Interns() {
             <div className="bg-white rounded-xl shadow-lg p-4 border border-gray-100">
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                 <p className="text-sm text-gray-600">
-                  Showing <span className="font-semibold text-indigo-600">{(currentPage - 1) * itemsPerPage + 1}</span> to{' '}
-                  <span className="font-semibold text-indigo-600">{Math.min(currentPage * itemsPerPage, filteredInterns.length)}</span> of{' '}
-                  <span className="font-semibold text-indigo-600">{filteredInterns.length}</span> interns
+                  Showing <span className="font-semibold text-teal-600">{(currentPage - 1) * itemsPerPage + 1}</span> to{' '}
+                  <span className="font-semibold text-teal-600">{Math.min(currentPage * itemsPerPage, filteredInterns.length)}</span> of{' '}
+                  <span className="font-semibold text-teal-600">{filteredInterns.length}</span> interns
                 </p>
                 <div className="flex items-center gap-1">
                   <button
@@ -976,7 +975,7 @@ function Interns() {
                     className={`p-2 rounded-lg transition-all transform ${
                       currentPage === 1
                         ? 'text-gray-300 cursor-not-allowed'
-                        : 'hover:bg-gradient-to-r hover:from-indigo-100 hover:to-purple-100 text-indigo-600 hover:scale-110'
+                        : 'hover:bg-gradient-to-r hover:from-teal-100 hover:to-cyan-100 text-teal-600 hover:scale-110'
                     }`}
                   >
                     <FaChevronLeft className="w-4 h-4" />
@@ -987,8 +986,8 @@ function Interns() {
                       onClick={() => setCurrentPage(i + 1)}
                       className={`w-9 h-9 rounded-lg text-sm font-medium transition-all transform ${
                         currentPage === i + 1
-                          ? 'bg-gradient-to-r from-indigo-600 to-indigo-700 text-white shadow-lg shadow-indigo-600/30 scale-110'
-                          : 'hover:bg-gradient-to-r hover:from-indigo-100 hover:to-purple-100 text-gray-600 hover:scale-105'
+                          ? 'bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-lg shadow-teal-600/30 scale-110'
+                          : 'hover:bg-gradient-to-r hover:from-teal-100 hover:to-cyan-100 text-gray-600 hover:scale-105'
                       }`}
                     >
                       {i + 1}
@@ -1000,7 +999,7 @@ function Interns() {
                     className={`p-2 rounded-lg transition-all transform ${
                       currentPage === totalPages
                         ? 'text-gray-300 cursor-not-allowed'
-                        : 'hover:bg-gradient-to-r hover:from-indigo-100 hover:to-purple-100 text-indigo-600 hover:scale-110'
+                        : 'hover:bg-gradient-to-r hover:from-teal-100 hover:to-cyan-100 text-teal-600 hover:scale-110'
                     }`}
                   >
                     <FaChevronRight className="w-4 h-4" />
@@ -1029,7 +1028,7 @@ function Interns() {
       {showBulkUploadModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
           <div className="bg-white rounded-2xl shadow-xl max-w-md w-full transform transition-all animate-fadeIn">
-            <div className="bg-gradient-to-r from-indigo-600 via-indigo-600 to-purple-700 p-5 rounded-t-2xl">
+            <div className="bg-gradient-to-r from-teal-600 via-teal-600 to-cyan-700 p-5 rounded-t-2xl">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-white flex items-center gap-2">
                   <FaCloudUploadAlt className="w-5 h-5" />
@@ -1040,7 +1039,7 @@ function Interns() {
                     setShowBulkUploadModal(false);
                     setBulkFile(null);
                   }}
-                  className="p-1.5 hover:bg-indigo-700 rounded-lg transition-colors"
+                  className="p-1.5 hover:bg-teal-700 rounded-lg transition-colors"
                 >
                   <FaTimes className="w-5 h-5 text-white" />
                 </button>
@@ -1053,7 +1052,7 @@ function Interns() {
                   onClick={() => setBulkUploadType('add')}
                   className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition-all transform ${
                     bulkUploadType === 'add'
-                      ? 'bg-gradient-to-r from-indigo-600 to-indigo-700 text-white shadow-lg shadow-indigo-600/30 scale-105'
+                      ? 'bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-lg shadow-teal-600/30 scale-105'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105'
                   }`}
                 >
@@ -1063,7 +1062,7 @@ function Interns() {
                   onClick={() => setBulkUploadType('update')}
                   className={`flex-1 py-2.5 rounded-xl text-sm font-medium transition-all transform ${
                     bulkUploadType === 'update'
-                      ? 'bg-gradient-to-r from-indigo-600 to-indigo-700 text-white shadow-lg shadow-indigo-600/30 scale-105'
+                      ? 'bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-lg shadow-teal-600/30 scale-105'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-105'
                   }`}
                 >
@@ -1071,9 +1070,9 @@ function Interns() {
                 </button>
               </div>
 
-              <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-indigo-500 transition-colors group">
-                <div className="w-16 h-16 bg-gradient-to-r from-indigo-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                  <FaFileExcel className="w-8 h-8 text-indigo-600" />
+              <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-teal-500 transition-colors group">
+                <div className="w-16 h-16 bg-gradient-to-r from-teal-100 to-cyan-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                  <FaFileExcel className="w-8 h-8 text-teal-600" />
                 </div>
                 <p className="text-sm font-medium text-gray-700 mb-2">
                   Upload Excel or CSV file
@@ -1092,16 +1091,16 @@ function Interns() {
                 />
                 <label
                   htmlFor="bulkFile"
-                  className="inline-block px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-xl text-sm cursor-pointer hover:from-indigo-700 hover:to-indigo-800 transition-all shadow-lg shadow-indigo-600/30 transform hover:scale-105"
+                  className="inline-block px-6 py-2.5 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-xl text-sm cursor-pointer hover:from-teal-700 hover:to-cyan-700 transition-all shadow-lg shadow-teal-600/30 transform hover:scale-105"
                 >
                   Choose File
                 </label>
                 {bulkFile && (
-                  <div className="mt-4 p-3 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl border border-indigo-200">
-                    <p className="text-sm font-medium text-indigo-700 truncate">
+                  <div className="mt-4 p-3 bg-gradient-to-r from-teal-50 to-cyan-50 rounded-xl border border-teal-200">
+                    <p className="text-sm font-medium text-teal-700 truncate">
                       {bulkFile.name}
                     </p>
-                    <p className="text-xs text-indigo-600 mt-1">
+                    <p className="text-xs text-teal-600 mt-1">
                       Size: {(bulkFile.size / 1024).toFixed(2)} KB
                     </p>
                   </div>
@@ -1112,7 +1111,7 @@ function Interns() {
                 <button
                   onClick={handleBulkUpload}
                   disabled={!bulkFile || bulkLoading}
-                  className="flex-1 px-4 py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-xl hover:from-indigo-700 hover:to-indigo-800 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-indigo-600/30 transform hover:scale-105"
+                  className="flex-1 px-4 py-2.5 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-xl hover:from-teal-700 hover:to-cyan-700 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-teal-600/30 transform hover:scale-105"
                 >
                   {bulkLoading ? (
                     <span className="flex items-center justify-center gap-2">
@@ -1142,7 +1141,7 @@ function Interns() {
       {showRankingModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
           <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto transform transition-all animate-fadeIn">
-            <div className="bg-gradient-to-r from-indigo-600 via-indigo-600 to-purple-700 p-5 sticky top-0 rounded-t-2xl">
+            <div className="bg-gradient-to-r from-teal-600 via-teal-600 to-cyan-700 p-5 sticky top-0 rounded-t-2xl">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <FaTrophy className="w-5 h-5 text-white" />
@@ -1150,7 +1149,7 @@ function Interns() {
                 </div>
                 <button
                   onClick={() => setShowRankingModal(false)}
-                  className="p-1.5 hover:bg-indigo-700 rounded-lg transition-colors"
+                  className="p-1.5 hover:bg-teal-700 rounded-lg transition-colors"
                 >
                   <FaTimes className="w-5 h-5 text-white" />
                 </button>
@@ -1296,15 +1295,15 @@ function Interns() {
       {showDetailModal && selectedIntern && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
           <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto transform transition-all animate-fadeIn">
-            <div className="bg-gradient-to-r from-indigo-600 via-indigo-600 to-purple-700 p-5 rounded-t-2xl sticky top-0">
+            <div className="bg-gradient-to-r from-teal-600 via-teal-600 to-cyan-700 p-5 rounded-t-2xl sticky top-0">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 bg-gradient-to-br from-white to-indigo-100 rounded-xl flex items-center justify-center text-indigo-600 font-bold text-2xl shadow-lg">
+                  <div className="w-14 h-14 bg-gradient-to-br from-white to-teal-100 rounded-xl flex items-center justify-center text-teal-600 font-bold text-2xl shadow-lg">
                     {selectedIntern.name?.charAt(0) || '?'}
                   </div>
                   <div>
                     <h2 className="text-xl font-bold text-white">{selectedIntern.name}</h2>
-                    <div className="flex items-center gap-2 text-sm text-indigo-100 mt-1">
+                    <div className="flex items-center gap-2 text-sm text-teal-100 mt-1">
                       <FaIdCard className="w-3 h-3" />
                       <span>ID: {(selectedIntern._id || selectedIntern.id || 'N/A').slice(-8)}</span>
                     </div>
@@ -1312,7 +1311,7 @@ function Interns() {
                 </div>
                 <button
                   onClick={() => setShowDetailModal(false)}
-                  className="p-2 hover:bg-indigo-700 rounded-xl transition-colors"
+                  className="p-2 hover:bg-teal-700 rounded-xl transition-colors"
                 >
                   <FaTimes className="w-5 h-5 text-white" />
                 </button>
@@ -1322,18 +1321,18 @@ function Interns() {
             <div className="p-6 space-y-5">
               {/* Contact Info */}
               <div className="grid grid-cols-2 gap-4">
-                <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl border border-indigo-200 hover:shadow-lg transition-all transform hover:scale-105">
-                  <div className="w-10 h-10 bg-gradient-to-r from-indigo-200 to-purple-200 rounded-lg flex items-center justify-center">
-                    <FaEnvelope className="w-4 h-4 text-indigo-700" />
+                <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-teal-50 to-cyan-50 rounded-xl border border-teal-200 hover:shadow-lg transition-all transform hover:scale-105">
+                  <div className="w-10 h-10 bg-gradient-to-r from-teal-200 to-cyan-200 rounded-lg flex items-center justify-center">
+                    <FaEnvelope className="w-4 h-4 text-teal-700" />
                   </div>
                   <div className="truncate">
                     <p className="text-xs text-gray-500">Email</p>
                     <p className="text-sm font-semibold text-gray-800 truncate">{selectedIntern.email}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl border border-indigo-200 hover:shadow-lg transition-all transform hover:scale-105">
-                  <div className="w-10 h-10 bg-gradient-to-r from-indigo-200 to-purple-200 rounded-lg flex items-center justify-center">
-                    <FaCalendarAlt className="w-4 h-4 text-indigo-700" />
+                <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-teal-50 to-cyan-50 rounded-xl border border-teal-200 hover:shadow-lg transition-all transform hover:scale-105">
+                  <div className="w-10 h-10 bg-gradient-to-r from-teal-200 to-cyan-200 rounded-lg flex items-center justify-center">
+                    <FaCalendarAlt className="w-4 h-4 text-teal-700" />
                   </div>
                   <div>
                     <p className="text-xs text-gray-500">End Date</p>
@@ -1346,25 +1345,25 @@ function Interns() {
 
               {/* Quick Stats */}
               <div className="grid grid-cols-3 gap-4">
-                <div className="text-center p-4 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl border border-indigo-200 hover:shadow-lg transition-all transform hover:scale-105">
-                  <FaStar className="w-5 h-5 text-indigo-600 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-indigo-600">{Math.round(selectedIntern.score) || 0}%</p>
+                <div className="text-center p-4 bg-gradient-to-br from-teal-50 to-cyan-50 rounded-xl border border-teal-200 hover:shadow-lg transition-all transform hover:scale-105">
+                  <FaStar className="w-5 h-5 text-teal-600 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-teal-600">{Math.round(selectedIntern.score) || 0}%</p>
                   <p className="text-xs text-gray-500 mt-1">Overall Score</p>
                 </div>
-                <div className="text-center p-4 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl border border-indigo-200 hover:shadow-lg transition-all transform hover:scale-105">
-                  <FaGraduationCap className="w-5 h-5 text-indigo-600 mx-auto mb-2" />
+                <div className="text-center p-4 bg-gradient-to-br from-teal-50 to-cyan-50 rounded-xl border border-teal-200 hover:shadow-lg transition-all transform hover:scale-105">
+                  <FaGraduationCap className="w-5 h-5 text-teal-600 mx-auto mb-2" />
                   <p className="text-sm font-semibold text-gray-800 truncate">{selectedIntern.course || '-'}</p>
                   <p className="text-xs text-gray-500 mt-1">Course</p>
                 </div>
-                <div className="text-center p-4 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl border border-indigo-200 hover:shadow-lg transition-all transform hover:scale-105">
-                  <FaUserTie className="w-5 h-5 text-indigo-600 mx-auto mb-2" />
+                <div className="text-center p-4 bg-gradient-to-br from-teal-50 to-cyan-50 rounded-xl border border-teal-200 hover:shadow-lg transition-all transform hover:scale-105">
+                  <FaUserTie className="w-5 h-5 text-teal-600 mx-auto mb-2" />
                   <p className="text-sm font-semibold text-gray-800 truncate">{selectedIntern.mentor || '-'}</p>
                   <p className="text-xs text-gray-500 mt-1">Mentor</p>
                 </div>
               </div>
 
               {/* Performance Summary */}
-              <div className="bg-gradient-to-br from-indigo-600 via-indigo-600 to-purple-700 rounded-xl p-5 text-white shadow-xl">
+              <div className="bg-gradient-to-br from-teal-600 via-teal-600 to-cyan-700 rounded-xl p-5 text-white shadow-xl">
                 <div className="flex items-center justify-between mb-3">
                   <h4 className="font-semibold flex items-center gap-2">
                     <FaTasks className="w-4 h-4" />
@@ -1372,62 +1371,62 @@ function Interns() {
                   </h4>
                   <div className="text-right">
                     <p className="text-2xl font-bold">{calculateAverageScore(selectedIntern) || 0}%</p>
-                    <p className="text-xs text-indigo-200">Average of 6 Metrics</p>
+                    <p className="text-xs text-teal-200">Average of 6 Metrics</p>
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <div className="flex justify-between text-xs text-indigo-200 mb-1">
+                    <div className="flex justify-between text-xs text-teal-200 mb-1">
                       <span>Task Completion</span>
                       <span>{selectedIntern.taskCompletion || 0}%</span>
                     </div>
-                    <div className="h-1.5 bg-indigo-800 rounded-full overflow-hidden">
-                      <div className="h-full bg-gradient-to-r from-white to-indigo-200 rounded-full" style={{ width: `${selectedIntern.taskCompletion || 0}%` }} />
+                    <div className="h-1.5 bg-teal-800 rounded-full overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-white to-teal-200 rounded-full" style={{ width: `${selectedIntern.taskCompletion || 0}%` }} />
                     </div>
                   </div>
                   <div>
-                    <div className="flex justify-between text-xs text-indigo-200 mb-1">
+                    <div className="flex justify-between text-xs text-teal-200 mb-1">
                       <span>Task Quality</span>
                       <span>{selectedIntern.taskQuality || 0}%</span>
                     </div>
-                    <div className="h-1.5 bg-indigo-800 rounded-full overflow-hidden">
-                      <div className="h-full bg-gradient-to-r from-white to-indigo-200 rounded-full" style={{ width: `${selectedIntern.taskQuality || 0}%` }} />
+                    <div className="h-1.5 bg-teal-800 rounded-full overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-white to-teal-200 rounded-full" style={{ width: `${selectedIntern.taskQuality || 0}%` }} />
                     </div>
                   </div>
                   <div>
-                    <div className="flex justify-between text-xs text-indigo-200 mb-1">
+                    <div className="flex justify-between text-xs text-teal-200 mb-1">
                       <span>Deadline Adherence</span>
                       <span>{selectedIntern.deadlineAdherence || 0}%</span>
                     </div>
-                    <div className="h-1.5 bg-indigo-800 rounded-full overflow-hidden">
-                      <div className="h-full bg-gradient-to-r from-white to-indigo-200 rounded-full" style={{ width: `${selectedIntern.deadlineAdherence || 0}%` }} />
+                    <div className="h-1.5 bg-teal-800 rounded-full overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-white to-teal-200 rounded-full" style={{ width: `${selectedIntern.deadlineAdherence || 0}%` }} />
                     </div>
                   </div>
                   <div>
-                    <div className="flex justify-between text-xs text-indigo-200 mb-1">
+                    <div className="flex justify-between text-xs text-teal-200 mb-1">
                       <span>Attendance</span>
                       <span>{selectedIntern.attendance || 0}%</span>
                     </div>
-                    <div className="h-1.5 bg-indigo-800 rounded-full overflow-hidden">
-                      <div className="h-full bg-gradient-to-r from-white to-indigo-200 rounded-full" style={{ width: `${selectedIntern.attendance || 0}%` }} />
+                    <div className="h-1.5 bg-teal-800 rounded-full overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-white to-teal-200 rounded-full" style={{ width: `${selectedIntern.attendance || 0}%` }} />
                     </div>
                   </div>
                   <div>
-                    <div className="flex justify-between text-xs text-indigo-200 mb-1">
+                    <div className="flex justify-between text-xs text-teal-200 mb-1">
                       <span>Mentor Feedback</span>
                       <span>{selectedIntern.mentorFeedback || 0}%</span>
                     </div>
-                    <div className="h-1.5 bg-indigo-800 rounded-full overflow-hidden">
-                      <div className="h-full bg-gradient-to-r from-white to-indigo-200 rounded-full" style={{ width: `${selectedIntern.mentorFeedback || 0}%` }} />
+                    <div className="h-1.5 bg-teal-800 rounded-full overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-white to-teal-200 rounded-full" style={{ width: `${selectedIntern.mentorFeedback || 0}%` }} />
                     </div>
                   </div>
                   <div>
-                    <div className="flex justify-between text-xs text-indigo-200 mb-1">
+                    <div className="flex justify-between text-xs text-teal-200 mb-1">
                       <span>Communication</span>
                       <span>{selectedIntern.communication || 0}%</span>
                     </div>
-                    <div className="h-1.5 bg-indigo-800 rounded-full overflow-hidden">
-                      <div className="h-full bg-gradient-to-r from-white to-indigo-200 rounded-full" style={{ width: `${selectedIntern.communication || 0}%` }} />
+                    <div className="h-1.5 bg-teal-800 rounded-full overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-white to-teal-200 rounded-full" style={{ width: `${selectedIntern.communication || 0}%` }} />
                     </div>
                   </div>
                 </div>
@@ -1462,14 +1461,14 @@ function Interns() {
                     setShowDetailModal(false);
                     handleEditIntern(selectedIntern);
                   }}
-                  className="flex-1 px-4 py-3 border-2 border-indigo-600 text-indigo-600 rounded-xl hover:bg-indigo-50 text-sm font-semibold flex items-center justify-center gap-2 transition-all transform hover:scale-105"
+                  className="flex-1 px-4 py-3 border-2 border-teal-600 text-teal-600 rounded-xl hover:bg-teal-50 text-sm font-semibold flex items-center justify-center gap-2 transition-all transform hover:scale-105"
                 >
                   <FaEdit className="w-4 h-4" />
                   Edit Intern
                 </button>
                 <button
                   onClick={() => handleEmailIntern(selectedIntern.email)}
-                  className="flex-1 px-4 py-3 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-xl hover:from-indigo-700 hover:to-indigo-800 text-sm font-semibold flex items-center justify-center gap-2 transition-all shadow-lg shadow-indigo-600/30 transform hover:scale-105"
+                  className="flex-1 px-4 py-3 bg-gradient-to-r from-teal-600 to-cyan-600 text-white rounded-xl hover:from-teal-700 hover:to-cyan-700 text-sm font-semibold flex items-center justify-center gap-2 transition-all shadow-lg shadow-teal-600/30 transform hover:scale-105"
                 >
                   <FaEnvelope className="w-4 h-4" />
                   Send Email
