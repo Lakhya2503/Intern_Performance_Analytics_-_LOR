@@ -42,6 +42,7 @@ const accessRefershToken = asyncHandler(async(req,res)=>{
 
 
 
+
         if(!user) {
            throw new ApiError(401, "Invalid refresh token")
         }
@@ -126,6 +127,8 @@ const loggedInUser = asyncHandler(async(req,res)=>{
           $or : [{ username } , { email }]
       })
 
+
+      console.log("user",user);
 
 
 

@@ -3,19 +3,9 @@ import ApiError from '../utils/ApiError.js';
 
 // Initialize Brevo client with API key from environment variables
 const apiInstance = new BrevoClient({
-  apiKey: process.env.SMTP_API_KEY, // Must be a valid API key
+  apiKey: process.env.BREVO_API_KEY,
 });
 
-/**
- * Send Letter of Recommendation via email with attachment
- *
- * @param {string} email - Recipient's email address
- * @param {string} name - Recipient's name
- * @param {Buffer} pdfBuffer - PDF file buffer
- * @param {string} fileName - Name of the attached file
- * @returns {Promise<Object>} Success status object
- * @throws {ApiError} When email sending fails
- */
 export const sendLorViaEmail = async (email, name, pdfBuffer, fileName) => {
   // Input validation
   if (!email || !name || !pdfBuffer || !fileName) {
@@ -27,8 +17,8 @@ export const sendLorViaEmail = async (email, name, pdfBuffer, fileName) => {
     const sendSmtpEmail = {
       // Sender information
       sender: {
-        email: 'laxman2509shinde@gmail.com',
-        name: 'Athenura'
+        email: process.env.BREVO_SENDER_EMAIL,
+        name: process.env.BREVO_SENDER_NAME
       },
 
       // Recipient information
@@ -270,8 +260,8 @@ export const sendLorViaEmail = async (email, name, pdfBuffer, fileName) => {
 
 // Optional: Export additional utility functions
 export const validateEmailConfig = () => {
-  if (!process.env.SMTP_API_KEY) {
-    throw new ApiError(500, 'SMTP API key is not configured');
+  if (!process.env.BREVO_API_KEY) {
+    throw new ApiError(500, 'BREVO API key is not configured');
   }
   return true;
 };
